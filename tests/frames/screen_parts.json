@@ -1,0 +1,87 @@
+{
+ "inventory": {
+  "inventory_gh7.png": {
+   "gh": 7.0,
+   "box": [
+    22,
+    140,
+    143,
+    14
+   ],
+   "mesos": 18047
+  },
+  "inventory_gh11.png": {
+   "gh": 11.0,
+   "box": [
+    33,
+    210,
+    223,
+    21
+   ],
+   "mesos": 18047
+  },
+  "inventory_gh28.png": {
+   "gh": 28.0,
+   "box": [
+    80,
+    500,
+    534,
+    50
+   ],
+   "mesos": 18047
+  }
+ },
+ "party": {
+  "28": {
+   "gh": 28.0,
+   "pitch": 64,
+   "rows": [
+    "party_row_gh28_0.png",
+    "party_row_gh28_1.png",
+    "party_row_gh28_2.png",
+    "party_row_gh28_3.png",
+    "party_row_gh28_4.png"
+   ]
+  },
+  "7": {
+   "gh": 7.0,
+   "pitch": 16,
+   "rows": [
+    "party_row_gh7_0.png"
+   ]
+  },
+  "11": {
+   "gh": 11.0,
+   "pitch": 25,
+   "rows": [
+    "party_row_gh11_0.png"
+   ]
+  }
+ },
+ "status": {
+  "status_gh7.png": {
+   "gh": 7.0,
+   "x0": 462,
+   "cy": 21.5,
+   "job": "Bandit"
+  },
+  "status_gh11.png": {
+   "gh": 11.0,
+   "x0": 726,
+   "cy": 33.5,
+   "job": "Bandit"
+  },
+  "status_gh28.png": {
+   "gh": 28.0,
+   "x0": 1848,
+   "cy": 84.0,
+   "job": "Bandit"
+  },
+  "status_gh28_rogue.png": {
+   "gh": 28.0,
+   "x0": 1848,
+   "cy": 84.0,
+   "job": "Rogue"
+  }
+ }
+}

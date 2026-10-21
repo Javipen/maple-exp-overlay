@@ -1,0 +1,41 @@
+{
+ "version": 2,
+ "entries": [
+  {
+   "date": "2026-10-14",
+   "map": "The Land of Wild Boar II",
+   "level": 32,
+   "party": 1,
+   "exp": 54800,
+   "seconds": 1200.0,
+   "mesos": 16000,
+   "mesos_seconds": 1200.0,
+   "updated": 1792009251.9856472
+  },
+  {
+   "date": "2026-10-14",
+   "map": "The Burnt Land II",
+   "level": 35,
+   "party": 5,
+   "exp": 178100,
+   "seconds": 3900.0,
+   "mesos": 52000,
+   "mesos_seconds": 3900.0,
+   "updated": 1792009252.0602837
+  },
+  {
+   "date": "2026-10-14",
+   "map": "Rocky Road 2 (renamed)",
+   "level": 27,
+   "party": 3,
+   "exp": 27400,
+   "seconds": 600.0,
+   "mesos": 8000,
+   "mesos_seconds": 600.0,
+   "updated": 1792009252.0717914
+  }
+ ],
+ "aliases": {
+  "Rocky Road II": "Rocky Road 2 (renamed)"
+ }
+}

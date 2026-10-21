@@ -1,0 +1,18 @@
+# The exact packages the Windows download is built with on GitHub (Python 3.10, 64-bit).
+# Each file's SHA-256 is checked as it's installed (pip install --require-hashes), so a
+# package that isn't byte-for-byte the one listed here can't get into a build.
+#
+# To change a version: download the new file for Windows/Python 3.10 from PyPI, check its
+# SHA-256 against the one PyPI shows, and update both lines. (requirements.txt is the looser
+# list for running from source.)
+altgraph==0.17.5 --hash=sha256:f3a22400bce1b0c701683820ac4f3b159cd301acab067c51c653e06961600597
+mss==10.1.0 --hash=sha256:9179c110cadfef5dc6dc4a041a0cd161c74c379218648e6640b48c6b5cfe8918
+numpy==2.2.6 --hash=sha256:f0fd6321b839904e15c46e0d257fdd101dd7f530fe03fd6359c1ea63738703f3
+opencv-python-headless==4.12.0.88 --hash=sha256:86b413bdd6c6bf497832e346cd5371995de148e579b9774f8eba686dee3f5528
+packaging==25.0 --hash=sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484
+pefile==2024.8.26 --hash=sha256:76f8b485dcd3b1bb8166f1128d395fa3d87af26360c2358fb75b80019b957c6f
+pillow==12.3.0 --hash=sha256:300557495eb45ebb8aec96c2da9c4be642fbf7cd937278b4013ba894ea8eb0eb
+pyinstaller==6.17.0 --hash=sha256:b019940dbf7a01489d6b26f9fb97db74b504e0a757010f7ad078675befc85a82
+pyinstaller-hooks-contrib==2025.10 --hash=sha256:aa7a378518772846221f63a84d6306d9827299323243db890851474dfd1231a9
+pywin32-ctypes==0.2.3 --hash=sha256:8a1513379d709975552d202d942d9837758905c8d01eb82b8bcc30918929e7b8
+setuptools==83.0.0 --hash=sha256:29b23c360f22f414dc7336bb39178cc7bcbf6021ed2733cde173f09dba19abb3

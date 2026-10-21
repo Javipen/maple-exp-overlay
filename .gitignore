@@ -1,0 +1,27 @@
+# Build output (made by build.py), including the copy to use in the project folder
+/build/
+/release/
+/Maple Classic Exp Overlay.exe
+/_internal/
+
+# Settings and logs from running it (kept in %APPDATA%\MapleEXP, but never commit them if they turn up here)
+/config.json
+/exp_log.json
+/exp_log.txt
+/mesos_digits.npz
+/errors.log
+/errors.old.log
+*.tmp
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editors and assistants
+.vscode/
+.idea/
+.claude/
+CLAUDE.md
+CLAUDE.local.md

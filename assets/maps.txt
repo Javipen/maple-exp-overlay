@@ -1,0 +1,423 @@
+1st Accompaniment <1st Stage>	0
+1st Accompaniment <2nd Stage>	0
+1st Accompaniment <3rd Stage>	0
+1st Accompaniment <4th stage>	0
+1st Accompaniment <Bonus>	0
+1st Accompaniment <Exit>	0
+1st Accompaniment <Last Stage>	0
+3-Way Road-Split	0
+A Hill West of Henesys	0
+A Look-Out Shed Around the Beach	0
+A Split Road	0
+Amherst	1
+Amherst Department Store	1
+Amherst Townstreet	1
+Amherst Weapon Store	1
+An Empty House	0
+Another Entrance	0
+Another Path	0
+Another Sanctuary	0
+Ant Tunnel For Bowman	0
+Ant Tunnel I	0
+Ant Tunnel II	0
+Ant Tunnel III	0
+Ant Tunnel IV	0
+Ant Tunnel Park	0
+B1 <Area 1>	0
+B1 <Area 2>	0
+B1 <Subway Depot>	0
+B2 <Area 1>	0
+B2 <Area 2>	0
+B2 <Subway Depot>	0
+B3 <Area 1>	0
+B3 <Area 2>	0
+B3 <Area 3>	0
+B3 <Subway Depot>	0
+Backalley Semi-Basement	0
+Beach Hunting Ground	0
+Before Takeoff <To Ellinia>	1
+Before Takeoff <To Orbis>	1
+Bowman Instructional School	1
+Bygone Days	0
+Cabin <To Ellinia>	1
+Cabin <To Orbis>	1
+Cabin of the Forsaken	0
+Caution Falling Down	0
+Cave Fairy Department Store	1
+Cave Fairy Sanctuary	1
+Cave Within the Cave	0
+Chief's Residence	1
+Clang and Lorang	0
+Cloud Park I	0
+Cloud Park II	0
+Cloud Park III	0
+Cloud Park IV	0
+Cloud Park V	0
+Cloud Park VI	0
+Coconut Harvest	0
+Cold Field I	0
+Cold Field II	0
+Collision of Ice and Fire	0
+Construction Site North of Kerning City	0
+Damp Forest	0
+Damp Tree-Forest	0
+Dangerous Cliff	0
+Dangerous Croko I	0
+Dangerous Croko II	0
+Dangerous Forest	0
+Dangerous Steam	0
+Dangerous Valley	0
+Dangerous Valley II	0
+Dark Cave	0
+Dead Mine I	0
+Dead Mine II	0
+Dead Mine III	0
+Dead Mine IV	0
+Decayed Tunnel I	0
+Decayed Tunnel II	0
+Decayed Tunnel III	0
+Deep Ant Tunnel I	0
+Deep Ant Tunnel II	0
+Deep Forest	0
+Deep Valley I	0
+Deep Valley II	0
+Deep Valley III	0
+Dilapidated Tomb	0
+Disposed Flower Garden	0
+Downstairs at the Forest	0
+Drake Hunting Ground	0
+Drake's Meal Table	0
+Dungeon, Southern Forest I	0
+Dungeon, Southern Forest II	0
+Dungeon, Southern Forest III	0
+Dungeon, Southern Forest IV	0
+East Domain of Perion	0
+East Entrance to Mushroom Town	1
+East Rocky Mountain I	0
+East Rocky Mountain II	0
+East Rocky Mountain III	0
+East Rocky Mountain IV	0
+East Rocky Mountain V	0
+East Rocky Mountain VI	0
+East Rocky Mountain VII	0
+El Nath	1
+El Nath Department Store	1
+El Nath Market	1
+El Nath Weapon Store	1
+Ellinia	1
+Ellinia Department Store	1
+Ellinia Station	1
+Ellinia Weapon Store	1
+Entrance to Orbis Tower	0
+Florina Beach	0
+Forbidden Entrance	0
+Forest West of Henesys	0
+Forest of Dead Trees I	0
+Forest of Dead Trees II	0
+Forest of Dead Trees III	0
+Forest of Dead Trees IV	0
+Forgotten Dungeon Tunnel	0
+Forgotten Entrance I	0
+Forgotten Entrance II	0
+Forgotten Entrance III	0
+Forgotten Hollow	0
+Forgotten Hollow Instance 080003000	0
+Forgotten Hollow Instance 080003100	0
+Forgotten Hollow Instance 080003200	0
+Forgotten Hollow Instance 080003300	0
+Forgotten Hollow Instance 080003500	0
+Free Market <10>	1
+Free Market <11>	1
+Free Market <1>	1
+Free Market <2>	1
+Free Market <3>	1
+Free Market <4>	1
+Free Market <5>	1
+Free Market <6>	1
+Free Market <7>	1
+Free Market <8>	1
+Free Market <9>	1
+Free Market Entrance	1
+G* Coconut Season	0
+Garden of Darkness I	0
+Garden of Darkness II	0
+Garden of Green I	0
+Garden of Green II	0
+Garden of Red I	0
+Garden of Red II	0
+Garden of Yellow I	0
+Garden of Yellow II	0
+Golem's Temple I	0
+Golem's Temple II	0
+Golem's Temple III	0
+Golem's Temple IV	0
+Guild Head Quarters<Hall of Fame>	1
+Henesys	1
+Henesys Department Store	1
+Henesys Dungeon Entrance	0
+Henesys Hair Salon	1
+Henesys Hunting Ground I	0
+Henesys Hunting Ground II	0
+Henesys Hunting Ground III	0
+Henesys Market	1
+Henesys Park	0
+Henesys Plastic Surgery	1
+Henesys Skin-Care	1
+Henesys Town Hall	1
+Henesys Townstreet	1
+Henesys Weapon Store	1
+Holy Ground at the Snowfield	0
+Hot Sand	0
+Hunting Ground Middle of the Forest I	0
+Hunting Ground Middle of the Forest II	0
+Hunting Ground in the Deep Forest I	0
+Hunting Ground in the Deep Forest II	0
+Ice Valley I	0
+Ice Valley II	0
+Icy Cold Field	0
+In a Small Forest	0
+Kerning City	1
+Kerning City Civic Center	1
+Kerning City Construction Site	0
+Kerning City Hair Salon	1
+Kerning City Middle Forest I	0
+Kerning City Middle Forest II	0
+Kerning City Middle Forest III	0
+Kerning City Pharmacy	1
+Kerning City Repair Shop	1
+Kerning City Self-Defence Item Store	1
+L Forest I	0
+L Forest II	0
+L Forest III	0
+Land of Wild Boar	0
+Leaving the Event	0
+Line 1 <Area 1>	0
+Line 1 <Area 2>	0
+Line 1 <Area 3>	0
+Line 1 <Area 4>	0
+Line 2 <Area 1>	0
+Line 2 <Area 2>	0
+Line 2 <Area 3>	0
+Lingering Regret	0
+Lith Harbor	1
+Lith Harbor Armor Shop	1
+Lith Harbor Department Store	1
+Lith Harbor Weapon Shop	1
+Lorang Lorang	0
+Lorang Lorang Lorang	0
+Lorang and Clang	0
+Magic Library	1
+Magician's Tree Dungeon	0
+Maple Hill	0
+Marr's Forest	0
+Monkey Forest I	0
+Monkey Forest II	0
+Monkey Swamp I	0
+Monkey Swamp II	0
+Monkey Swamp III	0
+Mushroom Garden	0
+Mushroom Town	1
+Mushroom Town - West Entrance	1
+Mushroom Town Townstreet	1
+Niora Hospital	1
+Northern Top of Construction Site	0
+Old Man's House	1
+Orbis	1
+Orbis Department Store	1
+Orbis Hair Salon	1
+Orbis Park	0
+Orbis Plastic Surgery	0
+Orbis Skin-Care	1
+Orbis Ticketing Booth	1
+Orbis Tower <10th Floor>	0
+Orbis Tower <11th Floor>	0
+Orbis Tower <12th Floor>	0
+Orbis Tower <13th Floor>	0
+Orbis Tower <14th Floor>	0
+Orbis Tower <15th Floor>	0
+Orbis Tower <1st Floor>	0
+Orbis Tower <2nd Floor>	0
+Orbis Tower <3rd Floor>	0
+Orbis Tower <4th Floor>	0
+Orbis Tower <5th Floor>	0
+Orbis Tower <6th Floor>	0
+Orbis Tower <7th Floor>	0
+Orbis Tower <8th Floor>	0
+Orbis Tower <9th Floor>	0
+Orbis Tower <Hidden Room>	0
+Orbis Weapon Store	1
+Over the Wall	0
+Perilous Descent I	0
+Perilous Descent II	0
+Perilous Descent III	0
+Perion	1
+Perion Department Store	1
+Perion Dungeon Entrance	0
+Perion Street Corner	0
+Perion Weapon Store	1
+Pet-Walking Road	0
+Physical Fitness Test <Easy Level 1>	1
+Physical Fitness Test <Easy Level 2>	1
+Physical Fitness Test <Easy Level 3>	1
+Physical Fitness Test <Easy Waiting Room>	1
+Physical Fitness Test <Level 1>	1
+Physical Fitness Test <Level 2>	1
+Physical Fitness Test <Level 3>	1
+Physical Fitness Test <Level 4>	1
+Physical Fitness Test <Normal Level 1>	1
+Physical Fitness Test <Normal Level 2>	1
+Physical Fitness Test <Normal Level 3>	1
+Physical Fitness Test <Normal Waiting Room>	1
+Physical Fitness Test <Waiting Room>	1
+Pig Park	0
+Pig Park II	0
+Precipice of Darkness	0
+Primeval Forest I	0
+Primeval Forest II	0
+Primeval Forest III	0
+Receiving the Reward For the Event	0
+Regular Sauna	0
+Right Around Lith Harbor	0
+Rocky Road I	0
+Rocky Road II	0
+Rocky Road III	0
+Sanctuary Entrance I	0
+Sanctuary Entrance II	0
+Sanctuary Entrance III	0
+Sanctuary Entrance IV	0
+Sharp Cliff I	0
+Sharp Cliff II	0
+Sleepy Dungeon I	0
+Sleepy Dungeon II	0
+Sleepy Dungeon III	0
+Sleepy Dungeon IV	0
+Sleepy Dungeon V	0
+Sleepywood	1
+Sleepywood Hotel	0
+Snail Field of Flowers	0
+Snail Garden	0
+Snail Hunting Ground I	0
+Snail Hunting Ground II	0
+Snail Hunting Ground III	0
+Snowy Hill	0
+Someone Else's Grave	0
+Someone Else's House	0
+Southperry	1
+Southperry Armor Store	1
+Stairway to the Sky I	0
+Stairway to the Sky II	0
+Station Tunnel <To Ellinia>	1
+Station<To Ellinia>	1
+Strolling Path	0
+Strolling Path II	0
+Subway Ticketing Booth	0
+Sunset Sky	0
+Swampy Land in a Deep Forest	0
+The Blue Mushroom Forest	0
+The Breathing Rock	0
+The Burnt Land I	0
+The Burnt Land II	0
+The Burnt Land III	0
+The Burnt Land IV	0
+The Burnt Land V	0
+The Cave of Evil Eye I	0
+The Cave of Evil Eye II	0
+The Cave of Evil Eye III	0
+The Cave of Evil Eye IV	0
+The Cave of Trial I	0
+The Cave of Trial II	0
+The Cave of Trial III	0
+The Circulation Desk	1
+The Crown-Flyer	0
+The Cursed Sanctuary	0
+The Deep Forest of Patience <Step 1>	0
+The Deep Forest of Patience <Step 2>	0
+The Deep Forest of Patience <Step 3>	0
+The Deep Forest of Patience <Step 4>	0
+The Deep Forest of Patience <Step 5>	0
+The Deep Forest of Patience <Step 6>	0
+The Deep Forest of Patience <Step 7>	0
+The Door to Zakum	0
+The End of Fleeting Light	0
+The Entrance of Golem's Temple	0
+The Faded Canopy	0
+The Field East of Amherst	0
+The Field South of Ellinia	0
+The Field Up North of Ellinia	0
+The Field West of Amherst	0
+The Forest East of Henesys	0
+The Forest North of Ellinia	0
+The Forest South of Ellinia	0
+The Forest of Evil I	0
+The Forest of Evil II	0
+The Forest of Patience <Step 1>	0
+The Forest of Patience <Step 2>	0
+The Forest of Patience <Step 3>	0
+The Forest of Patience <Step 4>	0
+The Forest of Patience <Step 5>	0
+The Forest of Wisdom	0
+The Grave of Mushmom	0
+The Hermit's Cabin	0
+The Hill East of Henesys	0
+The Land of Wild Boar II	0
+The Murky Swamp	0
+The Passage	0
+The Pig Beach	0
+The Rain-Forest East of Henesys	0
+The Resting Spot, Pig Park	0
+The Road to Garden of 3 Colors	0
+The Road to the Dungeon	0
+The Swamp of Despair I	0
+The Swamp of Despair II	0
+The Swamp of Despair III	0
+The Tree That Grew I	0
+The Tree That Grew II	0
+The Tree That Grew III	0
+The Tree Tunnel At the Forest Up North	0
+The Tunnel That Lost Light I	0
+The Tunnel That Lost Light II	0
+The Valley of Death	0
+Thicket Around the Beach I	0
+Thicket Around the Beach II	0
+Thicket Around the Beach III	0
+Thief's Construction Site	0
+Thieves' Hideout	0
+To Ellinia	1
+To Orbis	1
+Tomato Field	0
+Top of the Hill	0
+Transfer Area	0
+Tree Dungeon, Forest Up North I	0
+Tree Dungeon, Forest Up North II	0
+Tree Dungeon, Forest Up North III	0
+Tree Dungeon, Forest Up North IV	0
+Tree Dungeon, Forest Up North IX	0
+Tree Dungeon, Forest Up North V	0
+Tree Dungeon, Forest Up North VI	0
+Tree Dungeon, Forest Up North VII	0
+Tree Dungeon, Forest Up North VIII	0
+Tree Dungeon, Monkey Forest I	0
+Tree Dungeon, Monkey Forest II	0
+Truth Booth	1
+Up and Up <Level 1>	0
+Up and Up <Level 2>	0
+Up and Up <Level 3>	0
+Utah's Pig Farm	0
+VIP Sauna	0
+Warrior's Rocky Mountain	0
+Warriors' Sanctuary	1
+Watch Out for Icy Path I	0
+Watch Out for Icy Path II	0
+West Domain of Perion	0
+West Rocky Mountain I	0
+West Rocky Mountain II	0
+West Rocky Mountain III	0
+West Rocky Mountain IV	0
+West Street Corner of Perion	0
+Wild Kargo's Area	0
+Wolf Territory I	0
+Wolf Territory II	0
+Wolf Territory III	0
+Wolf Territory IV	0
+Wolf Territory V	0
+Yellow Mushroom House	1

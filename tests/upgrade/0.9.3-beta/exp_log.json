@@ -1,0 +1,69 @@
+{
+ "version": 3,
+ "install": "4b6c69da7bbefb72",
+ "entries": [
+  {
+   "date": "2026-10-14",
+   "map": "The Land of Wild Boar II",
+   "map_read": "The Land of Wild Boar II",
+   "level": 32,
+   "party": 1,
+   "class": "Bandit",
+   "exp": 54800,
+   "seconds": 1200.0,
+   "mesos": 16000,
+   "mesos_seconds": 1200.0,
+   "seal": "73e66b3a48c08b47efe7c171",
+   "updated": 1792009252.5663273
+  },
+  {
+   "date": "2026-10-14",
+   "map": "The Burnt Land II",
+   "map_read": "The Burnt Land II",
+   "level": 35,
+   "party": 5,
+   "class": "Bandit",
+   "exp": 178100,
+   "seconds": 3900.0,
+   "mesos": 52000,
+   "mesos_seconds": 3900.0,
+   "seal": "2f85872944b77762138bf247",
+   "updated": 1792009252.650513
+  },
+  {
+   "date": "2026-10-14",
+   "map": "Rocky Road 2 (renamed)",
+   "map_read": "Rocky Road II",
+   "level": 27,
+   "party": 3,
+   "class": "Rogue",
+   "exp": 27400,
+   "seconds": 600.0,
+   "mesos": 8000,
+   "mesos_seconds": 600.0,
+   "seal": "64667554b0ed633af2ce376e",
+   "updated": 1792009252.6625345
+  }
+ ],
+ "aliases": {
+  "Rocky Road II": "Rocky Road 2 (renamed)"
+ },
+ "runs": [
+  {
+   "date": "2026-10-14",
+   "started": "2026-10-14T16:20",
+   "map": "The Burnt Land II",
+   "map_read": "The Burnt Land II",
+   "class": "Bandit",
+   "level_start": 35,
+   "level_end": 35,
+   "party": 5,
+   "exp": 164400,
+   "seconds": 3600.0,
+   "mesos": 48000,
+   "mesos_seconds": 3600.0,
+   "version": "0.9.3-beta",
+   "seal": "fea770bd1130d33656510fd9"
+  }
+ ]
+}

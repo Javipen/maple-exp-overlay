@@ -1,0 +1,18 @@
+{
+  "gap_seconds": 20,
+  "transparency": 30,
+  "topmost": false,
+  "pos": [
+    5300,
+    800
+  ],
+  "log_open": true,
+  "log_size": [
+    1200,
+    600
+  ],
+  "log_columns": {
+    "map": 210,
+    "exp": 90
+  }
+}
