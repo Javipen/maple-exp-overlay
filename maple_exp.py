@@ -80,7 +80,7 @@ def _local_only():
 
 _local_only()
 
-VERSION = "1.0.0"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
+VERSION = "1.0.1"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
 WINDOW_TITLE = "Maple Classic Exp Overlay"    # the version is shown in Settings
 OLD_TITLES = ("Maple EXP/hr",)               # what versions before 0.9.3 were called
 
@@ -96,6 +96,7 @@ ERROR_LOG_PATH = DATA_DIR / "errors.log"
 TEMPLATE_PATH = ASSETS / "digits.npz"
 ICON_PATH = ASSETS / "icon.ico"
 POLL_SECONDS = 1.5          # how often to read the EXP bar
+MESOS_UNSEEN = 15           # seconds without reading the mesos (the inventory closed) before the card guesses them
 HUD_CALIBRATION = 300       # seconds of tracking before the tracker card shows rates and the time to level
 LOGGING = False             # the EXP log (one line per map, level and party) isn't kept in this simplified copy
 ROLLING_WINDOW = 300        # seconds used for the "last 5 min" rate
@@ -118,7 +119,7 @@ DEFAULTS = {"gap_seconds": 15, "transparency": 0, "topmost": True,
             # of its 1390-unit-wide drawing, for a 1080-tall game; it grows and shrinks with the game) and
             # how solid it is. hud_offset (set by moving it) is where it is, from the game's top-left.
             "hud": True, "hud_layout": "full", "hud_theme": "brown", "hud_scale": 0.5, "hud_width": 1390,
-            "hud_tall": 0, "hud_opacity": 1.0}
+            "hud_tall": 0, "hud_repot": True, "hud_opacity": 1.0}
 SHAPE_LABELS = {"square": "Square", "wide": "Wide", "bar": "Bar"}
 SHAPE_BLURBS = {"square": "The narrow card: the big number, the level bar and Start/Pause.",
                 "wide": "Longer sideways: the level bar on top and four numbers in a row.",
@@ -1944,6 +1945,7 @@ class MesoTracker:
     def reset(self):
         self.value = None                     # confirmed mesos count
         self.seen_at = None                   # when it was last confirmed
+        self.seen_el = None                   # ...in tracking time (the inventory may be closed since)
         self._candidate = (None, 0, 0)
         self.gained = 0
         self.earned = self.spent = 0          # the ups and downs that make up gained (spent is positive)
@@ -1982,7 +1984,7 @@ class MesoTracker:
             elif n < (3 if big else 2):
                 return
             self._candidate = (None, 0, 0)
-        self.seen_at = now
+        self.seen_at, self.seen_el = now, elapsed
         if running and not self.counting:
             self.counting = True                  # count changes from this reading on
             self.start = elapsed if self.start is None else self.start
@@ -1998,23 +2000,42 @@ class MesoTracker:
                 self.samples.popleft()
         self.value = value
 
+    # The mesos are only read while the inventory is open. So the rates are worked out over the
+    # time up to the last reading, not up to now: with the inventory closed they hold steady
+    # (instead of sinking as the time grows with nothing counted), and when it's opened again
+    # everything picked up meanwhile is counted at once, over all that time.
+
+    def _end(self, elapsed):
+        return min(elapsed, self.seen_el) if self.seen_el is not None else elapsed
+
     def per_hour(self, elapsed):
-        if self.start is None or elapsed - self.start < 30:
+        end = self._end(elapsed)
+        if self.start is None or end - self.start < 30:
             return None
-        return self.gained / (elapsed - self.start) * 3600
+        return self.gained / (end - self.start) * 3600
 
     def per_5min(self, elapsed):
         if self.start is None:
             return None
-        t0 = max(self.start, elapsed - ROLLING_WINDOW)
-        if elapsed - t0 < 60:
+        end = self._end(elapsed)
+        t0 = max(self.start, end - ROLLING_WINDOW)
+        if end - t0 < 60:
             return None
         before = 0
         for t, g in self.samples:
             if t > t0:
                 break
             before = g
-        return (self.gained - before) / (elapsed - t0) * ROLLING_WINDOW
+        return (self.gained - before) / (end - t0) * ROLLING_WINDOW
+
+    def unseen(self, elapsed):
+        """Seconds of tracking since the mesos were last read (the inventory closed), or 0."""
+        return max(0.0, elapsed - self.seen_el) if self.seen_el is not None and self.counting else 0.0
+
+    def guess_since_seen(self, elapsed):
+        """Mesos probably picked up since the last reading, at the rate so far (0 if there's no rate yet)."""
+        rate = self.per_hour(elapsed)
+        return max(0.0, rate) * self.unseen(elapsed) / 3600 if rate else 0.0
 
 
 class Session:
@@ -3384,6 +3405,8 @@ class App:
         self._section(body, "Tracker card over the game")
         hud = tk.BooleanVar(value=bool(self.cfg["hud"]))
         self._switch(body, "Show the EXP tracker card while you play", hud).pack(anchor="w")
+        repot = tk.BooleanVar(value=bool(self.cfg["hud_repot"]))
+        self._switch(body, "Show the repot row (Full layout)", repot).pack(anchor="w", pady=(px(6), 0))
         for title, options, key in (("Layout", {"minimal": "Minimal", "session": "Session", "full": "Full"}, "hud_layout"),
                                     ("Theme", HUD_THEMES, "hud_theme")):
             line = tk.Frame(body, bg=BG)
@@ -3417,6 +3440,8 @@ class App:
             self.cfg["transparency"] = min(MAX_TRANSPARENCY, max(0, int(float(transparency.get()))))
             self.cfg["topmost"] = bool(topmost.get())
             self.cfg["hud"] = bool(hud.get())
+            if bool(repot.get()) != self.hud.repot:
+                self.hud.set_repot(repot.get())
             self._apply_window_settings()
             w.attributes("-topmost", self.cfg["topmost"])
             scale = int(size.get().rstrip("%"))
@@ -3426,7 +3451,7 @@ class App:
                 self.root.after(60, self._reopen_settings)        # (drawn again at the new size)
             save_config(self.cfg)
 
-        for var in (gap, transparency, topmost, hud, size):
+        for var in (gap, transparency, topmost, hud, repot, size):
             var.trace_add("write", apply)
         self._hotkey_settings(body)
         buttons = tk.Frame(body, bg=BG)
@@ -3924,6 +3949,10 @@ class App:
         recent = t.recent_gain()
         per_hr = m.per_hour(el)
         mesos_known = m.value is not None
+        # With the inventory closed, the mesos can't be read: what's been picked up since is guessed at the
+        # rate so far, and shown with a "~" until the inventory is open again.
+        guess = m.guess_since_seen(el) if m.unseen(el) > MESOS_UNSEEN else 0.0
+        est = "~" if guess else ""
         if self.level_up_at and now - self.level_up_at < 6:
             slime = "sparkle"
         elif self.died_at and now - self.died_at < 30:
@@ -3947,10 +3976,10 @@ class App:
             "rate": "Calibrating…" if calibrating else fmt_num(rate) if rate is not None else "—",
             "session": f"+{fmt_num(t.gained)}" if t.gained else "+0",
             "mesos_rate": "Calibrating…" if calibrating else fmt_num(per_hr) if per_hr is not None else "—",
-            "mesos_net": f"{m.gained:+,.0f}" if mesos_known else "—",
-            "mesos_gained": f"+{fmt_num(m.earned)}" if mesos_known else "—",
+            "mesos_net": f"{est}{m.gained + guess:+,.0f}" if mesos_known else "—",
+            "mesos_gained": f"{est}+{fmt_num(m.earned + guess)}" if mesos_known else "—",
             "mesos_spent": f"-{fmt_num(m.spent)}" if mesos_known and m.spent else "0" if mesos_known else "—"}
-        content.update(self._repot_content())
+        content.update(self._repot_content(guess))
         self.reader.hud_rects = (self.hud.place(rect),)  # (first, so the reader never sees it)
         self.hud.show(rect, content)
 
@@ -3979,8 +4008,8 @@ class App:
                         + (f" That trip made {profit:+,} mesos." if profit is not None else
                            " Ring it again after your next trip to see what the trip made."))
 
-    def _repot_content(self):
-        """What the card's repot row shows."""
+    def _repot_content(self, guess=0.0):
+        """What the card's repot row shows (guess: mesos probably picked up since the inventory was closed)."""
         r = self.cfg.get("repot") if isinstance(self.cfg.get("repot"), dict) else {}
         if not isinstance(r.get("mesos"), int):
             return {"repot_at": "Ring the bell", "repot_since": "-", "repot_trip": "-", "repot_time": "-"}
@@ -3988,7 +4017,8 @@ class App:
         trip = r.get("trip")
         since = time.time() - r["at"] if isinstance(r.get("at"), (int, float)) else None
         return {"repot_at": fmt_num(r["mesos"]),
-                "repot_since": f"{now - r['mesos']:+,}" if now is not None else "Open your inventory",
+                "repot_since": (f"{'~' if guess else ''}{now + guess - r['mesos']:+,.0f}" if now is not None
+                                else "Open your inventory"),
                 "repot_trip": f"{trip:+,}" if isinstance(trip, int) else "-",
                 "repot_time": fmt_dur(since) if since is not None and since >= 0 else "-"}
 

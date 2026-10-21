@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.1
+
+- **Mesos/hr with the inventory closed:** you no longer need to keep the inventory open.
+  - Mesos/hr is worked out over the time your mesos were last seen, so it holds steady while the
+    inventory is closed instead of sinking.
+  - When you open it again, everything picked up meanwhile counts.
+  - While it's closed, Net session, Mesos gained and Since repot keep going as estimates, marked "~".
+- **TO LV. once:** with the session row below (Session and Full), the time to the next level is no
+  longer shown twice. The EXP gauge stretches across the card instead.
+- **The repot row is optional:** turn it off in Settings or in the card's right-click menu, and the
+  Full layout gets shorter.
+
 ## 1.0.0: the local-only edition
 
 Based on beanguri's Maple Classic Exp Overlay 0.9.10-beta.

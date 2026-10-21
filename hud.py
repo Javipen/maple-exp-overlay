@@ -38,6 +38,16 @@ W0 = 1390                   # the card's usual width in units (the reference's p
 MIN_WIDTH, MAX_WIDTH = 950, 2800
 HEIGHTS = {"minimal": 186, "session": 284, "full": 460}
 ROWS = {"minimal": 1, "session": 2, "full": 4}          # rows of numbers (extra height is shared between them)
+REPOT_ROW = 92              # units: the full layout's repot row (it can be turned off)
+
+
+def _height(layout, repot=True):
+    """The card's height in units (shadow not included), with or without the full layout's repot row."""
+    return HEIGHTS.get(layout, HEIGHTS["full"]) - (0 if repot or layout != "full" else REPOT_ROW)
+
+
+def _rows(layout, repot=True):
+    return ROWS.get(layout, 4) - (0 if repot or layout != "full" else 1)
 MAX_TALL = 320              # units of extra height the bottom edge can add
 MARGIN = 12                 # units of room around the card for its shadow
 TOP_ROOM = 50               # ...and more above it, for the "+EXP" floating up from the slime
@@ -194,18 +204,19 @@ def plain(text):
 
 
 def _tone(value):
+    value = value.lstrip("~")                       # (a guess, while the inventory is closed: coloured the same)
     return GOOD if value.startswith("+") and value != "+0" else BAD if value.startswith("-") and value != "-" else VALUE
 
 
-def render_base(layout, theme, scale, c, art, width=W0, tall=0):
+def render_base(layout, theme, scale, c, art, width=W0, tall=0, repot=True):
     """The card without its slime, as an RGBA picture (shadow included), and where things are on it
     (in its pixels) for compose(): layout and theme as in LAYOUTS / THEMES, scale = pixels per unit,
     width = its width in units, tall = extra height in units (shared out between its rows: the text
-    stays the same size), c = what it shows (see App._update_hud)."""
+    stays the same size), repot = the full layout's repot row on or off, c = what it shows (see App._update_hud)."""
     t = THEME.get(theme, THEME["brown"])
     tall = min(MAX_TALL, max(0, tall))
-    H0 = HEIGHTS.get(layout, HEIGHTS["full"]) + tall
-    extra = tall / ROWS.get(layout, 4)
+    H0 = _height(layout, repot) + tall
+    extra = tall / _rows(layout, repot)
     W = min(MAX_WIDTH, max(MIN_WIDTH, width))
     cw = (W - 22) / 4                               # the columns everything lines up on
     k = max(scale, min(scale * SS, 1.0))        # (drawn at least at the reference's size, then shrunk: smooth edges)
@@ -256,12 +267,15 @@ def render_base(layout, theme, scale, c, art, width=W0, tall=0):
         tx += tile_w + gap
     badge_end = badge_x + badge_w
 
-    # The time to the next level, on the right: in the last column, lined up with the rows below.
-    rb = x0 + 11 + 3 * cw
-    cv.line(rb, cy - 38, rb, cy + 38, DIVIDER, 2.5)
+    # The time to the next level, on the right, in the last column. With the session row below (which shows
+    # it too), it isn't shown twice: the gauge gets that room instead.
     nxt = c.get("next_level")
-    cv.text(rb + 34, cy - 22, f"TO LV. {nxt}" if nxt else "TO NEXT LV.", 23, t["time_label"])
-    cv.text(rb + 34, cy + 20, c.get("time") or "--:--:--", 50, t["time_value"], room=cw - 46)
+    time_top = layout == "minimal"
+    rb = x0 + 11 + 3 * cw if time_top else x0 + W - 4
+    if time_top:
+        cv.line(rb, cy - 38, rb, cy + 38, DIVIDER, 2.5)
+        cv.text(rb + 34, cy - 22, f"TO LV. {nxt}" if nxt else "TO NEXT LV.", 23, t["time_label"])
+        cv.text(rb + 34, cy + 20, c.get("time") or "--:--:--", 50, t["time_value"], room=cw - 46)
 
     gx0, gx1, gh = badge_end + 22, rb - 24, 54
     gy = cy - gh / 2
@@ -336,18 +350,20 @@ def render_base(layout, theme, scale, c, art, width=W0, tall=0):
                               ("coin_stack", "MESOS GAINED", c.get("mesos_gained", "-"), False),
                               ("money_bag", "MESOS SPENT", c.get("mesos_spent", "-"), True)], icons=True)
         y += 88 + extra + 4
+    if layout == "full" and repot:
         panel(y, 88 + extra, [("bell", "LAST REPOT", c.get("repot_at", "-"), False),
                               ("coin", "SINCE REPOT", c.get("repot_since", "-"), True),
                               ("coin_stack", "LAST TRIP", c.get("repot_trip", "-"), True),
                               ("money_bag", "TRIP TIME", c.get("repot_time", "-"), False)], icons=True)
 
-    size = card_size(layout, scale, W, tall)
+    size = card_size(layout, scale, W, tall, repot)
     img = cv.img.resize(size, Image.LANCZOS)
     info = {"ppu": scale, "slime": ((slime_x - 6) * scale, (gy + gh + 9) * scale),
             "card": (x0 * scale, y0 * scale, (x0 + W) * scale, (y0 + H0) * scale),
             "header": (head_cy * scale, (x0 + W - 26) * scale),
             "bell": (bell_at[0] * scale, bell_at[1] * scale) if bell_at else None,
-            "columns": [(x0 + 11 + i * cw + 34) * scale for i in range(4)], "time_x": (rb + 34) * scale}
+            "columns": [(x0 + 11 + i * cw + 34) * scale for i in range(4)],
+            "time_x": (rb + 34) * scale if time_top else None, "gauge": (gx0 * scale, gx1 * scale)}
     return img, info
 
 
@@ -454,18 +470,18 @@ def _edit_frame(img, info):
     img.alpha_composite(layer)
 
 
-def render(layout, theme, scale, c, art, opacity=1.0, width=W0, tall=0):
+def render(layout, theme, scale, c, art, opacity=1.0, width=W0, tall=0, repot=True):
     """The card as a still picture: the slime at rest (for previews and tests)."""
-    base, info = render_base(layout, theme, scale, c, art, width, tall)
+    base, info = render_base(layout, theme, scale, c, art, width, tall, repot)
     return compose(base, info, art, {"slime": c.get("slime", "happy"), "opacity": opacity})
 
 
-def card_size(layout, scale, width=W0, tall=0):
+def card_size(layout, scale, width=W0, tall=0, repot=True):
     """The card's window size in pixels (shadow included)."""
     width = min(MAX_WIDTH, max(MIN_WIDTH, width))
     tall = min(MAX_TALL, max(0, tall))
     return (int(round((width + 2 * MARGIN) * scale)),
-            int(round((HEIGHTS.get(layout, HEIGHTS["full"]) + tall + 2 * MARGIN + TOP_ROOM) * scale)))
+            int(round((_height(layout, repot) + tall + 2 * MARGIN + TOP_ROOM) * scale)))
 
 
 # --------------------------------------------------------------------------- the slime's moves
@@ -657,6 +673,16 @@ class HudCard:
         return self.cfg.get("hud_tall", 0)
 
     @property
+    def repot(self):
+        """The full layout's repot row: on or off."""
+        return self.cfg.get("hud_repot", True)
+
+    def set_repot(self, on):
+        self.cfg["hud_repot"] = bool(on)
+        self.save()
+        self.redraw()
+
+    @property
     def offset(self):
         """Where the card's top-left is, from the game area's top-left (pixels at a 1080-tall game)."""
         off = self.cfg.get("hud_offset")
@@ -727,7 +753,7 @@ class HudCard:
     def place(self, game):
         """Where the card goes over this game area: (x, y, w, h) on screen."""
         gx, gy, gw, gh = game
-        w, h = card_size(self.layout, self.scale * gh / 1080, self.width, self.tall)
+        w, h = card_size(self.layout, self.scale * gh / 1080, self.width, self.tall, self.repot)
         off = self.offset
         if off is None:             # at first: the bottom left, above the game's chat (and its messages)
             x, y = gx + round(8 * gh / 1080), gy + gh - round(0.17 * gh) - h
@@ -752,16 +778,17 @@ class HudCard:
 
     def _paint(self, now):
         ppu = self._ppu()
-        key = (self.layout, self.theme, round(ppu, 4), self.width, self.tall, repr(self.content))
+        key = (self.layout, self.theme, round(ppu, 4), self.width, self.tall, self.repot, repr(self.content))
         if self._fresh:                                         # (drawn in the background: take it)
             self._base, self._fresh = self._fresh, None
-        if not self._base or self._base[0][:5] != key[:5]:
+        if not self._base or self._base[0][:6] != key[:6]:
             # A new size, layout or theme (or being resized): draw it now, so it never shows stretched.
-            self._base = (key,) + render_base(self.layout, self.theme, ppu, self.content, self.art, self.width, self.tall)
+            self._base = (key,) + render_base(self.layout, self.theme, ppu, self.content, self.art, self.width, self.tall,
+                                              self.repot)
         elif self._base[0] != key and not self._drawing:
             # Only the numbers changed: draw them in the background, the slime carries on meanwhile.
             self._drawing = True
-            args = (self.layout, self.theme, ppu, dict(self.content), self.art, self.width, self.tall)
+            args = (self.layout, self.theme, ppu, dict(self.content), self.art, self.width, self.tall, self.repot)
 
             def work():
                 try:
@@ -831,10 +858,11 @@ class HudCard:
         if not self.editing:
             return
         m = tk.Menu(self.window.win, tearoff=0)
-        lay, th = tk.StringVar(m, self.layout), tk.StringVar(m, self.theme)
-        m._vars = (lay, th)                                      # (kept alive while the menu is)
+        lay, th, rp = tk.StringVar(m, self.layout), tk.StringVar(m, self.theme), tk.BooleanVar(m, self.repot)
+        m._vars = (lay, th, rp)                                  # (kept alive while the menu is)
         for key, name in LAYOUTS.items():
             m.add_radiobutton(label=name, value=key, variable=lay, command=lambda k=key: self.set_style(layout=k))
+        m.add_checkbutton(label="Show the repot row (Full)", variable=rp, command=lambda: self.set_repot(rp.get()))
         m.add_separator()
         for key, name in THEMES.items():
             m.add_radiobutton(label=f"{name} theme", value=key, variable=th, command=lambda k=key: self.set_style(theme=k))

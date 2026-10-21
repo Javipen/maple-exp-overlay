@@ -459,6 +459,20 @@ for v in (9820, 9820, 9820, 9850, 9850, 9700, 9700, 9900, 9900):
     t2.observe(v, 0, 0, True)
 check(f"mesos gained and spent are kept apart, and add up to the net ({t2.earned}, {t2.spent}, {t2.gained})",
       (t2.earned, t2.spent, t2.gained) == (230, 150, 80))
+# the inventory closed: mesos/hr holds (worked out up to the last reading), and what's picked up meanwhile counts
+t3 = m.MesoTracker()
+for el, v in ((0, 100000), (1, 100000), (2, 100000), (300, 103000), (301, 103000)):   # +3,000 in about 5 minutes
+    t3.observe(v, el, el, True)
+rate = t3.per_hour(301)
+check(f"mesos/hr while the inventory is open ({rate:,.0f})", abs(rate - 3000 / 299 * 3600) < 1)
+check(f"closed for 10 minutes: mesos/hr holds instead of sinking ({t3.per_hour(901):,.0f})",
+      abs(t3.per_hour(901) - rate) < 1 and t3.per_5min(901) == t3.per_5min(301))
+check(f"...and the mesos picked up meanwhile are guessed at that rate ({t3.guess_since_seen(901):,.0f})",
+      t3.unseen(901) == 600 and abs(t3.guess_since_seen(901) - rate * 600 / 3600) < 1)
+for el, v in ((901, 108000), (902, 108000)):                                 # opened again: +5,000 meanwhile
+    t3.observe(v, el, el, True)
+check(f"opened again: everything picked up meanwhile counts, over all that time ({t3.per_hour(902):,.0f})",
+      t3.gained == 8000 and abs(t3.per_hour(902) - 8000 / 900 * 3600) < 1 and t3.unseen(902) == 0)
 for v in (25000, 25000, 25000):
     t.observe(v, 0, 0, True)
 check("selling loot (a big jump) doesn't count as farming", t.gained == 30)

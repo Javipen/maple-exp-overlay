@@ -268,9 +268,29 @@ for _ in range(10):
 check(f"a frame is quick to draw ({(_t.perf_counter() - t0) * 100:.1f} ms)", (_t.perf_counter() - t0) * 100 < 15)
 calib = hud.render("full", "brown", 0.5, dict(card_c, calibrating=200, rate="Calibrating\u2026", time="--:--:--"), art)
 check("while calibrating it still draws", calib.size == hud.card_size("full", 0.5))
-infos = [hud.render_base(lay, "brown", 0.5, card_c, art, wid)[1] for lay in hud.LAYOUTS for wid in (950, 1390, 2400)]
-check("the top row's TO LV. lines up with the TO LV. column below it, at every layout and width",
-      all(abs(i["time_x"] - i["columns"][3]) < 0.01 for i in infos))
+infos = {(lay, wid): hud.render_base(lay, "brown", 0.5, card_c, art, wid)[1] for lay in hud.LAYOUTS
+         for wid in (950, 1390, 2400)}
+check("Minimal shows the time to level at the top, in the last column at every width",
+      all(abs(i["time_x"] - i["columns"][3]) < 0.01 for (lay, _), i in infos.items() if lay == "minimal"))
+check("with the session row below (Session, Full), TO LV. isn't shown twice: none at the top",
+      all(i["time_x"] is None for (lay, _), i in infos.items() if lay != "minimal"))
+check("...and the gauge takes that room, out to the card's right edge",
+      all(i["gauge"][1] > i["columns"][3] + 100 * 0.5 for (lay, _), i in infos.items() if lay != "minimal")
+      and all(i["gauge"][1] < i["columns"][3] for (lay, _), i in infos.items() if lay == "minimal"))
+with_row, without = hud.card_size("full", 0.5), hud.card_size("full", 0.5, repot=False)
+check(f"the repot row can be turned off: Full gets shorter, as wide ({with_row} -> {without})",
+      without[0] == with_row[0] and without[1] == with_row[1] - round(hud.REPOT_ROW * 0.5)
+      and hud.render("full", "brown", 0.5, card_c, art, repot=False).size == without
+      and hud.render_base("full", "brown", 0.5, card_c, art, repot=False)[1]["bell"] is None
+      and hud.card_size("session", 0.5, repot=False) == hud.card_size("session", 0.5))
+app.hud.show(game, card_c)
+app.hud.set_repot(False)
+check("turning it off (Settings or the card's menu) is saved and redraws the card",
+      app.cfg["hud_repot"] is False and app.hud.rect[3] == hud.card_size(app.hud.layout, app.hud._ppu(),
+                                                                          app.hud.width, app.hud.tall, False)[1])
+app.hud.set_repot(True)
+check("a guess (~, inventory closed) is coloured like the number", hud._tone("~+12,800") == hud.GOOD
+      and hud._tone("~-500") == hud.BAD)
 check("characters the typeface doesn't have (it draws them as boxes) are swapped", hud.plain("— a –") == "- a -")
 short, tall_pic = hud.render("full", "brown", 0.5, card_c, art), hud.render("full", "brown", 0.5, card_c, art, tall=120)
 check("extra height makes it taller, as wide", tall_pic.width == short.width and tall_pic.height == short.height + 60)
