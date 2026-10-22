@@ -7,6 +7,10 @@ own style, with a slime that hops every time you get EXP and a clerk bell for yo
 
 ![The tracker card over the game](docs/screenshots/3-card-in-game-v2.png)
 
+Resized to fit beside the chat, using edit mode (Shift+5), at the start of a session:
+
+![The tracker card made smaller, beside the game's chat](docs/screenshots/9-card-resized-in-game.png)
+
 ## What it does
 
 - **Reads your EXP bar and mesos from the screen.** It never touches the game's files or memory and
