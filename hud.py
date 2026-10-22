@@ -515,11 +515,12 @@ class Moves:
         self.rang = None            # when the repot bell was rung
 
     def gain(self, amount, now=None):
+        """A hop, with "+amount EXP" floating up ("+EXP" when the amount isn't known)."""
         now = time.monotonic() if now is None else now
         start = max([now] + [h + HOP for h in self.hops if h + HOP > now])   # (after any hop in progress)
         self.hops = [h for h in self.hops if h + HOP > now][-2:] + [start]
         self.floats = [f for f in self.floats if f[3] + f[4] > now][-3:] + [
-            (f"+{amount:,.0f} EXP", EXP_YELLOW, 30, now, 1.4, "slime")]
+            (f"+{amount:,.0f} EXP" if amount else "+EXP", EXP_YELLOW, 30, now, 1.4, "slime")]
         self.happy_until = start + HOP + 1.2
 
     def level_up(self, now=None):
@@ -735,12 +736,13 @@ class HudCard:
         self.redraw()
 
     # ---- what's on it
-    def celebrate(self, exp=0, level_up=False):
-        """EXP came in (a hop and "+EXP" floating up), or a level was reached (three hops)."""
+    def celebrate(self, exp=0, level_up=False, kill=False):
+        """EXP came in (a hop and "+EXP" floating up), a kill was seen (a hop, with the EXP it's likely
+        worth, or just "+EXP" until that's known), or a level was reached (three hops)."""
         if level_up:
             self.moves.level_up()
-        elif exp > 0:
-            self.moves.gain(exp)
+        elif kill or (exp and exp > 0):
+            self.moves.gain(exp if exp and exp > 0 else None)
 
     def ring(self, profit=None):
         """The repot bell was rung: it swings, with the trip's profit (if there was a trip before) floating up."""

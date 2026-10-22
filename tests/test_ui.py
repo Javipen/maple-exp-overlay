@@ -343,6 +343,55 @@ app._update_display()
 check("EXP coming in makes the slime hop", len(app.hud.moves.hops) == hops + 1
       and any("+777 EXP" == f[0] for f in app.hud.moves.floats))
 
+# kills, from the game's EXP messages: a hop per kill, worth what an EXP line has been worth
+tr.running = True
+app._kill_events.clear()
+app._gain_marks.clear()
+app._per_line, app._last_kill_at = None, -1e9
+app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
+t0 = m.time.monotonic()
+app._gain_marks.append((t0 - 100, tr.gained))
+app._kills(2, t0 - 90)                                          # before anything is learned: "+EXP"
+check("a kill makes the slime hop at once, \"+EXP\" until a line's worth is known",
+      len(app.hud.moves.hops) == 1 and app.hud.moves.floats[-1][0] == "+EXP")
+for i in range(5):                                              # 5 kills in a party: 2 lines each, 49 EXP a kill
+    app._kills(2, t0 - 80 + i)
+tr.gained += 6 * 49
+check(f"what a line is worth is learned from the EXP gained over the lines seen ({app._exp_per_line():.1f})",
+      abs(app._exp_per_line() - 24.5) < 0.01)
+app._kills(2, t0)
+check(f"so a kill (its 2 lines) shows the EXP it's worth ({app.hud.moves.floats[-1][0]})",
+      app.hud.moves.floats[-1][0] == "+49 EXP")
+seen = (tr.gained, app.level_up_at)
+hops_before = len(app.hud.moves.hops)
+app._hud_seen = seen
+tr.gained += 49
+app._update_hud(None, None, 57, (999941, 96.98), "Tracking")
+check("while kills are seen, the EXP readings don't make it hop again (no double hops)",
+      len(app.hud.moves.hops) == hops_before)
+tr.hidden, tr.kill_hint = True, 0.0
+worth = app._exp_per_line()
+app._kills(2, m.time.monotonic())
+check(f"while the game hides the EXP number, each kill carries the EXP on ({tr.kill_hint:.1f})",
+      abs(tr.kill_hint - 2 * worth) < 0.01)
+# No EXP messages seen lately (turned off, or covered), and the number hidden: hops from the % steps.
+# A clean history: 10 kills of 2 lines, 49 EXP each, then one 0.01% step at Lv 57 (103 EXP, about 2 kills).
+t0 = m.time.monotonic()
+app._kill_events.clear()
+app._gain_marks.clear()
+app._gain_marks.append((t0 - 120, 0))
+for i in range(10):
+    app._kill_events.append((t0 - 100 + i, 2))
+tr.gained = 10 * 49
+app._last_kill_at = -1e9
+app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
+app._hud_seen = (tr.gained, app.level_up_at)
+tr.gained += 103
+app._update_hud(None, None, 57, (999941, 96.98), "Tracking")
+check(f"no messages and the number hidden: hops from the % steps, one per likely kill ({len(app.hud.moves.hops)})",
+      len(app.hud.moves.hops) == 2)
+tr.hidden, tr.kill_hint, tr.running = False, 0.0, False
+
 # the repot bell: what each trip made, from one ring to the next
 app.cfg.pop("repot", None)
 meso.value = None

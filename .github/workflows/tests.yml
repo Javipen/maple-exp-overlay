@@ -26,6 +26,8 @@ jobs:
         run: python tests/test_logic.py
       - name: Screen-reading tests
         run: python tests/test_screen.py
+      - name: Kill watcher tests (the EXP messages)
+        run: python tests/test_killwatch.py
       - name: Bug report tests
         run: python tests/test_report.py
       - name: Text-reading tests (Tesseract, when installed)
