@@ -1,0 +1,16 @@
+# Line endings: text is stored and checked out with LF (Unix) line endings, whatever editor or
+# setting wrote it, so a change never shows up as every line of a file changing.
+* text=auto eol=lf
+
+# Batch files are run by cmd.exe, which wants Windows (CRLF) line endings.
+*.bat text eol=crlf
+
+# Never touched as text.
+*.png binary
+*.jpg binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.npz binary
+*.zip binary
