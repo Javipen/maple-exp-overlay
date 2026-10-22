@@ -5,7 +5,7 @@ own style, with a slime that hops every time you get EXP and a clerk bell for yo
 
 **Local only:** this copy never goes online. No update checks, no uploads, no website.
 
-![The tracker card over the game](docs/screenshots/3-card-in-game.png)
+![The tracker card over the game](docs/screenshots/3-card-in-game-v2.png)
 
 ## What it does
 
