@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.2
+
+- **Tracking keeps going past 999,999 EXP.** From 1,000,000 EXP the game stops showing the EXP number
+  and shows only the % (`EXP. [98.74%]`). The overlay used to lose the EXP bar there and freeze until
+  the next level-up. This hits from Lv 57 (the last 3% of the level), and gets worse with level: about
+  half of Lv 70 and nearly all of Lv 90.
+  - The EXP bar is now found by its `%` when the number is hidden.
+  - EXP is worked out from the % and your kills, and shown with a `~`. It's kept to the range the % allows,
+    so it never drifts. EXP/hr, the time to level and the session total stay right, to 0.01% of the level.
+  - When the number shows again (after the level-up), it takes over again.
+  - Started while the number is hidden: it uses your level from last time, and says so.
+- **The slime hops on every kill, not just once per EXP reading.** The overlay watches the game's yellow
+  EXP messages ("You received EXP (+38)") a few times a second, without reading them, only noticing new
+  ones. Each one makes the slime hop with the EXP it's worth, learned from the EXP you actually gain (in a
+  party, the party-bonus line is counted in). If those messages are off or covered, it hops from the EXP
+  readings as before; with the number hidden, a hop for each kill a % step is likely worth.
+
 ## 1.0.1
 
 - **Mesos/hr with the inventory closed:** you no longer need to keep the inventory open.

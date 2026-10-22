@@ -665,6 +665,60 @@ tr.observe([(1, 71.68)], False)
 check("an untrusted reading doesn't set the level", tr.req is None)
 check("'1 [71.68%]' (digits cut off) fits no level, so it isn't trusted", not m.fits_exp_table(1, 71.68))
 
+# ---- from 1,000,000 EXP the game hides the EXP number: "EXP. [98.74%]", the % alone
+for f in sorted((Path(__file__).parent / "frames").glob("exp_*.png")):
+    img = cv2.imread(str(f))
+    lay = m.find_exp(img)
+    if not lay:
+        continue
+    # The number erased, as the game leaves it: the bar's dark background up to the '['.
+    x0 = int(lay.box[0] - 0.4 * lay.gh)
+    x1 = int(min(c[0] - c[1] / 2 for c in lay.pct) - 0.95 * lay.gh)
+    y0, y1 = int(lay.cy - 0.75 * lay.gh), int(lay.cy + 0.75 * lay.gh)
+    region = img[y0:y1, x0:x1].reshape(-1, 3)
+    img[y0:y1, x0:x1] = m.np.median(region[region.max(axis=1) < 120], axis=0)
+    hidden_lay = m.find_exp(img)
+    got = m.read_layout(tpl, hidden_lay) if hidden_lay else None
+    check(f"the number hidden ({f.stem[4:]}): the EXP bar is still found, by its % ({got})", got == (None, 71.68))
+    reading = m.ScreenReader(tpl)._read((img, 0, 0), "test")[0]
+    check(f"...and read as the % alone, trusted ({reading.text})", reading.confident and reading.candidates == [(None, 71.68)])
+REQ57 = m.EXP_TABLE[56]                                          # Lv 57: 1,031,036 EXP
+tr = m.ExpTracker()
+tr.start()
+for _ in range(2):
+    tr.observe([(999941, 96.98)], True)                        # the last number the game shows
+check("Lv 57 known from the last numbers shown", tr.req == REQ57 and tr.exp == 999941)
+before = tr.gained
+ok, _ = tr.observe([(None, 96.99)], True)                       # 1,000,000 or more: the number is hidden
+check(f"the number hidden: the EXP is worked out from the % ({tr.exp:,})",
+      ok and tr.hidden and abs(tr.exp / REQ57 * 100 - 96.99) <= 0.011)
+tr.kill_hint = 49 * 3                                           # three kills seen since, about 49 EXP each
+exp_before = tr.exp
+tr.observe([(None, 97.0)], True)
+check(f"kills seen since carry it on, kept to what the % allows ({tr.exp:,})",
+      tr.exp >= exp_before and abs(tr.exp / REQ57 * 100 - 97.0) <= 0.011)
+tr.kill_hint = 99999                                            # far more than the % allows: never drifts
+tr.observe([(None, 97.01)], True)
+check(f"the EXP never strays from the % ({tr.exp / REQ57 * 100:.3f}%)", abs(tr.exp / REQ57 * 100 - 97.01) <= 0.011)
+for p in (97.5, 98.0, 98.74):
+    tr.observe([(None, p)], True)
+check(f"the EXP gained counts as the % goes up ({tr.gained - before:,} EXP over 1.76%)",
+      abs((tr.gained - before) - 0.0176 * REQ57) <= 0.0003 * REQ57)
+tr.observe([(None, 93.74)], True)
+tr.observe([(None, 93.74)], True)
+check("a death (5% lost) with the number hidden is still a death, not counted against EXP/hr",
+      tr.deaths == 1 and abs(tr.last_loss - 5.0) < 0.05)
+lvl_before = tr.levels
+for _ in range(2):
+    tr.observe([(812, 0.07)], True)                             # level up: the number shows again
+check("a level-up brings the number back, and is counted", tr.levels == lvl_before + 1 and not tr.hidden
+      and tr.exp == 812 and tr.req == m.EXP_TABLE[57])
+fresh = m.ExpTracker()
+ok, note = fresh.observe([(None, 98.74)], True)
+check("started while the number is hidden: nothing is guessed without the level", not ok and "hides" in note)
+check("...unless the level is known from last time", fresh.assume_level(57) == 57 and fresh.observe([(None, 98.74)], True)[0]
+      and abs(fresh.exp - 0.9874 * REQ57) <= 0.0001 * REQ57)
+
 # ---- pausing by itself (a fake clock, so these run instantly)
 clock = [10000.0]
 m.time.monotonic = lambda: clock[0]

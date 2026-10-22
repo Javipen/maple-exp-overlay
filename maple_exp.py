@@ -47,6 +47,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 import ocr
 import report
 from hud import LAYOUTS as HUD_LAYOUTS, THEMES as HUD_THEMES, HudCard
+from killwatch import KillWatcher, message_area
 from platforms import create_platform, hotkey_text, parse_hotkey
 from report import Health, Recent
 from ui_gfx import INK, TEXT_DIM
@@ -80,7 +81,7 @@ def _local_only():
 
 _local_only()
 
-VERSION = "1.0.1"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
+VERSION = "1.0.2"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
 WINDOW_TITLE = "Maple Classic Exp Overlay"    # the version is shown in Settings
 OLD_TITLES = ("Maple EXP/hr",)               # what versions before 0.9.3 were called
 
@@ -97,6 +98,8 @@ TEMPLATE_PATH = ASSETS / "digits.npz"
 ICON_PATH = ASSETS / "icon.ico"
 POLL_SECONDS = 1.5          # how often to read the EXP bar
 MESOS_UNSEEN = 15           # seconds without reading the mesos (the inventory closed) before the card guesses them
+KILL_POLL = 0.25            # how often the game's message area is checked for new EXP lines (kills)
+KILL_QUIET = 12             # seconds without EXP lines before the slime hops from the EXP readings instead
 HUD_CALIBRATION = 300       # seconds of tracking before the tracker card shows rates and the time to level
 LOGGING = False             # the EXP log (one line per map, level and party) isn't kept in this simplified copy
 ROLLING_WINDOW = 300        # seconds used for the "last 5 min" rate
@@ -220,6 +223,7 @@ def load_config():
               "log_open": lambda v: type(v) is bool,
               "share_runs": lambda v: type(v) is bool,       # missing: not asked yet
               "hud_offset": lambda v: ints(v, 2),
+              "last_level": lambda v: type(v) is int and 1 <= v <= len(EXP_TABLE),
               "repot": lambda v: isinstance(v, dict) and type(v.get("mesos")) is int}
     for key, ok in checks.items():
         if key in cfg and cfg[key] is not None and not ok(cfg[key]):
@@ -374,7 +378,16 @@ def find_exp(bgr):
             run.append(b)
             edge = b.x
         if not run:
-            continue                                          # HP/MP: label before '['
+            # A label right before '[': HP or MP ("[840/1080]")... or the EXP bar when the game
+            # hides its number, which it does from 1,000,000 EXP: then only "[98.74%]" is shown.
+            # That one is told apart by the '%' sign at its end.
+            cells = _cells(inside, dh)
+            if not cells or cells[-1][2] != "wide":
+                continue                                      # HP/MP
+            # (The box leaves room on the left for the number, for when it comes back.)
+            found.append(Layout(dh, cy, [], cells, (max(0, int(o.x - 9 * dh)), int(cy - bh), c.x + c.w,
+                                                     int(cy + bh)), V))
+            continue
         run.reverse()
         heights = [b.h for b in run + inside if b.w <= 0.85 * b.h]
         gh = float(np.median(heights)) if heights else float(bh)
@@ -460,9 +473,14 @@ def _read_digits(tpl, lay, cells):
 
 
 def read_layout(tpl, lay):
-    """(exp, pct) read with the digit templates, or None if any digit is unclear."""
-    exp_s = _read_digits(tpl, lay, lay.exp)
+    """(exp, pct) read with the digit templates, or None if any digit is unclear. exp is None when
+    the game hides the EXP number (from 1,000,000 EXP it only shows the %)."""
     pct_s = _read_digits(tpl, lay, _pct_cells(lay))
+    if not lay.exp:
+        if not pct_s or not 3 <= len(pct_s) <= 5 or (len(pct_s) > 3 and pct_s[0] == "0"):
+            return None
+        return None, int(pct_s) / 100
+    exp_s = _read_digits(tpl, lay, lay.exp)
     if not exp_s or not pct_s or not 3 <= len(pct_s) <= 5:
         return None
     if (len(exp_s) > 1 and exp_s[0] == "0") or (len(pct_s) > 3 and pct_s[0] == "0"):
@@ -1428,6 +1446,11 @@ class ScreenReader:
             return Reading(_problem(where, "Can't find the EXP bar.")), None
         view, boxes = _view(img, lay)
         got = read_layout(self.templates, lay) if self.templates else None
+        if got and got[0] is None:                    # the game hides the number: the % alone
+            return Reading(where, [got], True, f"[{got[1]:.2f}%] (the game hides the EXP number)", view, boxes), lay
+        if not lay.exp:
+            return Reading(_problem(where, "Found the EXP bar, but can't read its % clearly."),
+                           image=view, boxes=boxes), lay
         if got and fits_exp_table(*got):
             return Reading(where, [got], True, f"{got[0]:,} [{got[1]:.2f}%]", view, boxes), lay
         # Unclear digits, or a reading that fits no level: not trusted. Readings that do fit
@@ -1666,6 +1689,8 @@ class ExpTracker:
         self.gained = 0
         self.levels = 0
         self.samples = deque()                # (elapsed, gained)
+        self.hidden = False                   # the game hides the EXP number (1,000,000 or more): % only
+        self.kill_hint = 0.0                  # EXP from kills seen since the last reading (while hidden)
 
     def start(self):
         if not self.running:
@@ -1746,6 +1771,22 @@ class ExpTracker:
             self.req, self._req_exact = EXP_TABLE[level - 1], True
         self._table_level = level
 
+    def assume_level(self, level):
+        """Takes this level's EXP from the table (for when the EXP number can't be seen). Returns the level."""
+        if 1 <= level <= len(EXP_TABLE):
+            self.req, self._req_exact, self._table_level = EXP_TABLE[level - 1], True, level
+            return level
+        return None
+
+    def _from_pct(self, p):
+        """The EXP at p% while the game hides the number: the last EXP plus the kills seen since,
+        kept to what p% allows. The game shows 2 decimals, so p% is the EXP to within 0.01% of
+        the level (rounded or cut off: the range allows either), and the guess never drifts."""
+        lo, hi = (p - 0.005) / 100 * self.req, (p + 0.01) / 100 * self.req
+        guess = (self.exp if self.exp is not None else p / 100 * self.req) + self.kill_hint
+        self.kill_hint = 0.0
+        return int(round(min(max(guess, lo), hi)))
+
     def _consistent(self, e, p):
         return abs(e / self.req * 100 - p) <= 0.02 + 0.003 * p
 
@@ -1759,10 +1800,22 @@ class ExpTracker:
 
     # ---- main entry
     def observe(self, candidates, confident=False):
-        """Feed the (exp, pct) guesses for one screenshot. Returns (accepted, note)."""
+        """Feed the (exp, pct) guesses for one screenshot. Returns (accepted, note).
+
+        exp is None when the game hides the EXP number (it does from 1,000,000 EXP, showing only
+        the %): then the EXP is worked out from the % and the level's EXP (see _from_pct)."""
         candidates = [(e, p) for e, p in candidates if p is not None and 0 <= p < 100]
         if not candidates:
             return False, "unreadable"
+        hidden = all(e is None for e, _ in candidates)
+        if hidden:
+            if self.req is None:
+                return False, ("the game hides the EXP number above 999,999: the overlay needs to see it "
+                               "once (it shows again after your next level-up)")
+            candidates = [(self._from_pct(candidates[0][1]), candidates[0][1])]
+        else:
+            candidates = [(e, p) for e, p in candidates if e is not None]
+        self.hidden = hidden
         self._reads += 1
         self.last_read = candidates[0]
 
@@ -1772,9 +1825,10 @@ class ExpTracker:
             # Looks like a level-up, not confirmed yet: don't also take it as EXP lost.
             return False, "level up? waiting to confirm"
 
-        if self.req is None and confident:
-            self._req_from_table(candidates[0])
-        self._learn_req(candidates, confident)
+        if not hidden:                        # (an EXP worked out from the % can't teach the level's EXP)
+            if self.req is None and confident:
+                self._req_from_table(candidates[0])
+            self._learn_req(candidates, confident)
         if self.req is None:
             return False, "calibrating: learns your level's EXP after your next EXP gain"
 
@@ -2849,6 +2903,14 @@ class App:
 
         self._worker_thread = threading.Thread(target=self._worker, daemon=True)
         self._worker_thread.start()
+        # Kills, from the game's EXP messages (killwatch.py): the slime hops on each, and they keep the
+        # EXP going while the game hides the number.
+        self.kills = KillWatcher()
+        self._kill_events = deque(maxlen=600)   # (when, new EXP lines), while tracking
+        self._gain_marks = deque(maxlen=900)    # (when, EXP gained so far), to learn the EXP per line
+        self._last_kill_at = -1e9
+        self._per_line = None                   # EXP per EXP line, learned
+        threading.Thread(target=self._kill_worker, daemon=True).start()
         root.after(200, self._pump)
         root.after(500, self._refresh)
 
@@ -3626,6 +3688,55 @@ class App:
                 self.stop_evt.wait(max(0.1, POLL_SECONDS - (time.monotonic() - t0)))
             self.health.alive = False
 
+    def _kill_worker(self):
+        """Looks at the game's message area a few times a second for new EXP lines (kills)."""
+        with mss.mss() as sct:
+            while not self.stop_evt.is_set():
+                try:
+                    rect, g = self.reader.last_rect, self.reader.gh
+                    if rect and g and self.reader.hwnd and self.reader.mode == "window":
+                        shot = self.reader._hide_own(grab(sct, *message_area(rect)))
+                        if shot:
+                            n = self.kills.look(shot[0], g, max(8, int(0.03 * rect[2])))
+                            if n:
+                                self.q.put(("kills", (n, time.monotonic())))
+                    else:
+                        self.kills.reset()
+                except Exception as e:
+                    log_error("watching for kills", e)
+                self.stop_evt.wait(KILL_POLL)
+
+    def _kills(self, n, when):
+        """n new EXP lines came in: the slime hops, with the EXP they're likely worth floating up."""
+        t = self.tracker
+        if not (self.session.on and t.running):
+            return
+        self._kill_events.append((when, n))
+        self._last_kill_at = when
+        per_line = self._exp_per_line()
+        amount = per_line * n if per_line else None
+        if t.hidden and amount:
+            t.kill_hint += amount                       # (the EXP number is hidden: keep it going)
+        if self.hud.window.shown:
+            self.hud.celebrate(exp=amount, kill=True)
+
+    def _exp_per_line(self):
+        """The EXP one EXP line is worth, on average, over the last 3 minutes: the EXP gained over the
+        lines seen. (In a party a kill shows two lines, its EXP and the party bonus; the average
+        covers both, so lines x average is still the EXP that came in.)"""
+        now = time.monotonic()
+        # (Not the last 2 seconds' lines: their EXP may not have been read yet, the EXP bar being read
+        # every 1.5 seconds. Counting them would make a line look worth less than it is.)
+        recent = [(w, n) for w, n in self._kill_events if now - 180 <= w <= now - 2]
+        if recent and self._gain_marks:
+            start = recent[0][0]
+            before = [g for w, g in self._gain_marks if w < start]
+            gained = self.tracker.gained - (before[-1] if before else self._gain_marks[0][1])
+            lines = sum(n for _, n in recent)
+            if lines >= 4 and gained > 0:
+                self._per_line = gained / lines
+        return self._per_line
+
     def _first_run(self):
         """Once per install or update: a new install picks its compact shape, an update shows what's new."""
         seen = self.cfg.get("seen_version", "")
@@ -3724,6 +3835,8 @@ class App:
                                     "(details are in errors.log: Settings > Open data folder)")
                 elif kind == "hotkey":
                     self._hotkey(payload)
+                elif kind == "kills":
+                    self._kills(*payload)
                 else:
                     self._handle(payload)
         except queue.Empty:
@@ -3774,9 +3887,15 @@ class App:
         if r.candidates:
             if self.found_at is None or t.req is not None:
                 self.found_at = now
+            hidden = all(e is None for e, _ in r.candidates)
+            assumed = None
+            if hidden and t.req is None and isinstance(self.cfg.get("last_level"), int):
+                # Started while the game hides the EXP number: the level from last time, until the
+                # number shows again (after the next level-up) and confirms or corrects it.
+                assumed = t.assume_level(self.cfg["last_level"])
             before = t.gained
             ok, note = self.session.observe(r.candidates, r.confident, now)
-            self.rejected = 0 if ok else self.rejected + 1
+            self.rejected = 0 if ok or hidden else self.rejected + 1
             if self.rejected >= 10:                 # keeps not adding up: find the EXP bar again
                 self.reader.box, self.rejected = None, 0
             if t.running and t.gained != before and not self.skip_log:
@@ -3788,6 +3907,12 @@ class App:
                 if self.level:
                     self.level += 1             # until the new level's EXP confirms it
             status = self._status_for(note)
+            if hidden and t.req is None:
+                status = ("The game hides your EXP number above 999,999, and the overlay hasn't seen your level "
+                          "yet. It starts tracking after your next level-up, when the number shows again.")
+            elif t.hidden:
+                status += ("\nThe game hides your EXP number above 999,999: it's worked out from the % "
+                           "and your kills" + (f" (Lv {assumed}, from last time)." if assumed else "."))
         else:
             status = r.where
         if self.in_town:
@@ -3802,6 +3927,9 @@ class App:
         self.status.set(status)
         self.recent.add(status)
         self.level = level_for_req(t.req) or self.level
+        if self.level and self.cfg.get("last_level") != self.level:
+            self.cfg["last_level"] = self.level           # (for a start while the game hides the number)
+            save_config(self.cfg)
         self._log_tick(now)
 
     def _status_for(self, note):
@@ -3920,10 +4048,22 @@ class App:
         self.log_status.set(self._log_status_text(now))
         self.reader.own_rect = self._window_rect()
 
+    def _celebrate_gain(self, gained):
+        """EXP came in but no EXP messages were seen (turned off, or covered): hop from the EXP itself.
+        While the game hides the number the EXP comes in steps of 0.01% of the level, often a few
+        kills' worth: then a hop for each kill it's likely worth (up to 3)."""
+        per_line = self._exp_per_line()
+        events = [n for w, n in self._kill_events if w >= time.monotonic() - 180]
+        per_kill = per_line * sum(events) / len(events) if per_line and events else None
+        hops = min(3, max(1, round(gained / per_kill))) if self.tracker.hidden and per_kill else 1
+        for _ in range(hops):
+            self.hud.celebrate(exp=gained / hops)
+
     def _update_hud(self, rate, rolling, level, shown, state_text):
         """The EXP tracker card over the game (hud.py): shown while the game (or this overlay) is in
         front and its window is known, or while it's being moved."""
-        t = self.tracker
+        t, now_mono = self.tracker, time.monotonic()
+        self._gain_marks.append((now_mono, t.gained))     # (to learn what an EXP line is worth)
         if getattr(self, "_repot_pending", False) and self.meso.value is not None:
             self.ring_repot()                              # (rung while the mesos couldn't be read: now they can)
         # The slime hops when EXP comes in (three times for a level up): only for what comes in while it's shown.
@@ -3937,8 +4077,9 @@ class App:
         if self.hud.window.shown:
             if self.level_up_at and self.level_up_at != seen_level_up:
                 self.hud.celebrate(level_up=True)
-            elif t.gained > seen_gain:
-                self.hud.celebrate(exp=t.gained - seen_gain)
+            elif t.gained > seen_gain and now_mono - self._last_kill_at > KILL_QUIET:
+                # No EXP messages seen lately (turned off, or covered): hop from the EXP itself.
+                self._celebrate_gain(t.gained - seen_gain)
         m, now = self.meso, time.monotonic()
         el = t.elapsed()
         # The first 5 minutes of tracking calibrate: a rate from a minute or two swings wildly, so EXP/hr,
@@ -3968,7 +4109,8 @@ class App:
         content = {
             "level": level, "next_level": level + 1 if level else None,
             "fill": shown[1] / 100 if shown else 0.0, "status": None if shown and t.req else state_text,
-            "exp": fmt_num(shown[0]) if shown else "?", "req": fmt_num(t.req) if t.req else "?",
+            "exp": ("~" if t.hidden else "") + fmt_num(shown[0]) if shown else "?",      # (~: the game hides it)
+            "req": fmt_num(t.req) if t.req else "?",
             "pct": f"{shown[1]:.1f}%" if shown else "?",
             "time": fmt_clock(None if calibrating else to_level), "slime": slime,
             "calibrating": calibrating,
