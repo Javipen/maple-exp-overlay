@@ -1,5 +1,66 @@
 # Changelog
 
+## 1.1.0
+
+- **Pickups, read from the game's white message lines.** "You have gained mesos (+15)" and "Lupin's
+  Banana x1 earned. (Etc)" are read as they come in (with the bundled Tesseract, a few ways at once,
+  keeping what most readings agree on; anything unclear is left out).
+  - **Mesos picked up are exact**, inventory open or not: Mesos gained and Mesos/hr use them.
+  - **Loot** is counted, and priced at what NPC shops pay (Settings > Loot; Lupin's Banana and Green
+    Mushroom Cap come with meowdb's prices, anything else is set there).
+  - **Profit** takes Net session's place on the card: mesos picked up + loot - potions used.
+  - **Potions picked up** are known exactly: Pot cost counts a rise as picked up only as far as the
+    pickup lines say; any more is a purchase.
+- **Save pictures for testing** (Settings, off by default): keeps pictures of the potion popup and the
+  pickup lines, with what was read from them, in the data folder's captures folder, on this PC only.
+- **Pot cost: what your potions cost, from the controller's potion popup.** Playing with a controller,
+  hold the left trigger for a moment now and then: the overlay reads how many of each potion you have
+  and prices what you've used at the NPC shops' prices (Red 50, Orange 150, Blue 220, Lemon 150,
+  Meat 80, from meowdb.com). It shows as **Pot cost** in the repot row, in place of Trip time, from
+  your last ring of the bell.
+  - Items are recognised by their icons; names and prices can be changed in Settings > Potions.
+  - Counts that go up (buying more) aren't counted as used. Nothing counts while paused.
+  - Not looked at for 10 minutes while tracking: it's marked with a "~".
+  - Potions picked up from monsters (a few more in the field) make up for some used. A big rise, or
+    any in town, is a purchase and isn't counted.
+  - Misreads are kept out: a count read with a digit lost (1068 as 106) is never counted, nor is a
+    drop bigger than you could use in the time since the last look unless 8 looks agree, and a drop
+    that's back where it was within 5 minutes is taken back.
+- **EXP/hr is the real rate when you hunt in waves.** Tracking used to pause itself after 15 s without
+  EXP, and cut that time out. So every respawn wait went missing, and EXP/hr could read 2-3x too high.
+  - It now pauses itself after 2 minutes without EXP, a real break. If you had the old 15 s, it becomes
+    2 minutes; a time you picked yourself is kept (Settings > Pause after no EXP for).
+  - The EXP that ends a pause on the same map now counts: it was earned there.
+- **The slime hops whenever EXP comes in, paused or not.** It used to stay still while tracking was
+  paused (by itself or with Pause), and the first kill after each pause got no hop.
+- **No more hops from damage numbers.** The slime hops on kills from the game's yellow EXP lines, and
+  damage numbers by the messages can look like them. Now a line only counts if the EXP bar goes up
+  within a few seconds of it, each rise backing one line. The lines make the slime hop only while most
+  of the recent ones were real; otherwise it hops from the EXP bar. A hop from the EXP bar waits for the
+  next reading to agree, so a misread can't make it hop.
+- **Mesos spent counts your shop trips.** Spending happens in town, where tracking is paused, and the
+  mesos used to stop counting there, so "spent" stayed at 0.
+  - The mesos now keep counting from Start until Reset, through every pause, Pause included: you
+    often pause to go shopping.
+  - A big buy or sale (more than half your mesos) counts too, once it's read 3 times in a row. If it
+    goes back to about what it was, it was a misread, and it's taken back.
+  - Repotting on the way to a different map: what the trip cost goes with that map's numbers.
+- **Mesos misreads with the front digits missing are caught.** If something lies across the mesos box,
+  it could be found too narrow and the number read cut short (1,251,272 as 1,272). That showed up as
+  millions spent and earned, a wildly negative mesos/hr, and a wrong repot trip.
+  - A reading now only counts if the number ends inside the box, with room to its left.
+  - A count that's the end of the other (1,272 and 1,251,272) is never counted as spent or earned.
+  - A big change that goes back to about what it was within 5 minutes is taken back, even with mesos
+    picked up in between.
+- **No more "Can't read the EXP bar" just after a level-up.** Low in a level (say 0.03%) the % is too
+  rough to tell your level from the EXP table, so it waited for an EXP gain, and counted every reading
+  meanwhile as a failure. Now it uses your level from last time (or the next) when the reading fits it,
+  and a reading it can't place yet is no longer a failure.
+- **Clear the repot history:** Settings > Clear repot history, or the card's right-click menu (Shift+5).
+  The last repot, the last trip and its time go blank until you ring the bell again.
+- **Opening and closing the inventory no longer loses mesos.** Every change from one reading to the
+  next counts, however long the inventory was closed and whatever paused in between.
+
 ## 1.0.2
 
 - **Tracking keeps going past 999,999 EXP.** From 1,000,000 EXP the game stops showing the EXP number

@@ -23,14 +23,26 @@ def message_area(rect):
     return x0, y0, wx + ww - x0, wy + int(0.92 * wh) - y0
 
 
-def find_lines(bgr, text_h, right_slack):
-    """The yellow EXP lines in a picture of the message area, top to bottom: [(y, x0, x1, look)].
+def yellow(hsv):
+    """The EXP lines' yellow."""
+    hue, sat, val = cv2.split(hsv)
+    return ((hue >= 18) & (hue <= 40) & (sat >= 120) & (val >= 140)).astype(np.uint8)
+
+
+def white(hsv):
+    """The other messages' white ("You have gained mesos (+15)", "Banana x1 earned. (Etc)")."""
+    _, sat, val = cv2.split(hsv)
+    return ((sat <= 40) & (val >= 200)).astype(np.uint8)
+
+
+def find_lines(bgr, text_h, right_slack, colour=yellow):
+    """The lines of one colour (the yellow EXP lines, by default) in a picture of the message area,
+    top to bottom: [(y, x0, x1, look)].
 
     text_h: about how tall the game's text is (px). right_slack: how far from the area's right
     edge a line may end (the messages are lined up on the right)."""
     hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
-    hue, sat, val = cv2.split(hsv)
-    mask = ((hue >= 18) & (hue <= 40) & (sat >= 120) & (val >= 140)).astype(np.uint8)
+    mask = colour(hsv)
     width = mask.shape[1]
     # Letters joined sideways into words and words into lines (not up and down: lines stay apart),
     # so yellow things in the scenery beside the text don't join in.

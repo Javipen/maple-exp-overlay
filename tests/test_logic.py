@@ -436,10 +436,16 @@ m.CONFIG_PATH.write_text(json.dumps({"gap_seconds": "15", "transparency": 400, "
                                      "log_size": [5], "mode": "region"}), encoding="utf-8")
 cfg = m.load_config()
 check("damaged settings fall back to the defaults",
-      cfg["gap_seconds"] == 15 and cfg["transparency"] == m.MAX_TRANSPARENCY and "pos" not in cfg
+      cfg["gap_seconds"] == 120 and cfg["transparency"] == m.MAX_TRANSPARENCY and "pos" not in cfg
       and "log_size" not in cfg and cfg["mode"] == "window")
 m.CONFIG_PATH.write_text("[1, 2", encoding="utf-8")
 check("an unreadable settings file gives the defaults", m.load_config()["topmost"] is True)
+m.CONFIG_PATH.write_text(json.dumps({"gap_seconds": 15}), encoding="utf-8")
+check("1.0.2's 15 s pause (cutting out every respawn wait) becomes 2 minutes", m.load_config()["gap_seconds"] == 120)
+m.CONFIG_PATH.write_text(json.dumps({"gap_seconds": 15, "pause_rule": 2}), encoding="utf-8")
+check("...but 15 s picked since then is kept", m.load_config()["gap_seconds"] == 15)
+m.CONFIG_PATH.write_text(json.dumps({"gap_seconds": 45}), encoding="utf-8")
+check("...and so is any other time picked before", m.load_config()["gap_seconds"] == 45)
 
 # ---- mesos
 t = m.MesoTracker()
@@ -453,7 +459,8 @@ t.observe(9999, 0, 0, True)
 check("a one-off reading isn't counted yet", t.value == 9850)
 for v in (820, 820, 820, 9880, 9880, 9880):
     t.observe(v, 0, 0, True)
-check("a lost digit and its correction don't count as mesos gained", t.gained == 30 and t.value == 9880)
+check(f"a lost digit and its correction cancel out: only the 30 picked up meanwhile counts ({t.gained}, spent {t.spent})",
+      t.gained == 60 and t.spent == 0 and t.value == 9880)
 t2 = m.MesoTracker()
 for v in (9820, 9820, 9820, 9850, 9850, 9700, 9700, 9900, 9900):
     t2.observe(v, 0, 0, True)
@@ -475,7 +482,8 @@ check(f"opened again: everything picked up meanwhile counts, over all that time 
       t3.gained == 8000 and abs(t3.per_hour(902) - 8000 / 900 * 3600) < 1 and t3.unseen(902) == 0)
 for v in (25000, 25000, 25000):
     t.observe(v, 0, 0, True)
-check("selling loot (a big jump) doesn't count as farming", t.gained == 30)
+check(f"selling loot (a big jump) counts, once read 3 times ({t.gained}, earned {t.earned})",
+      t.gained == 60 + 15120 and t.earned == 60 + 15120)
 for v in (250000,) * 7:
     t.observe(v, 0, 0, True)
 check("an extra digit (10x) needs 8 readings in a row, not 3", t.value == 25000)
@@ -516,12 +524,14 @@ for before, after in ((0, 1), (0, 10), (9, 19), (99, 199), (9999, 19999),
     t = m.MesoTracker()
     for v in (before,) * 3 + (after,) * 3:
         t.observe(v, 0, 0, True)
-    check(f"zero, extra or lost digits, and wider jumps still rebase ({before} to {after})",
-          t.value == after and t.gained == 0)
+    front = str(max(before, after)).endswith(str(min(before, after))) and min(before, after) > 0
+    check(f"zero, extra or lost digits, and wider jumps count once read 3 times, unless one is the end of "
+          f"the other: front digits lost ({before} to {after})",
+          t.value == (before if front else after) and t.gained == (0 if front else after - before))
     for v in (before,) * 3:
         t.observe(v, 0, 0, True)
-    check(f"correcting a rebased count doesn't add mesos ({after} to {before})",
-          t.value == before and t.gained == 0)
+    check(f"...and correcting one takes it back: it was a misread ({after} to {before})",
+          t.value == before and t.gained == 0 and t.earned == 0 and t.spent == 0)
 
 for before, after in ((9, 90), (99, 990), (9999, 99990), (10, 1), (100, 10), (10000, 1000)):
     t = m.MesoTracker()
@@ -532,6 +542,34 @@ for before, after in ((9, 90), (99, 990), (9999, 99990), (10, 1), (100, 10), (10
     t.observe(after, 0, 0, True)
     check(f"a confirmed tenfold change still rebases ({before} to {after})",
           t.value == after and t.gained == 0)
+
+# the front digits lost: 1,251,272 read as 1,272 (the box found too narrow)
+t = m.MesoTracker()
+for v in (1251272,) * 3 + (1272,) * 7:
+    t.observe(v, 0, 0, True)
+check("front digits lost (1,251,272 read as 1,272) need 8 readings in a row", t.value == 1251272)
+t.observe(1272, 0, 0, True)
+for v in (1400, 1400):                                          # +128 picked up meanwhile
+    t.observe(v, 10, 10, True)
+for v in (1251400,) * 8:                                        # read right again
+    t.observe(v, 20, 20, True)
+check(f"...and aren't spent, nor earned when they're back: only what was picked up counts "
+      f"(gained {t.gained}, earned {t.earned}, spent {t.spent})",
+      t.value == 1251400 and t.gained == 128 and t.earned == 128 and t.spent == 0)
+# any other big misread: taken back when the count comes back, even with mesos picked up meanwhile
+t = m.MesoTracker()
+for v in (1250000,) * 3 + (620000,) * 3 + (620500,) * 2 + (1250500,) * 3:
+    t.observe(v, 30, 30, True)
+check(f"a big misread is taken back when the right count is back, with mesos picked up meanwhile "
+      f"(gained {t.gained}, earned {t.earned}, spent {t.spent})",
+      t.gained == 500 and t.earned == 500 and t.spent == 0)
+t = m.MesoTracker()
+for v in (1250000,) * 3 + (620000,) * 3:                        # a real buy...
+    t.observe(v, 30, 30, True)
+for v in (1250000,) * 3:                                        # ...earned back over 10 minutes
+    t.observe(v, 630, 630, True)
+check(f"a real big buy earned back later isn't taken back (spent {t.spent}, earned {t.earned})",
+      t.spent == 630000 and t.earned == 630000)
 
 t = m.MesoTracker()
 for v in (9980,) * 3:
@@ -759,14 +797,14 @@ idle(s, 40)
 check(f"no EXP for 15 s pauses by itself, without counting the idle time "
       f"({s.waiting}, {s.exp.elapsed():.0f} s)", s.waiting == "idle" and abs(s.exp.elapsed() - 30) < 0.6)
 gains(s, 3.5)
-check(f"the next EXP gain carries on (the gain that restarts it isn't counted: {s.exp.gained})",
-      s.waiting is None and s.exp.running and s.exp.gained == 1000)
+check(f"the next EXP gain carries on, and counts (it was earned on this map: {s.exp.gained})",
+      s.waiting is None and s.exp.running and s.exp.gained == 1100)
 gained = s.exp.gained
 s.map_seen("The Swamp of Despair I")
 check("leaving the map pauses by itself", s.waiting == "map" and not s.exp.running)
 s.map_seen("Rocky Road II")
 gains(s, 6.5)
-check("back on the same map, it carries on adding up", s.exp.running and s.exp.gained == gained + 100)
+check("back on the same map, it carries on adding up", s.exp.running and s.exp.gained == gained + 200)
 s.map_seen("The Swamp of Despair I")
 gains(s, 6.5)
 check(f"EXP on a different map starts from zero, still knowing the level "
@@ -808,6 +846,67 @@ gains(s, 12)
 idle(s, 40)
 s.map_blind()
 check("paused by being idle, then blind: it waits for the minimap too", s.waiting == "blind")
+
+# ---- EXP/hr when hunting in waves: the respawn waits are part of the time
+s = session(gap=m.DEFAULTS["gap_seconds"])
+s.start(clock[0])
+t0 = clock[0]
+for _ in range(20):                                     # 5 kills 3 s apart, then 25 s for the respawn
+    gains(s, 15)
+    idle(s, 25)
+true_rate = 20 * 5 * 100 / (clock[0] - t0) * 3600
+check(f"hunting in waves, EXP/hr is the real rate ({s.exp.rate():,.0f} for {true_rate:,.0f})",
+      s.exp.running and abs(s.exp.rate() / true_rate - 1) < 0.05)
+
+
+# ---- mesos through pauses: shop trips are what "spent" is
+def mesos(s, value, times=3):
+    for _ in range(times):
+        clock[0] += 0.5
+        s.meso.observe(value, clock[0], s.exp.elapsed(), s.started)
+
+
+s = session()
+s.start(clock[0])
+mesos(s, 500000)
+gains(s, 12)
+mesos(s, 503000)
+s.map_seen("Perion")                                    # off to town
+mesos(s, 470000)                                        # potions: -33,000
+s.map_seen("Rocky Road II")
+gains(s, 6.5)
+check(f"a shop trip in town counts as spent, though tracking was paused ({s.meso.spent:,})",
+      s.meso.spent == 33000 and s.meso.earned == 3000 and s.exp.running)
+mesos(s, 150000)                                        # a big buy: more than half the mesos
+check(f"a big buy (more than half the mesos) counts as spent too ({s.meso.spent:,})", s.meso.spent == 353000)
+s = session()
+s.start(clock[0])
+mesos(s, 500000)
+gains(s, 12)
+mesos(s, 503000)
+s.map_seen("Perion")
+mesos(s, 470000)
+s.map_seen("The Swamp of Despair I")                    # back out to a different map
+gains(s, 6.5)
+check(f"repotting on the way to a new map: the trip's spending goes with the new map's numbers "
+      f"(spent {s.meso.spent:,}, earned {s.meso.earned:,})",
+      s.map == "The Swamp of Despair I" and s.meso.spent == 33000 and s.meso.earned == 0 and s.meso.gained == -33000)
+s = session(gap=15)
+s.start(clock[0])
+mesos(s, 500000)
+gains(s, 12)
+idle(s, 20)                                             # (inventory closed, looting, paused by itself)
+gains(s, 6.5)
+mesos(s, 504000)                                        # opened again
+check(f"mesos picked up with the inventory closed count, even across a pause ({s.meso.earned:,})",
+      s.meso.earned == 4000)
+s.pause()
+mesos(s, 400000)
+check(f"after pressing Pause (to go shopping, say), the mesos still count ({s.meso.spent:,})", s.meso.spent == 104000)
+s.reset()
+mesos(s, 300000)
+check("after Reset they don't, until Start", s.meso.spent == 0 and s.meso.earned == 0 and not s.meso.counting)
+
 
 # ---- map names: the game's spelling, OCR slips, towns
 check(f"the game's map list is bundled ({len(m.map_list().entries)} maps)", len(m.map_list().entries) > 300)

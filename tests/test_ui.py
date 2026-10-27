@@ -337,10 +337,18 @@ app._update_display()
 cont = app.hud.content
 check(f"after 5 minutes they show ({cont['rate']}, {cont['time']})",
       cont["calibrating"] is None and cont["rate"].replace(",", "").isdigit() and cont["time"] != "--:--:--")
-hops = len(app.hud.moves.hops)
+app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()     # (no hops left over: they expire)
+hops = 0
+app._hud_seen, app._hud_pending = (tr.gained, app.level_up_at), None    # (48,000 was set, not gained)
 tr.gained += 777
 app._update_display()
-check("EXP coming in makes the slime hop", len(app.hud.moves.hops) == hops + 1
+check("EXP coming in waits for the next reading to agree (a misread never makes it hop)",
+      len(app.hud.moves.hops) == hops)
+app._update_display()
+check("...not just the next look at the same reading", len(app.hud.moves.hops) == hops)
+tr._reads += 1
+app._update_display()
+check("...then it makes the slime hop", len(app.hud.moves.hops) == hops + 1
       and any("+777 EXP" == f[0] for f in app.hud.moves.floats))
 
 # kills, from the game's EXP messages: a hop per kill, worth what an EXP line has been worth
@@ -350,6 +358,7 @@ app._gain_marks.clear()
 app._per_line, app._last_kill_at = None, -1e9
 app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
 t0 = m.time.monotonic()
+app._lines_trusted = lambda now: True                          # (lines have had EXP behind them: see below)
 app._gain_marks.append((t0 - 100, tr.gained))
 app._kills(2, t0 - 90)                                          # before anything is learned: "+EXP"
 check("a kill makes the slime hop at once, \"+EXP\" until a line's worth is known",
@@ -388,9 +397,51 @@ app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
 app._hud_seen = (tr.gained, app.level_up_at)
 tr.gained += 103
 app._update_hud(None, None, 57, (999941, 96.98), "Tracking")
+tr._reads += 1
+app._update_hud(None, None, 57, (999941, 96.98), "Tracking")
 check(f"no messages and the number hidden: hops from the % steps, one per likely kill ({len(app.hud.moves.hops)})",
       len(app.hud.moves.hops) == 2)
 tr.hidden, tr.kill_hint, tr.running = False, 0.0, False
+# paused (by itself, or not started): the EXP isn't counted, but the slime still hops for it
+app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
+app._last_kill_at = -1e9
+tr.exp, tr.req = 500000, 1000000
+app._update_hud(None, None, 57, (500000, 50.0), "Paused")
+tr.exp = 500150
+app._update_hud(None, None, 57, (500150, 50.01), "Paused")
+tr._reads += 1
+app._update_hud(None, None, 57, (500150, 50.01), "Paused")
+check(f"paused, EXP coming in still makes the slime hop ({[f[0] for f in app.hud.moves.floats]})",
+      len(app.hud.moves.hops) == 1 and app.hud.moves.floats[-1][0] == "+150 EXP")
+was = len(app._kill_events)
+app._kills(1, m.time.monotonic())
+check("...and so does a kill seen in the messages (without teaching what a line is worth)",
+      len(app.hud.moves.hops) == 2 and len(app._kill_events) == was)
+
+# yellow things that aren't EXP lines (damage numbers): the lines must have EXP come in right behind them
+del app._lines_trusted
+now = m.time.monotonic()
+app._line_checks.clear()
+app._rises.clear()
+app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
+app._kills(1, now)
+check("until lines have been seen with EXP behind them, they don't make it hop", len(app.hud.moves.hops) == 0)
+app._line_checks.clear()
+for i in range(4):                                              # 4 lines, each with EXP 1.5 s after
+    app._line_checks.append([now - 60 + 10 * i, None])
+    app._rises.append([now - 58.5 + 10 * i, False])
+app._kills(1, now)
+check("lines with EXP coming in behind them are trusted: they make it hop", len(app.hud.moves.hops) == 1)
+for i in range(8):                                              # then damage numbers: many lines, no EXP
+    app._line_checks.append([now - 20 + 0.5 * i, None])
+app._kills(1, now)
+check("lines with no EXP behind them stop being trusted: no more hops from them", len(app.hud.moves.hops) == 1)
+app._line_checks.clear()
+app._rises.clear()
+for i in range(10):                                             # hitting a monster: 10 "lines", 1 kill's EXP
+    app._line_checks.append([now - 30 + 0.3 * i, None])
+app._rises.append([now - 28, False])
+check("one EXP rise backs one line only (a monster takes many hits)", not app._lines_trusted(now))
 
 # the repot bell: what each trip made, from one ring to the next
 app.cfg.pop("repot", None)
@@ -600,6 +651,114 @@ check("a minimap name unseen for a while pauses it", app.session.waiting == "bli
 app.reader.map_seen_at = m.time.monotonic()
 app.session.on, app.session.waiting = False, None
 m.tesseract_ok = real_ok
+
+# ---- just after a level-up the % is too rough to tell the level: the level from last time
+saved_session = app.session
+app.session = m.Session(120)
+app.tracker, app.meso = app.session.exp, app.session.meso
+app.cfg["last_level"], app.rejected = 53, 0
+for _ in range(8):                                              # Lv 53: 240 / 832,902 EXP
+    app._handle(blank._replace(where="Reading", candidates=[(240, 0.03)], confident=True))
+check(f"at 0.03% of a level, the level from last time is used if the reading fits it "
+      f"(req {app.tracker.req}, rejected {app.rejected})",
+      app.tracker.req == m.EXP_TABLE[52] and app.rejected == 0 and app._state()[1] != "Can't read the EXP bar")
+app.session = m.Session(120)
+app.tracker, app.meso = app.session.exp, app.session.meso
+app.cfg["last_level"], app.level = 20, None                     # (another character: doesn't fit)
+for _ in range(8):
+    app._handle(blank._replace(where="Reading", candidates=[(240, 0.03)], confident=True))
+check(f"...and if it doesn't fit, it waits for an EXP gain without calling the reading a failure "
+      f"(req {app.tracker.req}, rejected {app.rejected})",
+      app.tracker.req is None and app.rejected == 0 and app._state()[1] != "Can't read the EXP bar")
+app.session = saved_session
+app.tracker, app.meso = app.session.exp, app.session.meso
+
+# ---- the repot bell's history can be cleared
+app.cfg["repot"] = {"mesos": 1252407, "at": m.time.time() - 600, "trip": 1239820, "trips": 16}
+check("with a repot saved, the card shows it", app._repot_content()["repot_at"] == "1,252,407")
+app.clear_repot(confirm=False)
+check("clearing the repot history blanks the repot row",
+      "repot" not in app.cfg and app._repot_content()["repot_at"] == "Ring the bell"
+      and "repot" not in json.loads(m.CONFIG_PATH.read_text(encoding="utf-8")))
+check("the card's right-click menu offers it", app.hud.on_clear_repot == app.clear_repot)
+
+# ---- potions used, from the controller's potion popup: priced, shown as Pot cost in the repot row
+import potwatch  # noqa: E402
+cv2, tk, ROOT = m.cv2, m.tk, Path(__file__).resolve().parent.parent
+popup = potwatch.PotReader(m.ASSETS).look(cv2.imread(str(ROOT / "tests" / "frames" / "pots_lt_a.png")), 20)
+app.cfg.pop("pots", None)
+app.cfg.pop("pot_cost", None)
+app.pots = m.PotTracker()
+app.session.on = True
+check("before the popup's been read, Pot cost shows a dash", app._pot_cost_text() == "-")
+for _ in range(3):
+    app._pots(popup, m.time.monotonic())
+check(f"the popup's items are learned, with names and prices guessed ({[i['name'] for i in app.cfg['pots']]})",
+      [i["name"] for i in app.cfg["pots"]] == ["Meat", "Blue Potion", "Red Potion", "Lemon", "Orange Potion"]
+      and app._pot_cost_text() == "0")
+used = [(look, c - 10 if c and c == 1018 else c - 2 if c and c == 368 else c) for look, c in popup]
+for _ in range(2):
+    app._pots(used, m.time.monotonic())                         # 10 orange (150) and 2 blue (220) used
+check(f"potions used are priced: Pot cost ({app._pot_cost_text()})",
+      app.cfg["pot_cost"] == 10 * 150 + 2 * 220 and app._pot_cost_text() == "-1,940")
+app.cfg["pots"][1]["price"] = 300                               # (set in Settings)
+blue = [(look, 360 if c == 366 else c) for look, c in used]
+for _ in range(2):
+    app._pots(blue, m.time.monotonic())
+check("a price set in Settings is used from then on", app.cfg["pot_cost"] == 1940 + 6 * 300)
+app.cfg["repot"] = {"mesos": 1000000, "at": m.time.time(), "trip": None, "trips": 1}
+meso.value = 1000000
+app.ring_repot()
+check("ringing the repot bell starts Pot cost again from 0", app.cfg["pot_cost"] == 0 and app._pot_cost_text() == "0"
+      and app._repot_content()["repot_pots"] == "0")
+app.cfg["pot_cost"] = 500
+app.clear_repot(confirm=False)
+check("clearing the repot history clears Pot cost too", "pot_cost" not in app.cfg)
+app.pots.seen_at = m.time.monotonic() - m.POTS_STALE - 1
+check("not looked at for a while: Pot cost is marked as not up to date", app._pot_cost_text().startswith("~"))
+box = tk.Frame(app.root)
+app._fill_pots(box, {"bg": "white"}, {"bg": "white"}, 300)
+check("Settings lists the potions, each with its price", len(box.winfo_children()) == 5)
+box.destroy()
+app.session.on = False
+
+# ---- pickups, from the pickup lines: mesos exact, loot priced, potions picked up known; Profit on the card
+app.session.started, app.session.on = True, True
+app.picked_mesos, app.loot, app.pickups_seen, app.session_pot_cost = 0, {}, False, 0
+app.cfg["pots"] = [{"id": 4, "name": "Lemon", "price": 150, "look": [[[0.0, 0.0, 0.0]]]}]
+app._pickups([("mesos", 15), ("mesos", 17), ("item", "Lupin's Banana", 1, "Etc"), ("item", "Lupin's Banana", 2, "Etc"),
+              ("item", "Lemon", 3, "Use")], m.time.monotonic())
+check(f"mesos picked up add up exactly ({app.picked_mesos})", app.picked_mesos == 32)
+check(f"items go on the loot list, counted ({list(app.loot.values())})", list(app.loot.values()) == [("Lupin's Banana", 3)])
+check("potions picked up are told to the potion count, not put on the loot list", app.pots.picked.get(4) == 3 and app.pots.exact)
+app.cfg["loot_prices"] = {"Lupin's Banana": 25}
+app.session_pot_cost = 40
+check(f"the loot is worth its NPC price ({app.loot_value()})", app.loot_value() == 75)
+check("a long name cut short in its pickup line still finds its shop price (Green Mushroo... is a Green Mushroom Cap)",
+      m._shop_price("Green Mushroo") == 14 and m._shop_price("Lupin's Banana") == 37)
+front, m.PLATFORM.game_in_front = m.PLATFORM.game_in_front, lambda: True
+hwnd, rect = app.reader.hwnd, app.reader.last_rect
+app.reader.hwnd, app.reader.last_rect = 1, (100, 50, 1920, 1080)
+app._update_display()
+m.PLATFORM.game_in_front, app.reader.hwnd, app.reader.last_rect = front, hwnd, rect
+cont = app.hud.content
+check(f"the card shows Profit: mesos picked up + loot - potions used ({cont.get('net_label')}: {cont.get('mesos_net')})",
+      cont.get("net_label") == "PROFIT" and cont.get("mesos_net") == "+67" and cont.get("mesos_gained") == "+32")
+box = tk.Frame(app.root)
+app._fill_loot(box, {"bg": "white"}, {"bg": "white"}, 300)
+check("Settings lists the loot, each with its price", len(box.winfo_children()) == 1)
+box.destroy()
+app.reset()
+check("Reset starts the pickups again from nothing", app.picked_mesos == 0 and not app.loot and not app.pickups_seen)
+app._pickups([("mesos", 99)], m.time.monotonic())
+check("...and before Start, nothing is counted", app.picked_mesos == 0)
+app.cfg["save_captures"] = True
+app._save_capture("pickups", cv2.imread(str(ROOT / "tests" / "frames" / "pickups_mesos.png")), [("mesos", 15)])
+saved = list((m.DATA_DIR / "captures").glob("pickups-*.png"))
+check("with Save pictures on, a picture and what was read are kept in the data folder",
+      len(saved) == 1 and "('mesos', 15)" in (m.DATA_DIR / "captures" / "read.txt").read_text(encoding="utf-8"))
+app.cfg["save_captures"] = False
+app.session.on = False
 
 check("the typeface is the bundled one, or it fell back cleanly", app._own_fonts in (True, False) and bool(app.theme.fam["extra"]))
 app.close()

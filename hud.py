@@ -346,7 +346,7 @@ def render_base(layout, theme, scale, c, art, width=W0, tall=0, repot=True):
         y += 94 + extra + 4
     if layout == "full":
         panel(y, 88 + extra, [("coin_pair", "MESOS / HR", c.get("mesos_rate", "-"), False),
-                              ("coin", "NET SESSION", c.get("mesos_net", "-"), True),
+                              ("coin", c.get("net_label", "NET SESSION"), c.get("mesos_net", "-"), True),
                               ("coin_stack", "MESOS GAINED", c.get("mesos_gained", "-"), False),
                               ("money_bag", "MESOS SPENT", c.get("mesos_spent", "-"), True)], icons=True)
         y += 88 + extra + 4
@@ -354,7 +354,7 @@ def render_base(layout, theme, scale, c, art, width=W0, tall=0, repot=True):
         panel(y, 88 + extra, [("bell", "LAST REPOT", c.get("repot_at", "-"), False),
                               ("coin", "SINCE REPOT", c.get("repot_since", "-"), True),
                               ("coin_stack", "LAST TRIP", c.get("repot_trip", "-"), True),
-                              ("money_bag", "TRIP TIME", c.get("repot_time", "-"), False)], icons=True)
+                              ("money_bag", "POT COST", c.get("repot_pots", "-"), True)], icons=True)
 
     size = card_size(layout, scale, W, tall, repot)
     img = cv.img.resize(size, Image.LANCZOS)
@@ -644,6 +644,7 @@ class HudCard:
         self._fresh = None          # ...a newer one drawn in the background
         self._drawing = False
         self._drag = None
+        self.on_clear_repot = None  # (the app's "clear the repot history", offered in the right-click menu)
         win = self.window.win
         win.bind("<ButtonPress-1>", self._press)
         win.bind("<B1-Motion>", self._move)
@@ -865,6 +866,8 @@ class HudCard:
         for key, name in LAYOUTS.items():
             m.add_radiobutton(label=name, value=key, variable=lay, command=lambda k=key: self.set_style(layout=k))
         m.add_checkbutton(label="Show the repot row (Full)", variable=rp, command=lambda: self.set_repot(rp.get()))
+        if self.on_clear_repot:
+            m.add_command(label="Clear repot history...", command=self.on_clear_repot)
         m.add_separator()
         for key, name in THEMES.items():
             m.add_radiobutton(label=f"{name} theme", value=key, variable=th, command=lambda k=key: self.set_style(theme=k))

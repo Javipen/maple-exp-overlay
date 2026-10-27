@@ -48,6 +48,8 @@ import ocr
 import report
 from hud import LAYOUTS as HUD_LAYOUTS, THEMES as HUD_THEMES, HudCard
 from killwatch import KillWatcher, message_area
+from pickwatch import PickupWatcher
+from potwatch import PotReader, guess_item, same_icon, search_area as pot_search_area
 from platforms import create_platform, hotkey_text, parse_hotkey
 from report import Health, Recent
 from ui_gfx import INK, TEXT_DIM
@@ -81,7 +83,7 @@ def _local_only():
 
 _local_only()
 
-VERSION = "1.0.2"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
+VERSION = "1.1.0"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
 WINDOW_TITLE = "Maple Classic Exp Overlay"    # the version is shown in Settings
 OLD_TITLES = ("Maple EXP/hr",)               # what versions before 0.9.3 were called
 
@@ -100,9 +102,20 @@ POLL_SECONDS = 1.5          # how often to read the EXP bar
 MESOS_UNSEEN = 15           # seconds without reading the mesos (the inventory closed) before the card guesses them
 KILL_POLL = 0.25            # how often the game's message area is checked for new EXP lines (kills)
 KILL_QUIET = 12             # seconds without EXP lines before the slime hops from the EXP readings instead
+KILL_CHECK = 4.5            # seconds after a new EXP line within which the EXP bar must go up, for the line to be real
+POTS_STALE = 600            # seconds of tracking without a look at the potion popup before the card marks pot cost "~"
+POTS_PER_MINUTE = 60        # more potions than this a minute (since the last count) used: likely a misread
+POTS_PICKED_PER_MINUTE = 4  # potions a minute monsters might drop; a bigger rise is a purchase
+POTS_UNDO = 300             # seconds after a drop during which going back to before undoes it
+PICKUP_POLL = 0.5           # how often the message area is checked for new pickup lines (white)
+CAPTURES = 400              # at most this many pictures kept in the captures folder (Settings: save pictures)
+# What NPC shops pay for some common drops (meowdb.com, MapleStory Classic); anything else is 0 until
+# it's set in Settings > Loot.
+LOOT_PRICES = {"Lupin's Banana": 37, "Green Mushroom Cap": 14}
 HUD_CALIBRATION = 300       # seconds of tracking before the tracker card shows rates and the time to level
 LOGGING = False             # the EXP log (one line per map, level and party) isn't kept in this simplified copy
 ROLLING_WINDOW = 300        # seconds used for the "last 5 min" rate
+MESOS_UNDO = 300            # seconds after a big mesos change during which going back to about before undoes it
 SEARCH_STRIP = 0.22         # bottom part of the game window searched for the EXP text
 LOG_PATH = DATA_DIR / "exp_log.json"
 LOG_TEXT_PATH = DATA_DIR / "exp_log.txt"
@@ -115,14 +128,15 @@ MAP_HIDDEN_SECONDS = 3      # the minimap's name unseen this long: say so, and h
 MAP_BLIND_SECONDS = 45      # the minimap's name box unseen this long: the map may have changed unnoticed
 SCAN_SECONDS = 4            # how often the whole window is checked for the inventory and party
 OUTLINE_SECONDS = 8         # how often the (costly) search for a see-through mesos box may run
-DEFAULTS = {"gap_seconds": 15, "transparency": 0, "topmost": True,
+DEFAULTS = {"gap_seconds": 120, "transparency": 0, "topmost": True,
             "skip_version": "", "ui_scale": 100, "compact": False, "hotkeys_on": True,
             "details": False, "compact_shape": "square", "seen_version": "",
             # The EXP tracker card over the game (hud.py): its layout and theme, its size (pixels per unit
             # of its 1390-unit-wide drawing, for a 1080-tall game; it grows and shrinks with the game) and
             # how solid it is. hud_offset (set by moving it) is where it is, from the game's top-left.
             "hud": True, "hud_layout": "full", "hud_theme": "brown", "hud_scale": 0.5, "hud_width": 1390,
-            "hud_tall": 0, "hud_repot": True, "hud_opacity": 1.0}
+            "hud_tall": 0, "hud_repot": True, "hud_opacity": 1.0,
+            "save_captures": False}     # save pictures of the potion popup and the pickup lines, for testing
 SHAPE_LABELS = {"square": "Square", "wide": "Wide", "bar": "Bar"}
 SHAPE_BLURBS = {"square": "The narrow card: the big number, the level bar and Start/Pause.",
                 "wide": "Longer sideways: the level bar on top and four numbers in a row.",
@@ -198,6 +212,12 @@ def load_config():
         value = cfg.get(key)
         if type(value) is not type(default) or (key == "gap_seconds" and not 1 <= value <= 3600):
             cfg[key] = default
+    if cfg.get("pause_rule") != 2:
+        # Up to 1.0.2 it paused after 15 s without EXP, which cut every respawn wait out of the
+        # time and made EXP/hr far too high: the old default becomes the new one.
+        if cfg["gap_seconds"] == 15:
+            cfg["gap_seconds"] = DEFAULTS["gap_seconds"]
+        cfg["pause_rule"] = 2
     cfg["transparency"] = min(MAX_TRANSPARENCY, max(0, cfg["transparency"]))
     if cfg["compact_shape"] not in SHAPES:
         cfg["compact_shape"] = "square"
@@ -224,7 +244,13 @@ def load_config():
               "share_runs": lambda v: type(v) is bool,       # missing: not asked yet
               "hud_offset": lambda v: ints(v, 2),
               "last_level": lambda v: type(v) is int and 1 <= v <= len(EXP_TABLE),
-              "repot": lambda v: isinstance(v, dict) and type(v.get("mesos")) is int}
+              "repot": lambda v: isinstance(v, dict) and type(v.get("mesos")) is int,
+              "pot_cost": lambda v: type(v) is int,
+              "loot_prices": lambda v: isinstance(v, dict) and all(
+                  isinstance(k, str) and type(p) is int and p >= 0 for k, p in v.items()),
+              "pots": lambda v: isinstance(v, list) and all(
+                  isinstance(i, dict) and type(i.get("id")) is int and isinstance(i.get("name"), str)
+                  and type(i.get("price")) is int and isinstance(i.get("look"), list) for i in v)}
     for key, ok in checks.items():
         if key in cfg and cfg[key] is not None and not ok(cfg[key]):
             del cfg[key]
@@ -983,6 +1009,9 @@ def read_mesos_positions(bgr, field, templates, digit_count=None):
             return None                               # unclear: don't guess
     if not digits or (len(digits) > 1 and digits[0] == "0"):
         return None
+    if not ended:
+        return None          # the digits run right up to the box's left edge: the box was found too
+                             # narrow (something across it), and the number may be cut off at the front
     if scores[-1] < 0.85:
         return None          # the first digit must be very clear: a see-through box's background
                              # can pass for an extra '1' in front (real first digits score ~0.95)
@@ -1983,14 +2012,24 @@ class ExpTracker:
         return self.samples[-1][1] - self.samples[0][1]
 
 
+def _ends(short, long):
+    """Is the number short the end of long, with digits in front of it lost (1,272 of 1,251,272)?"""
+    return 0 < short < long and str(long).endswith(str(short))
+
+
 class MesoTracker:
     """Turns mesos readings into mesos gained per hour and per 5 minutes.
 
     A new count only counts once two readings in a row agree on it (three for a big jump),
-    so a one-off misread never shows up as mesos gained. A change by more than half,
-    or a digit-count change bigger than 10%, starts counting afresh from the new number
-    instead: that's a shop visit or a corrected misread, not mesos picked up. Small digit
-    rollovers count after three identical readings.
+    so a one-off misread never shows up as mesos gained. A change by more than half, or a
+    digit-count change bigger than 10%, needs the very same number three times; then it
+    counts too (a big shop trip is real spending), unless it's about ten times (or a tenth
+    of) the old count: that's a digit read too many (or lost). A big change that's later
+    undone (back to within a tenth of it) was a misread after all, and is taken back. Small digit rollovers count
+    after three identical readings.
+
+    Every change from one reading to the next counts, however long the inventory was closed
+    in between: only pause() (the Pause button) stops the counting.
     """
 
     def __init__(self):
@@ -2006,12 +2045,30 @@ class MesoTracker:
         self.samples = deque()                # (elapsed, gained)
         self.start = None                     # elapsed time when counting began
         self.counting = False
+        self._jump = None                     # the last big change: (from, counted, size, when, gained after)
+        self._mark = (0, 0, 0)                # (gained, earned, spent) when tracking last paused by itself
 
     def pause(self):
         self.counting = False                 # don't count what changes while paused
 
+    def mark(self):
+        """Tracking paused by itself (no EXP, or you left the map): what changes from here on may be
+        a shop trip for the next map's numbers (see new_session)."""
+        self._mark = (self.gained, self.earned, self.spent)
+
+    def new_session(self):
+        """New numbers for a new map, keeping the count and what changed since mark(): a trip to
+        town to repot is spent on the map you go back to."""
+        g, e, s = self._mark
+        self.gained, self.earned, self.spent = self.gained - g, self.earned - e, self.spent - s
+        self._mark = (0, 0, 0)
+        self.start = 0.0 if self.counting else None
+        self.seen_el = 0.0 if self.seen_el is not None else None
+        self.samples = deque([(0.0, 0)]) if self.counting else deque()
+        self._jump = None
+
     def observe(self, value, now, elapsed, running):
-        jump = False
+        jump = tenfold = False
         if value == self.value:
             self._candidate = (None, 0, 0)        # unchanged: nothing new to confirm
         else:
@@ -2030,8 +2087,10 @@ class MesoTracker:
             # The first count, a digit change and a jump need the very same number 3 times.
             # First counts and jumps aren't gained, so a misread there would never cancel
             # out; digit changes can also be different, nearby misreads of an extra digit.
-            # About 10x (or a tenth): almost always a digit read too many (or lost).
+            # About 10x (or a tenth): almost always a digit read too many (or lost). And one number
+            # being the end of the other (1,251,272 and 1,272): the front digits were lost (or are back).
             tenfold = old is not None and old > 0 and (9 <= value / old <= 11 or 0.09 <= value / old <= 0.11)
+            tenfold = tenfold or (old is not None and (_ends(old, value) or _ends(value, old)))
             if old is None or jump or digits_changed:
                 if same < (8 if tenfold else 3):
                     return
@@ -2043,16 +2102,37 @@ class MesoTracker:
             self.counting = True                  # count changes from this reading on
             self.start = elapsed if self.start is None else self.start
             self.samples.append((elapsed, self.gained))
-        elif running and value != self.value and not jump:
-            self.gained += value - self.value
-            if value > self.value:
-                self.earned += value - self.value
-            else:
-                self.spent += self.value - value
+        elif running and value != self.value:
+            change = value - self.value
+            j = self._jump
+            if j and now - j[3] <= MESOS_UNDO and abs(value - j[0]) <= 0.1 * j[2]:
+                # Back to about what it was before a big change: that was a misread (digits lost or
+                # read too many, the box half covered). Take it back, and count only the difference
+                # not counted yet (what was picked up meanwhile was counted as it came).
+                change = value - j[0] - (self.gained - j[4])
+                self._take_back(j[1])
+                self._jump = None
+            elif jump or tenfold:
+                counted = 0 if tenfold else change    # (a big buy or sale counts; a likely misread doesn't)
+                self._jump = (self.value, counted, abs(change), now, self.gained + counted)
+                change = counted
+            self.gained += change
+            if change > 0:
+                self.earned += change
+            elif change < 0:
+                self.spent -= change
             self.samples.append((elapsed, self.gained))
             while len(self.samples) > 2 and self.samples[1][0] <= elapsed - ROLLING_WINDOW:
                 self.samples.popleft()
         self.value = value
+
+    def _take_back(self, change):
+        """Undoes a counted change (gained, and earned or spent)."""
+        self.gained -= change
+        if change > 0:
+            self.earned -= change
+        else:
+            self.spent += change
 
     # The mesos are only read while the inventory is open. So the rates are worked out over the
     # time up to the last reading, not up to now: with the inventory closed they hold steady
@@ -2092,44 +2172,140 @@ class MesoTracker:
         return max(0.0, rate) * self.unseen(elapsed) / 3600 if rate else 0.0
 
 
+class PotTracker:
+    """Potions used, from their counts in the controller's potion popup (potwatch.py).
+
+    The popup only shows while the left trigger is held, so, like the mesos, every change from one
+    look to the next counts, however long between them:
+      - a drop is potions used;
+      - a small rise in the field is potions picked up from monsters (they make up for some used);
+      - a big rise, or any rise in town, is a purchase: not a use, so not counted.
+    A new count only counts once two looks in a row agree on it, three when it goes up or for the
+    first count. A drop bigger than could be used in the time since the last count, or a count
+    that's the old one with digits lost or added (1068 and 106), needs eight: it's almost always a
+    misread. And a drop that's undone (back to about where it was) within a few minutes was a
+    misread too, and is taken back."""
+
+    def __init__(self):
+        self.counts = {}                      # item id: confirmed count
+        self.counted_at = {}                  # item id: when it was confirmed
+        self.picked = {}                      # item id: how many were picked up since (from the pickup lines)
+        self.exact = False                    # pickups are read from the pickup lines (see App._pickups)
+        self._candidate = {}                  # item id: (count, looks in a row)
+        self._drop = {}                       # item id: (count before, used, when): the last drop counted
+        self.seen_at = None                   # when the popup was last read
+
+    def picked_up(self, item, qty):
+        """qty of this item were picked up (a pickup line): the next rise of its count, up to that, is them."""
+        self.picked[item] = self.picked.get(item, 0) + qty
+        self.exact = True
+
+    def observe(self, counts, now, counting, in_town=False):
+        """counts: {item id: count} from one look. Returns {item id: potions used}, newly confirmed:
+        negative for potions picked up (or a drop taken back)."""
+        self.seen_at = now
+        used = {}
+        for item, value in counts.items():
+            old = self.counts.get(item)
+            if value == old:
+                self._candidate.pop(item, None)
+                continue
+            last, n = self._candidate.get(item, (None, 0))
+            n = n + 1 if value == last else 1
+            self._candidate[item] = (value, n)
+            minutes = (now - self.counted_at.get(item, now)) / 60
+            if old is None or value > old:
+                need = 3
+            elif old - value > POTS_PER_MINUTE * max(minutes, 0.5) or _digits_lost(old, value):
+                need = 8
+            else:
+                need = 2
+            if n < need:
+                continue
+            del self._candidate[item]
+            self.counts[item], self.counted_at[item] = value, now
+            picked = self.picked.pop(item, 0)
+            if not counting or old is None:
+                continue
+            drop = self._drop.get(item)
+            if value > old and drop and now - drop[2] <= POTS_UNDO and abs(value - drop[0]) <= max(3, 0.02 * drop[0]):
+                used[item] = -drop[1]                   # back to where it was: that drop was a misread
+                del self._drop[item]
+            elif value < old and not _digits_lost(old, value):
+                used[item] = old - value
+                self._drop[item] = (old, old - value, now)
+            elif value > old and self.exact:
+                if value - old <= picked + 1:            # picked up from monsters (as many as the pickup lines said)
+                    used[item] = -(value - old)
+            elif value > old and not in_town and value - old <= 3 + POTS_PICKED_PER_MINUTE * minutes:
+                used[item] = -(value - old)             # picked up from monsters (a guess: no pickup lines read)
+        return used
+
+
+def _loot_key(name):
+    """An item's name as the pickup lines give it, for matching: its letters, up to where long names are
+    cut short ("Green Mushroo...")."""
+    return re.sub(r"[^a-z]", "", name.lower())[:12]
+
+
+def _shop_price(name):
+    """What an NPC shop pays for an item (LOOT_PRICES), by its name as a pickup line gives it (maybe cut short)."""
+    key = _loot_key(name)
+    return next((p for n, p in LOOT_PRICES.items() if _loot_key(n) == key), 0)
+
+
+def _digits_lost(a, b):
+    """Is one count the other with digits lost (or added) at the start or end? (1068 and 106, 846 and 46)"""
+    sa, sb = str(a), str(b)
+    if len(sa) == len(sb):
+        return False
+    short, long = sorted((sa, sb), key=len)
+    return long.startswith(short) or long.endswith(short)
+
+
 class Session:
     """What's on screen: EXP and mesos since Start, and when tracking pauses by itself.
 
     After Start it tracks until Pause is pressed, except that it pauses by itself when no
-    EXP comes in for `gap` seconds or you leave the map, and carries on at the next EXP
-    gain: from zero if that's on a different map, so the numbers are always for the map
-    you're on. Time spent paused never counts, and an idle pause rewinds the clock to the
-    last EXP gain. The gain that ends a pause starts the clock again rather than counting,
-    just like a log stretch's first gain.
+    EXP comes in for `gap` seconds (a real break: minutes, not a respawn wait) or you leave
+    the map, and carries on at the next EXP gain: from zero if that's on a different map, so
+    the numbers are always for the map you're on. Time spent paused never counts (the clock
+    stops as of the last EXP gain), but the gain that ends a pause on the same map does: it
+    was earned there.
+
+    The mesos keep counting through these pauses, and through Pause too: a shop trip is made in
+    town, away from the map (often paused), and what it costs is what "spent" is for. Only Reset
+    starts them again. What changed since a pause by itself began goes with the numbers for the
+    next map, if it's a different one.
     """
 
     def __init__(self, gap):
         self.exp, self.meso = ExpTracker(), MesoTracker()
         self.gap = gap
         self.on = False             # Start was pressed (and Pause wasn't)
+        self.started = False        # Start was pressed since the last Reset (the mesos count from then)
         self.waiting = None         # paused by itself: "idle" or "map"
         self.map = None             # the map these numbers are for
         self.here = None            # the map you're on now
         self.last_gain = None
 
     def start(self, now):
-        self.on, self.waiting, self.last_gain = True, None, now
+        self.on, self.waiting, self.last_gain, self.started = True, None, now, True
         self.map = self.map or self.here
         self.exp.start()
 
     def pause(self):
         self.on, self.waiting = False, None
-        self.exp.pause()
-        self.meso.pause()
+        self.exp.pause()                # (the mesos keep counting: pausing to go shopping is what spent is for)
 
     def reset(self):
         self.exp.reset()
         self.meso.reset()
-        self.on, self.waiting, self.map, self.last_gain = False, None, None, None
+        self.on, self.waiting, self.map, self.last_gain, self.started = False, None, None, None, False
 
     def _wait(self, why):
         self.exp.pause(at=self.last_gain)
-        self.meso.pause()
+        self.meso.mark()
         self.waiting = why
 
     def observe(self, candidates, confident, now):
@@ -2142,13 +2318,16 @@ class Session:
         if t.running and t.gained > gained_before:
             self.last_gain = now
         elif self.on and self.waiting and self.waiting != "blind" and rose:
-            if self.map and self.here and self.here != self.map:
+            same_map = not (self.map and self.here and self.here != self.map)
+            if not same_map:
                 t.new_session()             # a different map: its own numbers
-                self.meso.reset()
+                self.meso.new_session()
                 self.map = self.here
             self.waiting = None
             self.last_gain = now
             t.start()
+            if same_map and result[1] != "LEVEL UP!":
+                t._add_gain(t.exp - exp_before)   # (earned on this map: it counts)
         return result
 
     def map_blind(self):
@@ -2893,6 +3072,7 @@ class App:
 
         self._build_log_panel()
         self.hud = HudCard(root, PLATFORM, ASSETS, self.cfg, lambda: save_config(self.cfg))
+        self.hud.on_clear_repot = self.clear_repot
 
         if not templates:
             self.status.set("Some of the program's files are missing, so EXP reading is less "
@@ -2910,7 +3090,25 @@ class App:
         self._gain_marks = deque(maxlen=900)    # (when, EXP gained so far), to learn the EXP per line
         self._last_kill_at = -1e9
         self._per_line = None                   # EXP per EXP line, learned
+        # Yellow things that aren't EXP lines (damage numbers by the messages) can look like them: so the
+        # lines only make the slime hop while most of them have had EXP come in right behind them.
+        self._line_checks = deque(maxlen=40)    # [when, real?] for each look that found new lines (None: not known yet)
+        self._rises = deque(maxlen=80)          # [when, used] each time the EXP bar went up
+        self._hud_pending = None                # an EXP rise seen once, waiting for the next reading to agree
+        # Potions used, from the controller's potion popup (potwatch.py), priced at the shops' prices.
+        self.pots = PotTracker()
+        try:
+            self.pot_reader = PotReader(ASSETS)
+        except Exception as e:
+            self.pot_reader = None
+            log_error("loading the potion digits", e)
+        self._pot_area, self._pot_turn = None, 0  # (where the popup was found, for the game size it was found at)
+        self.session_pot_cost = 0               # potions used since Start (less those picked up), at shop prices
+        # Pickups, from the white lines in the message area (pickwatch.py): mesos and items picked up.
+        self.pickups = PickupWatcher(lambda images: TESS.read_lines(images))
+        self.picked_mesos, self.loot, self.pickups_seen = 0, {}, False
         threading.Thread(target=self._kill_worker, daemon=True).start()
+        threading.Thread(target=self._pickup_worker, daemon=True).start()
         root.after(200, self._pump)
         root.after(500, self._refresh)
 
@@ -3382,6 +3580,74 @@ class App:
         var.trace_add("write", lambda *_: t.set(bool(var.get())))
         return t
 
+    def _fill_loot(self, box, text, dim, wrap):
+        """The loot picked up since Start, each with what an NPC shop pays for it (editable)."""
+        px = self.theme.px
+        if not self.loot:
+            tk.Label(box, text="Items you pick up show up here as you play (read from the white pickup "
+                               "lines), each with its NPC price: they make up the loot in Profit.",
+                     wraplength=wrap, justify="left", **dim).pack(anchor="w")
+            return
+        prices = self.cfg.setdefault("loot_prices", {})
+        for name, qty in sorted(self.loot.values()):
+            line = tk.Frame(box, bg=BG)
+            line.pack(fill="x", pady=(0, px(4)))
+            tk.Label(line, text=f"{name}  x{qty}", **text).pack(side="left")
+            price = tk.StringVar(value=str(prices.get(name, _shop_price(name))))
+
+            def save(*_, name=name, price=price):
+                try:
+                    prices[name] = max(0, min(10 ** 9, int(price.get())))
+                except ValueError:
+                    return
+                save_config(self.cfg)
+            price.trace_add("write", save)
+            tk.Label(line, text="mesos each", **dim).pack(side="right")
+            tk.Entry(line, textvariable=price, width=8, justify="right", **text).pack(side="right", padx=(0, px(4)))
+
+    def _fill_pots(self, box, text, dim, wrap):
+        """The potions found in the controller's popup: each one's icon, name and price (editable)."""
+        for w in box.winfo_children():
+            w.destroy()
+        th, px = self.theme, self.theme.px
+        items = self.cfg.get("pots") or []
+        if not items:
+            tk.Label(box, text="Hold the left trigger in the game for a moment: the potions in it show up here, "
+                               "with the shops' prices. Their use shows as Pot cost in the repot row.",
+                     wraplength=wrap, justify="left", **dim).pack(anchor="w")
+            return
+        box._icons = []
+        for item in items:
+            line = tk.Frame(box, bg=BG)
+            line.pack(fill="x", pady=(0, px(4)))
+            look = (np.asarray(item["look"], np.float32) * 255).astype(np.uint8)
+            icon = ImageTk.PhotoImage(Image.fromarray(cv2.cvtColor(look, cv2.COLOR_BGR2RGB)).resize(
+                (px(36), px(27)), Image.NEAREST), master=box)
+            box._icons.append(icon)
+            tk.Label(line, image=icon, bg=BG).pack(side="left")
+            name, price = tk.StringVar(value=item["name"]), tk.StringVar(value=str(item["price"]))
+
+            def save(*_, item=item, name=name, price=price):
+                item["name"] = name.get().strip()[:40] or item["name"]
+                try:
+                    item["price"] = max(0, min(10 ** 9, int(price.get())))
+                except ValueError:
+                    return
+                save_config(self.cfg)
+            name.trace_add("write", save)
+            price.trace_add("write", save)
+            tk.Entry(line, textvariable=name, width=16, **text).pack(side="left", padx=(px(8), 0))
+            tk.Entry(line, textvariable=price, width=8, justify="right", **text).pack(side="left", padx=(px(6), 0))
+            tk.Label(line, text="mesos", **dim).pack(side="left", padx=(px(4), 0))
+
+            def forget(item=item):
+                self.cfg["pots"] = [it for it in self.cfg.get("pots") or [] if it["id"] != item["id"]]
+                self.pots.counts.pop(item["id"], None)
+                save_config(self.cfg)
+                self._fill_pots(box, text, dim, wrap)
+            Button(line, th, text="Forget", kind="secondary", width=70, height=28, radius=8, size=11, bg=BG,
+                   command=forget).pack(side="right")
+
     def _section(self, parent, text, first=False):
         tk.Label(parent, text=text.upper(), bg=BG, fg=DIM, font=self.theme.font("semibold", 10)).pack(
             anchor="w", pady=(0 if first else self.theme.px(20), self.theme.px(8)))
@@ -3469,6 +3735,8 @@ class App:
         self._switch(body, "Show the EXP tracker card while you play", hud).pack(anchor="w")
         repot = tk.BooleanVar(value=bool(self.cfg["hud_repot"]))
         self._switch(body, "Show the repot row (Full layout)", repot).pack(anchor="w", pady=(px(6), 0))
+        Button(body, th, text="Clear repot history", kind="secondary", width=180, height=34, radius=10, size=12,
+               bg=BG, command=self.clear_repot).pack(anchor="w", pady=(px(8), 0))
         for title, options, key in (("Layout", {"minimal": "Minimal", "session": "Session", "full": "Full"}, "hud_layout"),
                                     ("Theme", HUD_THEMES, "hud_theme")):
             line = tk.Frame(body, bg=BG)
@@ -3489,6 +3757,21 @@ class App:
         Button(body, th, text=f"Move / resize the card  ({self.cfg['hotkeys'].get('edit') or 'no hotkey'})",
                kind="secondary", width=260, height=34, radius=10, size=12, bg=BG,
                command=self.toggle_hud_editing).pack(anchor="w", pady=(px(10), 0))
+        self._section(body, "Loot")
+        loot = tk.Frame(body, bg=BG)
+        loot.pack(fill="x")
+        self._fill_loot(loot, text, dim, wrap)
+        captures = tk.BooleanVar(value=bool(self.cfg.get("save_captures")))
+        self._switch(body, "Save pictures for testing (potion popup, pickup lines)", captures).pack(
+            anchor="w", pady=(px(8), 0))
+        captures.trace_add("write", lambda *_: (self.cfg.update(save_captures=bool(captures.get())), save_config(self.cfg)))
+        tk.Label(body, text="Kept in the data folder's captures folder, on this PC only (at most "
+                            f"{CAPTURES}). For checking how well they're read.", wraplength=wrap, justify="left",
+                 **dim).pack(anchor="w")
+        self._section(body, "Potions (controller)")
+        pots = tk.Frame(body, bg=BG)
+        pots.pack(fill="x")
+        self._fill_pots(pots, text, dim, wrap)
         tk.Label(body, text="Local only: this copy never goes online. Nothing it reads or saves leaves this PC.",
                  wraplength=wrap, justify="left", **dim).pack(anchor="w", pady=(px(8), 0))
 
@@ -3700,25 +3983,154 @@ class App:
                             n = self.kills.look(shot[0], g, max(8, int(0.03 * rect[2])))
                             if n:
                                 self.q.put(("kills", (n, time.monotonic())))
+                        self._pot_turn = (self._pot_turn + 1) % 2
+                        if self.pot_reader and not self._pot_turn:           # (every other look)
+                            self._look_for_pots(sct, rect, g)
                     else:
                         self.kills.reset()
                 except Exception as e:
                     log_error("watching for kills", e)
                 self.stop_evt.wait(KILL_POLL)
 
-    def _kills(self, n, when):
-        """n new EXP lines came in: the slime hops, with the EXP they're likely worth floating up."""
-        t = self.tracker
-        if not (self.session.on and t.running):
+    def _pickup_worker(self):
+        """Reads the new white lines in the game's message area: mesos and items picked up."""
+        with mss.mss() as sct:
+            while not self.stop_evt.is_set():
+                try:
+                    rect, g = self.reader.last_rect, self.reader.gh
+                    if tesseract_ok and rect and g and self.reader.hwnd and self.reader.mode == "window":
+                        shot = self.reader._hide_own(grab(sct, *message_area(rect)))
+                        if shot:
+                            found = self.pickups.look(shot[0], g, max(8, int(0.03 * rect[2])))
+                            if found:
+                                self.q.put(("pickups", (found, time.monotonic())))
+                                if self.cfg.get("save_captures"):
+                                    self._save_capture("pickups", shot[0], found)
+                    else:
+                        self.pickups.reset()
+                except Exception as e:
+                    log_error("reading pickups", e)
+                self.stop_evt.wait(PICKUP_POLL)
+
+    def _save_capture(self, kind, img, what):
+        """Settings > Save pictures for testing: keeps a picture, and what was read from it, in the data
+        folder's captures folder (never anywhere else), up to CAPTURES pictures."""
+        try:
+            folder = DATA_DIR / "captures"
+            folder.mkdir(parents=True, exist_ok=True)
+            if len(list(folder.glob("*.png"))) >= CAPTURES:
+                return
+            name = f"{kind}-{time.strftime('%Y%m%d-%H%M%S')}-{int(time.time() * 1000) % 1000:03d}"
+            ok, png = cv2.imencode(".png", img)
+            if ok:
+                (folder / f"{name}.png").write_bytes(png.tobytes())
+                with open(folder / "read.txt", "a", encoding="utf-8") as f:
+                    f.write(f"{name}: {what}\n")
+        except Exception as e:
+            log_error("saving a picture for testing", e)
+
+    def _pickups(self, found, when):
+        """Pickup lines read: mesos picked up count exactly, items go on the loot list (potions: see PotTracker)."""
+        if not self.session.started:
             return
-        self._kill_events.append((when, n))
+        for p in found:
+            self.pickups_seen = True
+            if p[0] == "mesos":
+                self.picked_mesos += p[1]
+                continue
+            _, name, qty, tab = p
+            key = _loot_key(name)
+            pot = next((it for it in self.cfg.get("pots") or [] if _loot_key(it["name"]) == key), None)
+            if tab == "Use" and pot:
+                self.pots.picked_up(pot["id"], qty)
+            else:
+                self.loot[key] = (self.loot.get(key, (name, 0))[0], self.loot.get(key, (name, 0))[1] + qty)
+
+    def loot_value(self):
+        """What the loot picked up since Start is worth at NPC shops (the prices in Settings > Loot)."""
+        prices = self.cfg.get("loot_prices") or {}
+        return sum(qty * prices.get(name, _shop_price(name)) for name, qty in self.loot.values())
+
+    def _look_for_pots(self, sct, rect, g):
+        """The controller's potion popup (shown while the left trigger is held): its slots' counts."""
+        key = (tuple(rect), g)
+        area = self._pot_area[1] if self._pot_area and self._pot_area[0] == key else pot_search_area(rect)
+        shot = self.reader._hide_own(grab(sct, *area))
+        if not shot:
+            return
+        img, sx, sy = shot
+        slots = self.pot_reader.look(img, g)
+        if slots is None:
+            return
+        self.q.put(("pots", (slots, time.monotonic())))
+        counts = [c for _, c in slots]
+        if self.cfg.get("save_captures") and counts != getattr(self, "_pot_saved", None):
+            self._pot_saved = counts
+            self._save_capture("potions", img, counts)
+        if not (self._pot_area and self._pot_area[0] == key):
+            # Found: from now on, just look around it.
+            at = self.pot_reader.find_label(img, g)
+            if at is not None:
+                s, m = g / 20, int(30 * g / 20)
+                self._pot_area = (key, (sx + at[0] - int(275 * s) - m, sy + at[1] - int(150 * s) - m,
+                                        int(570 * s) + 2 * m, int(220 * s) + 2 * m))
+
+    def _pots(self, slots, when):
+        """A look at the potion popup: which items, how many of each; potions used are priced."""
+        items = self.cfg.setdefault("pots", [])
+        counts, changed = {}, False
+        for look, count in slots:
+            if look is None or count is None:
+                continue
+            item = next((it for it in items if same_icon(np.asarray(it["look"], np.float32), look)), None)
+            if item is None:                    # a new item: a first guess from its colour (Settings can fix it)
+                name, price = guess_item(look)
+                item = {"id": max([it["id"] for it in items] + [0]) + 1, "name": name, "price": price,
+                        "look": np.round(look, 3).tolist()}
+                items.append(item)
+                changed = True
+            counts[item["id"]] = counts.get(item["id"], 0) + count
+        used = self.pots.observe(counts, when, self.session.on, self.in_town)
+        prices = {it["id"]: it["price"] for it in items}
+        cost = sum(n * prices.get(i, 0) for i, n in used.items())
+        if cost:
+            self.cfg["pot_cost"] = int(self.cfg.get("pot_cost") or 0) + int(cost)
+            if self.session.on:
+                self.session_pot_cost += int(cost)
+            changed = True
+        if changed:
+            save_config(self.cfg)
+
+    def _kills(self, n, when):
+        """n new EXP lines came in: the slime hops, with the EXP they're likely worth floating up. It hops
+        whether or not tracking is on (paused, it's still EXP); only kills while tracking teach what a
+        line is worth, as that's learned from the EXP counted."""
+        t = self.tracker
+        self._line_checks.append([when, None])
+        if not self._lines_trusted(time.monotonic()):
+            return                                      # (the EXP bar's readings make it hop instead)
         self._last_kill_at = when
+        if self.session.on and t.running:
+            self._kill_events.append((when, n))
         per_line = self._exp_per_line()
         amount = per_line * n if per_line else None
-        if t.hidden and amount:
+        if t.hidden and amount and t.running:
             t.kill_hint += amount                       # (the EXP number is hidden: keep it going)
         if self.hud.window.shown:
             self.hud.celebrate(exp=amount, kill=True)
+
+    def _lines_trusted(self, now):
+        """Are the new "EXP lines" seen lately really EXP lines? Each one is real if the EXP bar went up
+        within KILL_CHECK seconds of it, each rise backing one line only (a monster takes many hits, so
+        damage numbers far outnumber the rises). They're trusted while most of the last 10 were real."""
+        for check in self._line_checks:
+            if check[1] is None and now - check[0] > KILL_CHECK:
+                rise = next((r for r in self._rises if not r[1] and check[0] - 1 <= r[0] <= check[0] + KILL_CHECK), None)
+                if rise:
+                    rise[1] = True
+                check[1] = rise is not None
+        known = [real for _, real in self._line_checks if real is not None][-10:]
+        return len(known) >= 3 and sum(known) >= 0.6 * len(known)
 
     def _exp_per_line(self):
         """The EXP one EXP line is worth, on average, over the last 3 minutes: the EXP gained over the
@@ -3837,6 +4249,10 @@ class App:
                     self._hotkey(payload)
                 elif kind == "kills":
                     self._kills(*payload)
+                elif kind == "pots":
+                    self._pots(*payload)
+                elif kind == "pickups":
+                    self._pickups(*payload)
                 else:
                     self._handle(payload)
         except queue.Empty:
@@ -3858,7 +4274,7 @@ class App:
             self.reader.saved_mesos = tuple(r.mesos_at)
             save_config(self.cfg)
         if r.mesos is not None:
-            self.meso.observe(r.mesos, now, t.elapsed(), t.running)
+            self.meso.observe(r.mesos, now, t.elapsed(), self.session.started)   # (through pauses: shop trips)
         if r.party is not None:                         # believe a new party size once seen twice
             seen, n = self._party_seen
             n = n + 1 if r.party == seen else 1
@@ -3889,13 +4305,23 @@ class App:
                 self.found_at = now
             hidden = all(e is None for e, _ in r.candidates)
             assumed = None
-            if hidden and t.req is None and isinstance(self.cfg.get("last_level"), int):
+            last = self.cfg.get("last_level")
+            if hidden and t.req is None and isinstance(last, int):
                 # Started while the game hides the EXP number: the level from last time, until the
                 # number shows again (after the next level-up) and confirms or corrects it.
-                assumed = t.assume_level(self.cfg["last_level"])
+                assumed = t.assume_level(last)
+            elif t.req is None and r.confident and isinstance(last, int):
+                # Low in a level (just after a level-up), the % is too rough to tell the level from
+                # the EXP table: the level from last time (or the next) if the reading fits it.
+                e, p = r.candidates[0]
+                fits = [lv for lv in (last, last + 1) if lv <= len(EXP_TABLE) and e is not None
+                        and abs(e / EXP_TABLE[lv - 1] * 100 - p) <= 0.02 + 0.003 * p]
+                if fits:
+                    t.assume_level(fits[0])
             before = t.gained
             ok, note = self.session.observe(r.candidates, r.confident, now)
-            self.rejected = 0 if ok or hidden else self.rejected + 1
+            # (a clean reading whose level isn't known yet is still a reading, not a failure)
+            self.rejected = 0 if ok or hidden or note.startswith("calibrating") else self.rejected + 1
             if self.rejected >= 10:                 # keeps not adding up: find the EXP bar again
                 self.reader.box, self.rejected = None, 0
             if t.running and t.gained != before and not self.skip_log:
@@ -4068,7 +4494,22 @@ class App:
             self.ring_repot()                              # (rung while the mesos couldn't be read: now they can)
         # The slime hops when EXP comes in (three times for a level up): only for what comes in while it's shown.
         seen_gain, seen_level_up = getattr(self, "_hud_seen", (t.gained, self.level_up_at))
-        self._hud_seen = (t.gained, self.level_up_at)
+        # (and EXP that isn't counted, as tracking is paused or not started: the slime hops for it too)
+        seen_exp = getattr(self, "_hud_seen_exp", (t.exp, t.req))
+        rise = t.gained - seen_gain
+        if rise <= 0 and seen_exp[0] is not None and t.exp is not None and seen_exp[1] == t.req:
+            rise = max(0, t.exp - seen_exp[0])
+        # A rise only counts once the next reading agrees, so a one-off misread never makes it hop.
+        if rise > 0 and (self._hud_pending is None or t._reads <= self._hud_pending):
+            if self._hud_pending is None:
+                self._hud_pending = t._reads
+            rise = 0
+            self._hud_seen = (seen_gain, self.level_up_at)
+        else:
+            self._hud_pending = None
+            self._hud_seen, self._hud_seen_exp = (t.gained, self.level_up_at), (t.exp, t.req)
+            if rise > 0 or (self.level_up_at and self.level_up_at != seen_level_up):
+                self._rises.append([now_mono, False])      # (what makes an EXP line real)
         rect = self.reader.last_rect if self.reader.hwnd else None
         if not (rect and (self.hud.editing or (self.cfg["hud"] and PLATFORM.game_in_front()))):
             self.hud.hide()
@@ -4077,9 +4518,9 @@ class App:
         if self.hud.window.shown:
             if self.level_up_at and self.level_up_at != seen_level_up:
                 self.hud.celebrate(level_up=True)
-            elif t.gained > seen_gain and now_mono - self._last_kill_at > KILL_QUIET:
+            elif rise > 0 and now_mono - self._last_kill_at > KILL_QUIET:
                 # No EXP messages seen lately (turned off, or covered): hop from the EXP itself.
-                self._celebrate_gain(t.gained - seen_gain)
+                self._celebrate_gain(rise)
         m, now = self.meso, time.monotonic()
         el = t.elapsed()
         # The first 5 minutes of tracking calibrate: a rate from a minute or two swings wildly, so EXP/hr,
@@ -4120,7 +4561,16 @@ class App:
             "mesos_rate": "Calibrating…" if calibrating else fmt_num(per_hr) if per_hr is not None else "—",
             "mesos_net": f"{est}{m.gained + guess:+,.0f}" if mesos_known else "—",
             "mesos_gained": f"{est}+{fmt_num(m.earned + guess)}" if mesos_known else "—",
+            "net_label": "NET SESSION",
             "mesos_spent": f"-{fmt_num(m.spent)}" if mesos_known and m.spent else "0" if mesos_known else "—"}
+        if self.pickups_seen:
+            # The pickup lines are being read: mesos picked up are known exactly, inventory or not; and
+            # the profit is those, plus the loot's worth, less the potions used.
+            content.update({
+                "mesos_rate": "Calibrating…" if calibrating else fmt_num(self.picked_mesos / el * 3600) if el > 0 else "—",
+                "mesos_gained": f"+{fmt_num(self.picked_mesos)}",
+                "net_label": "PROFIT",
+                "mesos_net": f"{self.picked_mesos + self.loot_value() - self.session_pot_cost:+,.0f}"})
         content.update(self._repot_content(guess))
         self.reader.hud_rects = (self.hud.place(rect),)  # (first, so the reader never sees it)
         self.hud.show(rect, content)
@@ -4144,17 +4594,36 @@ class App:
         profit = now_mesos - last["mesos"] if isinstance(last.get("mesos"), int) else None
         self.cfg["repot"] = {"mesos": now_mesos, "at": time.time(), "trip": profit if profit is not None else last.get("trip"),
                              "trips": int(last.get("trips") or 0) + 1}
+        self.cfg["pot_cost"] = 0                         # (potions used: counted from this ring)
         save_config(self.cfg)
         self.hud.ring(profit)
         self.status.set(f"Ding! Repot saved at {fmt_num(now_mesos)} mesos."
                         + (f" That trip made {profit:+,} mesos." if profit is not None else
                            " Ring it again after your next trip to see what the trip made."))
 
+    def clear_repot(self, confirm=True):
+        """Forgets the repot bell's history (the last repot, the last trip and its time), for a fresh start."""
+        if not isinstance(self.cfg.get("repot"), dict):
+            self.status.set("The repot bell has nothing saved yet.")
+            return
+        if confirm and not messagebox.askyesno(
+                "Clear repot history", "Forget the last repot, the last trip and its time?\n\n"
+                "The repot row starts blank again. Ring the bell after your next shop trip to start over.",
+                parent=self.root):
+            return
+        self.cfg.pop("repot", None)
+        self.cfg.pop("pot_cost", None)
+        self._repot_pending = False
+        save_config(self.cfg)
+        self.status.set("Repot history cleared. Ring the bell after your next shop trip to start over.")
+        self._update_display()
+
     def _repot_content(self, guess=0.0):
         """What the card's repot row shows (guess: mesos probably picked up since the inventory was closed)."""
         r = self.cfg.get("repot") if isinstance(self.cfg.get("repot"), dict) else {}
         if not isinstance(r.get("mesos"), int):
-            return {"repot_at": "Ring the bell", "repot_since": "-", "repot_trip": "-", "repot_time": "-"}
+            return {"repot_at": "Ring the bell", "repot_since": "-", "repot_trip": "-", "repot_time": "-",
+                    "repot_pots": self._pot_cost_text()}
         now = self.meso.value
         trip = r.get("trip")
         since = time.time() - r["at"] if isinstance(r.get("at"), (int, float)) else None
@@ -4162,7 +4631,18 @@ class App:
                 "repot_since": (f"{'~' if guess else ''}{now + guess - r['mesos']:+,.0f}" if now is not None
                                 else "Open your inventory"),
                 "repot_trip": f"{trip:+,}" if isinstance(trip, int) else "-",
-                "repot_time": fmt_dur(since) if since is not None and since >= 0 else "-"}
+                "repot_time": fmt_dur(since) if since is not None and since >= 0 else "-",
+                "repot_pots": self._pot_cost_text()}
+
+    def _pot_cost_text(self):
+        """The potions used since the last repot, less those picked up, at the shops' prices ("-" until
+        the popup's been read). More picked up than used shows as a gain."""
+        if not self.cfg.get("pots"):
+            return "-"
+        cost = int(self.cfg.get("pot_cost") or 0)
+        seen = self.pots.seen_at
+        stale = self.session.on and (seen is None or time.monotonic() - seen > POTS_STALE)
+        return ("~" if stale else "") + (f"-{fmt_num(cost)}" if cost > 0 else f"+{fmt_num(-cost)}" if cost < 0 else "0")
 
     def toggle_hud_editing(self):
         """Edit mode for the tracker card: drag it, resize it, pick its layout and theme (Shift+5 by default)."""
@@ -4216,6 +4696,7 @@ class App:
 
     def reset(self):
         self.session.reset()
+        self.picked_mesos, self.loot, self.pickups_seen, self.session_pot_cost = 0, {}, False, 0
         self.autolog.reset_clock()
         self.skip_log = False
         self._show_skip_log()
