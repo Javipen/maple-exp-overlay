@@ -17,8 +17,9 @@ Resized to fit beside the chat, using edit mode (Shift+5), at the start of a ses
   never sends input to the game.
 - **Shows a tracker card over the game.** The card shows your level, the EXP gauge, the time to your
   next level, EXP/hr, mesos/hr, and what this session has made.
-- **Reads your pickups** from the game's white message lines ("You have gained mesos (+15)",
-  "Lupin's Banana x1 earned. (Etc)"):
+- **Reads the game's messages** 10 times a second, by the game's own font: every kill's EXP ("You
+  received EXP (+32)") and every pickup ("You have gained mesos (+15)", "Lupin's Banana x1 earned.
+  (Etc)"):
   - mesos picked up are counted exactly, inventory open or not
   - loot is counted and priced at what NPC shops pay (Settings > Loot)
   - **Profit** on the card: mesos picked up + loot, less the potions used

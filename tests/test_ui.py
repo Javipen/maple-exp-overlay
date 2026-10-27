@@ -35,6 +35,7 @@ def pump(seconds=0.0):
 m.save_config({**m.DEFAULTS, "hotkeys_on": False, "pos": [60, 60]})
 root = m.tk.Tk()
 app = m.App(root, m.DigitTemplates.load())
+app.messages = None                     # (the tests don't watch the real screen's messages: what's there is told to it)
 root.update()
 t, meso = app.tracker, app.meso
 check("the main window is the simple one", isinstance(app.view, m.SimpleView))
@@ -351,46 +352,30 @@ app._update_display()
 check("...then it makes the slime hop", len(app.hud.moves.hops) == hops + 1
       and any("+777 EXP" == f[0] for f in app.hud.moves.floats))
 
-# kills, from the game's EXP messages: a hop per kill, worth what an EXP line has been worth
+# kills, from the game's messages (msgwatch.py): a hop per kill, with the EXP its lines say
 tr.running = True
-app._kill_events.clear()
-app._gain_marks.clear()
-app._per_line, app._last_kill_at = None, -1e9
+app._kill_exp.clear()
+app._last_kill_at = -1e9
 app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
-t0 = m.time.monotonic()
-app._lines_trusted = lambda now: True                          # (lines have had EXP behind them: see below)
-app._gain_marks.append((t0 - 100, tr.gained))
-app._kills(2, t0 - 90)                                          # before anything is learned: "+EXP"
-check("a kill makes the slime hop at once, \"+EXP\" until a line's worth is known",
-      len(app.hud.moves.hops) == 1 and app.hud.moves.floats[-1][0] == "+EXP")
-for i in range(5):                                              # 5 kills in a party: 2 lines each, 49 EXP a kill
-    app._kills(2, t0 - 80 + i)
-tr.gained += 6 * 49
-check(f"what a line is worth is learned from the EXP gained over the lines seen ({app._exp_per_line():.1f})",
-      abs(app._exp_per_line() - 24.5) < 0.01)
-app._kills(2, t0)
-check(f"so a kill (its 2 lines) shows the EXP it's worth ({app.hud.moves.floats[-1][0]})",
-      app.hud.moves.floats[-1][0] == "+49 EXP")
+app._messages([("exp", 17), ("exp", 5)], m.time.monotonic())
+check(f"a kill (its EXP and party bonus lines) makes the slime hop at once, with their EXP ({app.hud.moves.floats[-1][0]})",
+      len(app.hud.moves.hops) == 1 and app.hud.moves.floats[-1][0] == "+22 EXP")
 seen = (tr.gained, app.level_up_at)
 hops_before = len(app.hud.moves.hops)
 app._hud_seen = seen
-tr.gained += 49
+tr.gained += 22
 app._update_hud(None, None, 57, (999941, 96.98), "Tracking")
 check("while kills are seen, the EXP readings don't make it hop again (no double hops)",
       len(app.hud.moves.hops) == hops_before)
 tr.hidden, tr.kill_hint = True, 0.0
-worth = app._exp_per_line()
-app._kills(2, m.time.monotonic())
-check(f"while the game hides the EXP number, each kill carries the EXP on ({tr.kill_hint:.1f})",
-      abs(tr.kill_hint - 2 * worth) < 0.01)
+app._kill(49, m.time.monotonic())
+check(f"while the game hides the EXP number, each kill carries its EXP on ({tr.kill_hint:.1f})", tr.kill_hint == 49)
 # No EXP messages seen lately (turned off, or covered), and the number hidden: hops from the % steps.
-# A clean history: 10 kills of 2 lines, 49 EXP each, then one 0.01% step at Lv 57 (103 EXP, about 2 kills).
+# A clean history: 10 kills of 49 EXP each, then one 0.01% step at Lv 57 (103 EXP, about 2 kills).
 t0 = m.time.monotonic()
-app._kill_events.clear()
-app._gain_marks.clear()
-app._gain_marks.append((t0 - 120, 0))
+app._kill_exp.clear()
 for i in range(10):
-    app._kill_events.append((t0 - 100 + i, 2))
+    app._kill_exp.append((t0 - 100 + i, 49))
 tr.gained = 10 * 49
 app._last_kill_at = -1e9
 app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
@@ -413,35 +398,9 @@ tr._reads += 1
 app._update_hud(None, None, 57, (500150, 50.01), "Paused")
 check(f"paused, EXP coming in still makes the slime hop ({[f[0] for f in app.hud.moves.floats]})",
       len(app.hud.moves.hops) == 1 and app.hud.moves.floats[-1][0] == "+150 EXP")
-was = len(app._kill_events)
-app._kills(1, m.time.monotonic())
-check("...and so does a kill seen in the messages (without teaching what a line is worth)",
-      len(app.hud.moves.hops) == 2 and len(app._kill_events) == was)
-
-# yellow things that aren't EXP lines (damage numbers): the lines must have EXP come in right behind them
-del app._lines_trusted
-now = m.time.monotonic()
-app._line_checks.clear()
-app._rises.clear()
-app.hud.moves = m.HudCard.__init__.__globals__["Moves"]()
-app._kills(1, now)
-check("until lines have been seen with EXP behind them, they don't make it hop", len(app.hud.moves.hops) == 0)
-app._line_checks.clear()
-for i in range(4):                                              # 4 lines, each with EXP 1.5 s after
-    app._line_checks.append([now - 60 + 10 * i, None])
-    app._rises.append([now - 58.5 + 10 * i, False])
-app._kills(1, now)
-check("lines with EXP coming in behind them are trusted: they make it hop", len(app.hud.moves.hops) == 1)
-for i in range(8):                                              # then damage numbers: many lines, no EXP
-    app._line_checks.append([now - 20 + 0.5 * i, None])
-app._kills(1, now)
-check("lines with no EXP behind them stop being trusted: no more hops from them", len(app.hud.moves.hops) == 1)
-app._line_checks.clear()
-app._rises.clear()
-for i in range(10):                                             # hitting a monster: 10 "lines", 1 kill's EXP
-    app._line_checks.append([now - 30 + 0.3 * i, None])
-app._rises.append([now - 28, False])
-check("one EXP rise backs one line only (a monster takes many hits)", not app._lines_trusted(now))
+app._kill(30, m.time.monotonic())
+check("...and so does a kill seen in the messages (the EXP not carried on: tracking's off)",
+      len(app.hud.moves.hops) == 2 and tr.kill_hint == 0)
 
 # the repot bell: what each trip made, from one ring to the next
 app.cfg.pop("repot", None)
@@ -752,6 +711,18 @@ app.reset()
 check("Reset starts the pickups again from nothing", app.picked_mesos == 0 and not app.loot and not app.pickups_seen)
 app._pickups([("mesos", 99)], m.time.monotonic())
 check("...and before Start, nothing is counted", app.picked_mesos == 0)
+app.session.started, running = True, app.tracker.running
+app.tracker.running = True
+app._pickups([("mesos", 40)], m.time.monotonic())
+app.tracker.running = False
+app._pickups([("mesos", 60)], m.time.monotonic())
+check(f"mesos/hr counts only what's picked up while the EXP clock runs, as EXP/hr does "
+      f"({app.timed_mesos} of {app.picked_mesos})", app.picked_mesos == 100 and app.timed_mesos == 40)
+app._messages([("mesos", 5), ("exp", 9), ("item", "Lupin's Banana", 1, "Etc")], m.time.monotonic())
+check("message lines go where they belong: mesos and loot picked up, a kill's EXP",
+      app.picked_mesos == 105 and list(app.loot.values()) == [("Lupin's Banana", 1)] and app._kill_exp[-1][1] == 9)
+app.reset()
+app.session.started, app.tracker.running = False, running
 app.cfg["save_captures"] = True
 app._save_capture("pickups", cv2.imread(str(ROOT / "tests" / "frames" / "pickups_mesos.png")), [("mesos", 15)])
 saved = list((m.DATA_DIR / "captures").glob("pickups-*.png"))

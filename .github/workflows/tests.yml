@@ -26,12 +26,12 @@ jobs:
         run: python tests/test_logic.py
       - name: Screen-reading tests
         run: python tests/test_screen.py
-      - name: Kill watcher tests (the EXP messages)
-        run: python tests/test_killwatch.py
       - name: Potion popup tests (the controller's left trigger)
         run: python tests/test_pots.py
-      - name: Pickup tests (the white pickup lines)
+      - name: Pickup tests (reading pickup lines)
         run: python tests/test_pickups.py
+      - name: Message watcher tests (the message stack, read by the game's font)
+        run: python tests/test_msgwatch.py
       - name: Bug report tests
         run: python tests/test_report.py
       - name: Text-reading tests (Tesseract, when installed)

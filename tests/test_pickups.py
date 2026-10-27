@@ -1,5 +1,5 @@
-"""Pickups, from the game's white message lines (pickwatch.py): reading what a line says, finding the
-lines in real 4K pictures (cropped to the lines), and reading them with Tesseract when it's here.
+"""Pickups, from the game's white message lines (pickwatch.py): reading what a line says, and reading
+real 4K lines (cropped to the lines) by the game's font, and with Tesseract when it's here.
 Run from the project folder:  py -3 tests/test_pickups.py"""
 import os
 import sys
@@ -11,8 +11,8 @@ sys.path.insert(0, str(ROOT))
 os.environ["MAPLE_EXP_DATA"] = tempfile.mkdtemp()
 import cv2  # noqa: E402
 
-import killwatch as kw  # noqa: E402
 import maple_exp as m  # noqa: E402
+import msgwatch as mw  # noqa: E402
 import ocr  # noqa: E402
 import pickwatch as pk  # noqa: E402
 
@@ -52,27 +52,30 @@ check("...an item's name from the clean readings, its count 1 when it can't be r
 check("...and nothing when they don't agree", pk.vote(["You have gained mesos (+15)", "You have gained mesos (+16)",
                                                         "junk", "more junk"]) is None)
 
-# ---- the lines in real pictures (a 4K game: text about 20 px)
+# ---- real lines (a 4K game: text about 20 px), from a picture of each line's row and where it starts and ends
 FRAMES = ROOT / "tests" / "frames"
 mesos = cv2.imread(str(FRAMES / "pickups_mesos.png"))
-lines = kw.find_lines(mesos, 20, 60, kw.white)
-check(f"the white pickup lines are found ({len(lines)})", len(lines) == 2)
-check("...and the yellow EXP lines aren't, among them",
-      len(kw.find_lines(cv2.imread(str(FRAMES / "pickups_item.png")), 20, 60, kw.white)) <= 2)
+item = cv2.imread(str(FRAMES / "pickups_item.png"))
+LINES = [(mesos, 40, (58, 516), ("mesos", 17)), (mesos, 79, (58, 516), ("mesos", 15)),
+         (item, 22, (30, 518), ("item", "Lupin's Banana", 1, "Etc"))]
+
+
+def row(img, y):
+    return img[max(0, y - 21):y + 22]
+
+
+font = mw.Font(ROOT / "assets")
+got = [font.read(row(img, y), 1.0, x1)[:2] for img, y, (x0, x1), _ in LINES]
+check(f"the game's font reads the mesos lines, and finds no amount in the item line ({got})",
+      got == [("mesos", 17), ("mesos", 15), ("text", None)])
 
 tess = os.environ.get("TESSERACT") or m.find_tesseract()
 build = ROOT / "build" / "dist" / "Maple Classic Exp Overlay" / "tesseract" / "tesseract.exe"
 tess = tess or (str(build) if build.is_file() else None)
 if tess:
     T = ocr.Tesseract(tess)
-    got = [pk.vote(T.read_lines(pk.line_pictures(mesos, line, 20))) for line in lines]
-    check(f"they're read right: mesos picked up ({got})", got == [("mesos", 17), ("mesos", 15)])
-    item = cv2.imread(str(FRAMES / "pickups_item.png"))
-    got = pk.vote(T.read_lines(pk.line_pictures(item, (23, 30, 518, None), 20)))
-    check(f"...and an item ({got})", got == ("item", "Lupin's Banana", 1, "Etc"))
-    w = pk.PickupWatcher(T.read_lines)
-    w.look(mesos[:80], 20, 60)                                  # (the first look: what's there is old)
-    check("only new lines are read: a new one at the bottom", w.look(mesos, 20, 60) == [("mesos", 15)])
+    got = [pk.read_line(row(img, y), span, 20, T.read_lines) for img, y, span, _ in LINES]
+    check(f"Tesseract reads them too: the mesos, and the item ({got})", got == [want for *_, want in LINES])
 else:
     print("     (Tesseract isn't here: reading the pictures not tested)")
 
