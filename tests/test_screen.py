@@ -88,6 +88,18 @@ for name, info in sorted(PARTS["inventory"].items()):
     ok, total = counts["found see-through"]
     print(f"     (mesos box found by its outline, {size}: {ok}/{total})")
 
+# ---- a box found too narrow (something across its left part): never a number cut off at the front
+for name, info in sorted(PARTS["inventory"].items()):
+    inv, (bx, by, bw, bh) = cv2.imread(str(FRAMES / name)), info["box"]
+    cut = []
+    for i in range(1, len(str(info["mesos"]))):
+        left = int(m._mesos_spot((bx, by, bw, bh), i) - 0.3 * bh) + 1      # room for only i digits
+        got = m.read_mesos_positions(inv, (left, by, bx + bw - left, bh), templates)
+        if got and got[0] != info["mesos"]:
+            cut.append(f"{got[0]} with room for {i} digits")
+    check(f"a box too narrow for the number never reads it short, EXP digits {info['gh']:.0f} px "
+          f"({', '.join(cut) or 'none read short'})", not cut)
+
 # ---- storage and trade windows show a second mesos box: never read the wrong one
 class FakeScreen:
     """Stands in for mss: one monitor showing `image` (the game), grab() cuts out of it."""

@@ -28,6 +28,10 @@ jobs:
         run: python tests/test_screen.py
       - name: Kill watcher tests (the EXP messages)
         run: python tests/test_killwatch.py
+      - name: Potion popup tests (the controller's left trigger)
+        run: python tests/test_pots.py
+      - name: Pickup tests (the white pickup lines)
+        run: python tests/test_pickups.py
       - name: Bug report tests
         run: python tests/test_report.py
       - name: Text-reading tests (Tesseract, when installed)

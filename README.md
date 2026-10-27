@@ -17,6 +17,11 @@ Resized to fit beside the chat, using edit mode (Shift+5), at the start of a ses
   never sends input to the game.
 - **Shows a tracker card over the game.** The card shows your level, the EXP gauge, the time to your
   next level, EXP/hr, mesos/hr, and what this session has made.
+- **Reads your pickups** from the game's white message lines ("You have gained mesos (+15)",
+  "Lupin's Banana x1 earned. (Etc)"):
+  - mesos picked up are counted exactly, inventory open or not
+  - loot is counted and priced at what NPC shops pay (Settings > Loot)
+  - **Profit** on the card: mesos picked up + loot, less the potions used
 - **Three layouts:** *Minimal*, *Session EXP*, and *Full*, which adds the mesos and repot rows.
 - **Four themes:** Brown, Orange, Blue and Steel.
 - **A slime that reacts to what you're doing:**
@@ -31,6 +36,8 @@ Resized to fit beside the chat, using edit mode (Shift+5), at the start of a ses
   - It also shows what you've made since, live, in green or red.
   - It shows **what the last trip made, exactly**: buying potions and selling loot included, from
     one ring to the next.
+  - With a controller: hold the left trigger now and then, and **Pot cost** shows what the potions you
+    used since the last ring cost, at the shops' prices.
 - **Calibrates for 5 minutes before showing rates.** EXP/hr, mesos/hr and the time to level wait until
   there's enough to go on, so you don't get wild early numbers.
 - **Move and resize the card** (Shift+5):
