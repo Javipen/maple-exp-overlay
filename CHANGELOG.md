@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.0 (in testing)
+
+- **A new message watcher: kills and pickups counted line by line.** The game's messages at the bottom
+  right are looked at 10 times a second and read by the game's own font (its digits are always drawn
+  the same), instead of being read by Tesseract a couple of times a second. In recordings of play, the
+  old way missed close to half the mesos picked up: a line is only bright for about a second, all
+  meso lines looked alike to it, and a line it couldn't read was lost. Now:
+  - **every line is counted once**, two identical "+16" lines in a row included, and a skill's flash
+    over the messages doesn't add any
+  - **amounts are read exactly**: on 4K pictures of play, every one of 293 lines (Tesseract read some
+    "+15" as 145, "+22" as 272)
+  - **item lines are read again** (they were never read: a dimmed line was cut in half)
+  - **the slime shows each kill's real EXP**, from its EXP and party bonus lines
+- **Mesos/hr is on the same clock as EXP/hr.** Mesos picked up while paused (or idle) still count in
+  Mesos gained and Profit, but not toward the rate, as that time isn't counted.
+
 ## 1.1.0
 
 - **Pickups, read from the game's white message lines.** "You have gained mesos (+15)" and "Lupin's

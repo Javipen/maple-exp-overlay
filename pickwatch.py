@@ -1,22 +1,17 @@
-"""Notices pickups, from the game's white messages at the bottom right.
+"""Reads pickup lines with Tesseract: the item lines the game's font can't (msgwatch.py reads the
+amounts of the others).
 
-Picking something up prints a white line in the same stack as the yellow EXP lines:
-"You have gained mesos (+15)" for mesos, "Green Mushroo... x1 earned. (Etc)" for an item (its
-name cut short when it's long, how many, and its inventory tab). This finds the new white lines
-the way the kill watcher finds new EXP lines (killwatch.py), and reads each new one with
-Tesseract, a few ways at once, taking the answer most of them agree on. Lines it can't make
-sense of are left out: a missed pickup is better than a wrong one.
-
-(Some EXP lines are white too, and the names over characters are white: their text tells them
-apart, and they're ignored.)
+Picking something up prints a white line in the message stack: "You have gained mesos (+15)"
+for mesos, "Green Mushroo... x1 earned. (Etc)" for an item (its name cut short when it's long,
+how many, and its inventory tab). A line is read a few ways at once, taking the answer most of
+them agree on. Lines it can't make sense of are left out: a missed pickup is better than a
+wrong one. (White EXP lines are told apart by their text, and ignored.)
 """
 import re
 from collections import Counter
 
 import cv2
 import numpy as np
-
-import killwatch as kw
 
 _AMOUNT = re.compile(r"\+\s*(\d[\d,]*)(.?)")
 # "earned" as it's read: earned, eared, eamed, carned...
@@ -92,35 +87,10 @@ def vote(texts):
     return ("item", names.most_common(1)[0][0], counts.most_common(1)[0][0] if counts else 1, key[2])
 
 
-class PickupWatcher:
-    """Looks at the message area again and again, and reads the new white lines each time.
+def read_line(band, span, text_h, read_lines):
+    """What a white message line says, from a picture of its row (band: the line's middle half way
+    down) and where it starts and ends in it (span): parse()'s answer, or None.
 
     read_lines: reads a list of pictures, one line of text each (Tesseract)."""
-
-    def __init__(self, read_lines):
-        self.read_lines = read_lines
-        self.before = None
-
-    def reset(self):
-        self.before = None
-
-    def look(self, bgr, text_h, right_slack):
-        """The pickups in the white lines that came in since the last look: a list of parse() results."""
-        lines = kw.find_lines(bgr, text_h, right_slack, kw.white)
-        if self.before is None:                       # (the first look: what's there is old)
-            self.before = lines
-            return []
-        n = kw.count_new(self.before, lines, 0.45 * text_h)
-        self.before = lines
-        new = lines[-n:] if n else []                 # (new lines come in at the bottom)
-        if not new:
-            return []
-        pictures = [line_pictures(bgr, line, text_h) for line in new]
-        texts = self.read_lines([p for group in pictures for p in group])
-        out, i = [], 0
-        for group in pictures:
-            got = vote(texts[i:i + len(group)])
-            i += len(group)
-            if got:
-                out.append(got)
-        return out
+    x0, x1 = span
+    return vote(read_lines(line_pictures(band, (band.shape[0] / 2, x0, x1, None), text_h)))

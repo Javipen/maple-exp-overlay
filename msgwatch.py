@@ -146,6 +146,7 @@ class Line:
     kind: str = None
     amount: int = None
     band: np.ndarray = None                        # its latest picture (Tesseract reads "text" lines from it)
+    span: tuple = None                             # where it starts and ends in that picture (x)
     done: bool = False
 
 
@@ -376,7 +377,7 @@ class MessageWatcher:
             if line.done:
                 continue
             kind, amount, sure = rows[line.row].said
-            line.band = bands[line.row]
+            line.band, line.span = bands[line.row], (rows[line.row].left, rows[line.row].right)
             line.tries.append((kind, amount, sure))
             if sure or len(line.tries) >= TRIES:
                 self._finish(line, out)

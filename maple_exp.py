@@ -47,8 +47,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 import ocr
 import report
 from hud import LAYOUTS as HUD_LAYOUTS, THEMES as HUD_THEMES, HudCard
-from killwatch import KillWatcher, message_area
-from pickwatch import PickupWatcher
+from msgwatch import Font as MessageFont, MessageWatcher, stack_area
+from pickwatch import read_line as read_pickup
 from potwatch import PotReader, guess_item, same_icon, search_area as pot_search_area
 from platforms import create_platform, hotkey_text, parse_hotkey
 from report import Health, Recent
@@ -83,7 +83,7 @@ def _local_only():
 
 _local_only()
 
-VERSION = "1.1.0"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
+VERSION = "1.2.0"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
 WINDOW_TITLE = "Maple Classic Exp Overlay"    # the version is shown in Settings
 OLD_TITLES = ("Maple EXP/hr",)               # what versions before 0.9.3 were called
 
@@ -100,14 +100,13 @@ TEMPLATE_PATH = ASSETS / "digits.npz"
 ICON_PATH = ASSETS / "icon.ico"
 POLL_SECONDS = 1.5          # how often to read the EXP bar
 MESOS_UNSEEN = 15           # seconds without reading the mesos (the inventory closed) before the card guesses them
-KILL_POLL = 0.25            # how often the game's message area is checked for new EXP lines (kills)
+MESSAGE_POLL = 0.1          # how often the game's message stack is looked at (msgwatch.py)
+POT_EVERY = 5               # ...and the potion popup, every this many of those looks
 KILL_QUIET = 12             # seconds without EXP lines before the slime hops from the EXP readings instead
-KILL_CHECK = 4.5            # seconds after a new EXP line within which the EXP bar must go up, for the line to be real
 POTS_STALE = 600            # seconds of tracking without a look at the potion popup before the card marks pot cost "~"
 POTS_PER_MINUTE = 60        # more potions than this a minute (since the last count) used: likely a misread
 POTS_PICKED_PER_MINUTE = 4  # potions a minute monsters might drop; a bigger rise is a purchase
 POTS_UNDO = 300             # seconds after a drop during which going back to before undoes it
-PICKUP_POLL = 0.5           # how often the message area is checked for new pickup lines (white)
 CAPTURES = 400              # at most this many pictures kept in the captures folder (Settings: save pictures)
 # What NPC shops pay for some common drops (meowdb.com, MapleStory Classic); anything else is 0 until
 # it's set in Settings > Loot.
@@ -3083,17 +3082,15 @@ class App:
 
         self._worker_thread = threading.Thread(target=self._worker, daemon=True)
         self._worker_thread.start()
-        # Kills, from the game's EXP messages (killwatch.py): the slime hops on each, and they keep the
-        # EXP going while the game hides the number.
-        self.kills = KillWatcher()
-        self._kill_events = deque(maxlen=600)   # (when, new EXP lines), while tracking
-        self._gain_marks = deque(maxlen=900)    # (when, EXP gained so far), to learn the EXP per line
+        # The game's message stack (msgwatch.py): kills (the EXP lines: the slime hops on each, and they
+        # keep the EXP going while the game hides the number), and mesos and items picked up.
+        try:
+            self.messages = MessageWatcher(MessageFont(ASSETS))
+        except Exception as e:
+            self.messages = None
+            log_error("loading the message font", e)
+        self._kill_exp = deque(maxlen=200)      # (when, EXP) for each kill seen in the messages
         self._last_kill_at = -1e9
-        self._per_line = None                   # EXP per EXP line, learned
-        # Yellow things that aren't EXP lines (damage numbers by the messages) can look like them: so the
-        # lines only make the slime hop while most of them have had EXP come in right behind them.
-        self._line_checks = deque(maxlen=40)    # [when, real?] for each look that found new lines (None: not known yet)
-        self._rises = deque(maxlen=80)          # [when, used] each time the EXP bar went up
         self._hud_pending = None                # an EXP rise seen once, waiting for the next reading to agree
         # Potions used, from the controller's potion popup (potwatch.py), priced at the shops' prices.
         self.pots = PotTracker()
@@ -3102,13 +3099,12 @@ class App:
         except Exception as e:
             self.pot_reader = None
             log_error("loading the potion digits", e)
-        self._pot_area, self._pot_turn = None, 0  # (where the popup was found, for the game size it was found at)
+        self._pot_area = None                   # (where the popup was found, for the game size it was found at)
         self.session_pot_cost = 0               # potions used since Start (less those picked up), at shop prices
-        # Pickups, from the white lines in the message area (pickwatch.py): mesos and items picked up.
-        self.pickups = PickupWatcher(lambda images: TESS.read_lines(images))
-        self.picked_mesos, self.loot, self.pickups_seen = 0, {}, False
-        threading.Thread(target=self._kill_worker, daemon=True).start()
-        threading.Thread(target=self._pickup_worker, daemon=True).start()
+        # Pickups, from the message stack's white lines: mesos and items picked up. picked_mesos counts
+        # all of them since Start; timed_mesos only those while the EXP clock runs, for mesos/hr.
+        self.picked_mesos, self.timed_mesos, self.loot, self.pickups_seen = 0, 0, {}, False
+        threading.Thread(target=self._message_worker, daemon=True).start()
         root.after(200, self._pump)
         root.after(500, self._refresh)
 
@@ -3971,46 +3967,49 @@ class App:
                 self.stop_evt.wait(max(0.1, POLL_SECONDS - (time.monotonic() - t0)))
             self.health.alive = False
 
-    def _kill_worker(self):
-        """Looks at the game's message area a few times a second for new EXP lines (kills)."""
+    def _message_worker(self):
+        """Looks at the game's message stack 10 times a second (msgwatch.py) for new lines: kills (the
+        EXP lines) and pickups (the white lines; an item's name is read by Tesseract). Every few looks,
+        the controller's potion popup too."""
+        turn = 0
         with mss.mss() as sct:
             while not self.stop_evt.is_set():
+                t0 = time.monotonic()
                 try:
                     rect, g = self.reader.last_rect, self.reader.gh
-                    if rect and g and self.reader.hwnd and self.reader.mode == "window":
-                        shot = self.reader._hide_own(grab(sct, *message_area(rect)))
+                    if self.messages and rect and g and self.reader.hwnd and self.reader.mode == "window":
+                        shot = self.reader._hide_own(grab(sct, *stack_area(rect, g)))
                         if shot:
-                            n = self.kills.look(shot[0], g, max(8, int(0.03 * rect[2])))
-                            if n:
-                                self.q.put(("kills", (n, time.monotonic())))
-                        self._pot_turn = (self._pot_turn + 1) % 2
-                        if self.pot_reader and not self._pot_turn:           # (every other look)
-                            self._look_for_pots(sct, rect, g)
-                    else:
-                        self.kills.reset()
-                except Exception as e:
-                    log_error("watching for kills", e)
-                self.stop_evt.wait(KILL_POLL)
-
-    def _pickup_worker(self):
-        """Reads the new white lines in the game's message area: mesos and items picked up."""
-        with mss.mss() as sct:
-            while not self.stop_evt.is_set():
-                try:
-                    rect, g = self.reader.last_rect, self.reader.gh
-                    if tesseract_ok and rect and g and self.reader.hwnd and self.reader.mode == "window":
-                        shot = self.reader._hide_own(grab(sct, *message_area(rect)))
-                        if shot:
-                            found = self.pickups.look(shot[0], g, max(8, int(0.03 * rect[2])))
+                            found = self._said(self.messages.look(shot[0], g, t0), g)
                             if found:
-                                self.q.put(("pickups", (found, time.monotonic())))
+                                self.q.put(("messages", (found, t0)))
                                 if self.cfg.get("save_captures"):
-                                    self._save_capture("pickups", shot[0], found)
-                    else:
-                        self.pickups.reset()
+                                    self._save_capture("messages", shot[0], found)
+                        turn = (turn + 1) % POT_EVERY
+                        if self.pot_reader and not turn:
+                            self._look_for_pots(sct, rect, g)
+                    elif self.messages:
+                        self.messages.reset()
                 except Exception as e:
-                    log_error("reading pickups", e)
-                self.stop_evt.wait(PICKUP_POLL)
+                    log_error("watching the messages", e)
+                self.stop_evt.wait(max(0.02, MESSAGE_POLL - (time.monotonic() - t0)))
+
+    @staticmethod
+    def _said(lines, gh):
+        """New message lines (msgwatch.Line) as what they say: ("exp", amount) for an EXP or party bonus
+        line, ("mesos", amount), ("item", name, how many, tab). A white line with no amount is read
+        by Tesseract (an item, mostly); lines that can't be read are left out."""
+        out = []
+        for line in lines:
+            if line.kind in ("exp", "bonus"):
+                out.append(("exp", line.amount))
+            elif line.kind == "mesos":
+                out.append(("mesos", line.amount))
+            elif line.kind == "text" and line.colour == "white" and tesseract_ok and line.band is not None:
+                got = read_pickup(line.band, line.span, gh, TESS.read_lines)
+                if got:
+                    out.append(got)
+        return out
 
     def _save_capture(self, kind, img, what):
         """Settings > Save pictures for testing: keeps a picture, and what was read from it, in the data
@@ -4029,6 +4028,14 @@ class App:
         except Exception as e:
             log_error("saving a picture for testing", e)
 
+    def _messages(self, found, when):
+        """New message lines read (see _said): a kill's EXP, and pickups."""
+        if any(p[0] == "exp" for p in found):
+            self._kill(sum(p[1] for p in found if p[0] == "exp"), when)
+        picked = [p for p in found if p[0] in ("mesos", "item")]
+        if picked:
+            self._pickups(picked, when)
+
     def _pickups(self, found, when):
         """Pickup lines read: mesos picked up count exactly, items go on the loot list (potions: see PotTracker)."""
         if not self.session.started:
@@ -4037,6 +4044,8 @@ class App:
             self.pickups_seen = True
             if p[0] == "mesos":
                 self.picked_mesos += p[1]
+                if self.tracker.running:                # (mesos/hr: on the same clock as EXP/hr)
+                    self.timed_mesos += p[1]
                 continue
             _, name, qty, tab = p
             key = _loot_key(name)
@@ -4101,53 +4110,16 @@ class App:
         if changed:
             save_config(self.cfg)
 
-    def _kills(self, n, when):
-        """n new EXP lines came in: the slime hops, with the EXP they're likely worth floating up. It hops
-        whether or not tracking is on (paused, it's still EXP); only kills while tracking teach what a
-        line is worth, as that's learned from the EXP counted."""
+    def _kill(self, exp, when):
+        """A kill's lines came in (its EXP, and the party bonus with it): the slime hops at once, with the
+        EXP floating up. It hops whether or not tracking is on (paused, it's still EXP)."""
         t = self.tracker
-        self._line_checks.append([when, None])
-        if not self._lines_trusted(time.monotonic()):
-            return                                      # (the EXP bar's readings make it hop instead)
         self._last_kill_at = when
-        if self.session.on and t.running:
-            self._kill_events.append((when, n))
-        per_line = self._exp_per_line()
-        amount = per_line * n if per_line else None
-        if t.hidden and amount and t.running:
-            t.kill_hint += amount                       # (the EXP number is hidden: keep it going)
+        self._kill_exp.append((when, exp))
+        if t.hidden and t.running:
+            t.kill_hint += exp                          # (the EXP number is hidden: keep it going)
         if self.hud.window.shown:
-            self.hud.celebrate(exp=amount, kill=True)
-
-    def _lines_trusted(self, now):
-        """Are the new "EXP lines" seen lately really EXP lines? Each one is real if the EXP bar went up
-        within KILL_CHECK seconds of it, each rise backing one line only (a monster takes many hits, so
-        damage numbers far outnumber the rises). They're trusted while most of the last 10 were real."""
-        for check in self._line_checks:
-            if check[1] is None and now - check[0] > KILL_CHECK:
-                rise = next((r for r in self._rises if not r[1] and check[0] - 1 <= r[0] <= check[0] + KILL_CHECK), None)
-                if rise:
-                    rise[1] = True
-                check[1] = rise is not None
-        known = [real for _, real in self._line_checks if real is not None][-10:]
-        return len(known) >= 3 and sum(known) >= 0.6 * len(known)
-
-    def _exp_per_line(self):
-        """The EXP one EXP line is worth, on average, over the last 3 minutes: the EXP gained over the
-        lines seen. (In a party a kill shows two lines, its EXP and the party bonus; the average
-        covers both, so lines x average is still the EXP that came in.)"""
-        now = time.monotonic()
-        # (Not the last 2 seconds' lines: their EXP may not have been read yet, the EXP bar being read
-        # every 1.5 seconds. Counting them would make a line look worth less than it is.)
-        recent = [(w, n) for w, n in self._kill_events if now - 180 <= w <= now - 2]
-        if recent and self._gain_marks:
-            start = recent[0][0]
-            before = [g for w, g in self._gain_marks if w < start]
-            gained = self.tracker.gained - (before[-1] if before else self._gain_marks[0][1])
-            lines = sum(n for _, n in recent)
-            if lines >= 4 and gained > 0:
-                self._per_line = gained / lines
-        return self._per_line
+            self.hud.celebrate(exp=exp, kill=True)
 
     def _first_run(self):
         """Once per install or update: a new install picks its compact shape, an update shows what's new."""
@@ -4247,12 +4219,10 @@ class App:
                                     "(details are in errors.log: Settings > Open data folder)")
                 elif kind == "hotkey":
                     self._hotkey(payload)
-                elif kind == "kills":
-                    self._kills(*payload)
+                elif kind == "messages":
+                    self._messages(*payload)
                 elif kind == "pots":
                     self._pots(*payload)
-                elif kind == "pickups":
-                    self._pickups(*payload)
                 else:
                     self._handle(payload)
         except queue.Empty:
@@ -4478,9 +4448,8 @@ class App:
         """EXP came in but no EXP messages were seen (turned off, or covered): hop from the EXP itself.
         While the game hides the number the EXP comes in steps of 0.01% of the level, often a few
         kills' worth: then a hop for each kill it's likely worth (up to 3)."""
-        per_line = self._exp_per_line()
-        events = [n for w, n in self._kill_events if w >= time.monotonic() - 180]
-        per_kill = per_line * sum(events) / len(events) if per_line and events else None
+        recent = [exp for w, exp in self._kill_exp if w >= time.monotonic() - 180]
+        per_kill = sum(recent) / len(recent) if recent else None
         hops = min(3, max(1, round(gained / per_kill))) if self.tracker.hidden and per_kill else 1
         for _ in range(hops):
             self.hud.celebrate(exp=gained / hops)
@@ -4489,7 +4458,6 @@ class App:
         """The EXP tracker card over the game (hud.py): shown while the game (or this overlay) is in
         front and its window is known, or while it's being moved."""
         t, now_mono = self.tracker, time.monotonic()
-        self._gain_marks.append((now_mono, t.gained))     # (to learn what an EXP line is worth)
         if getattr(self, "_repot_pending", False) and self.meso.value is not None:
             self.ring_repot()                              # (rung while the mesos couldn't be read: now they can)
         # The slime hops when EXP comes in (three times for a level up): only for what comes in while it's shown.
@@ -4508,8 +4476,6 @@ class App:
         else:
             self._hud_pending = None
             self._hud_seen, self._hud_seen_exp = (t.gained, self.level_up_at), (t.exp, t.req)
-            if rise > 0 or (self.level_up_at and self.level_up_at != seen_level_up):
-                self._rises.append([now_mono, False])      # (what makes an EXP line real)
         rect = self.reader.last_rect if self.reader.hwnd else None
         if not (rect and (self.hud.editing or (self.cfg["hud"] and PLATFORM.game_in_front()))):
             self.hud.hide()
@@ -4567,7 +4533,7 @@ class App:
             # The pickup lines are being read: mesos picked up are known exactly, inventory or not; and
             # the profit is those, plus the loot's worth, less the potions used.
             content.update({
-                "mesos_rate": "Calibrating…" if calibrating else fmt_num(self.picked_mesos / el * 3600) if el > 0 else "—",
+                "mesos_rate": "Calibrating…" if calibrating else fmt_num(self.timed_mesos / el * 3600) if el > 0 else "—",
                 "mesos_gained": f"+{fmt_num(self.picked_mesos)}",
                 "net_label": "PROFIT",
                 "mesos_net": f"{self.picked_mesos + self.loot_value() - self.session_pot_cost:+,.0f}"})
@@ -4696,7 +4662,7 @@ class App:
 
     def reset(self):
         self.session.reset()
-        self.picked_mesos, self.loot, self.pickups_seen, self.session_pot_cost = 0, {}, False, 0
+        self.picked_mesos, self.timed_mesos, self.loot, self.pickups_seen, self.session_pot_cost = 0, 0, {}, False, 0
         self.autolog.reset_clock()
         self.skip_log = False
         self._show_skip_log()
