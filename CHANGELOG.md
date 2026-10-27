@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 (in testing)
+## 1.2.0
 
 - **A new message watcher: kills and pickups counted line by line.** The game's messages at the bottom
   right are looked at 10 times a second and read by the game's own font (its digits are always drawn
