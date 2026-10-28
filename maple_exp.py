@@ -47,8 +47,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 import ocr
 import report
 from hud import LAYOUTS as HUD_LAYOUTS, THEMES as HUD_THEMES, HudCard
-from msgwatch import Font as MessageFont, MessageWatcher, stack_area
-from pickwatch import read_line as read_pickup
+from msgwatch import GH0 as GH0_MSG, Font as MessageFont, MessageWatcher, stack_area
+from itemwatch import ItemReader
 from potwatch import PotReader, guess_item, same_icon, search_area as pot_search_area
 from platforms import create_platform, hotkey_text, parse_hotkey
 from report import Health, Recent
@@ -3090,6 +3090,11 @@ class App:
         except Exception as e:
             self.messages = None
             log_error("loading the message font", e)
+        try:                                    # (item lines: their names learned as they come, in the data folder)
+            self.items = ItemReader(ASSETS, DATA_DIR / "item_names.npz")
+        except Exception as e:
+            self.items = None
+            log_error("loading the item font", e)
         self._kill_exp = deque(maxlen=200)      # (when, EXP) for each kill seen in the messages
         self._last_kill_at = -1e9
         self._hud_pending = None                # an EXP rise seen once, waiting for the next reading to agree
@@ -3995,19 +4000,19 @@ class App:
                     log_error("watching the messages", e)
                 self.stop_evt.wait(max(0.02, MESSAGE_POLL - (time.monotonic() - t0)))
 
-    @staticmethod
-    def _said(lines, gh):
+    def _said(self, lines, gh):
         """New message lines (msgwatch.Line) as what they say: ("exp", amount) for an EXP or party bonus
-        line, ("mesos", amount), ("item", name, how many, tab). A white line with no amount is read
-        by Tesseract (an item, mostly); lines that can't be read are left out."""
+        line, ("mesos", amount), ("item", name, how many, tab). A white line with no amount is an item,
+        mostly: read by the item reader (itemwatch.py), with Tesseract for a name it doesn't know by
+        sight yet. Lines that can't be read are left out."""
         out = []
         for line in lines:
             if line.kind in ("exp", "bonus"):
                 out.append(("exp", line.amount))
             elif line.kind == "mesos":
                 out.append(("mesos", line.amount))
-            elif line.kind == "text" and line.colour == "white" and tesseract_ok and line.band is not None:
-                got = read_pickup(line.band, line.span, gh, TESS.read_lines)
+            elif line.kind == "text" and line.colour == "white" and self.items and line.band is not None:
+                got = self.items.read(line.band, line.span, gh / GH0_MSG, TESS.read_lines if tesseract_ok else None)
                 if got:
                     out.append(got)
         return out

@@ -6,6 +6,14 @@
   left-trigger popup, and its last digit was cut off, so that potion stopped counting in Pot cost
   (an orange potion at 2,199 was read, at 2,200 it wasn't). The reader now looks a little past the
   edge, only when there are strokes there and the count can't be read within the slot.
+- **Items picked up are read by the game's font, and named from the game's item list.** The end of
+  an item line ("x1 earned. (Etc)") is always drawn the same way, so it's read by its shapes: which
+  tab, and how many. The name is known by its picture once it's been seen; the first time, Tesseract
+  reads it and it's matched to the closest of the game's 2,169 items on that tab (from meowdb.com,
+  bundled: nothing is looked up online), so "Green Miushrog" is a Green Mushroom Cap and "Arrows for
+  Cros..." is Arrows for Crossbows. From then on it's known by sight, without Tesseract. On 4K lines
+  of play held out from its making, 25 of 30 were read and none wrong; Tesseract alone read 5. A name
+  that matches no item closely enough is left out.
 - **"Hold LT" in town.** Coming into a town with the popup not looked at since, Pot cost says
   "Hold LT" until you do. Potions bought before that look would hide the ones used since the last
   one (the count goes up overall, which is a purchase), so a look before shopping keeps them counted.

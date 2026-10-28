@@ -1,0 +1,30 @@
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Use	1	Red Potion
+Use	1	Red Potion
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Lupin's Banana
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Use	11	Arrows for Bows
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Use	1	Red Potion
+Etc	1	Green Mushroom Cap
+Use	1	Red Potion
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana

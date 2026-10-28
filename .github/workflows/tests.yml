@@ -32,6 +32,8 @@ jobs:
         run: python tests/test_pickups.py
       - name: Message watcher tests (the message stack, read by the game's font)
         run: python tests/test_msgwatch.py
+      - name: Item line tests (the items picked up, read by the game's font and named from its item list)
+        run: python tests/test_items.py
       - name: Bug report tests
         run: python tests/test_report.py
       - name: Text-reading tests (Tesseract, when installed)

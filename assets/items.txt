@@ -1,0 +1,2169 @@
+Equip	Adamantium Avarice
+Equip	Adamantium Guards
+Equip	Adamantium Igor
+Equip	Adamantium Knuckle
+Equip	Adamantium Legend Shield
+Equip	Adamantium Tower Shield
+Equip	Aluminum Baseball Bat
+Equip	Amethyst Earrings
+Equip	Angel Wings
+Equip	Aqua Brace
+Equip	Aqua Golden Circlet
+Equip	Aqua Platina
+Equip	Aqua Platina Pants
+Equip	Arc Staff
+Equip	Archer Pants
+Equip	Asianic Bow
+Equip	Axe Pole Arm
+Equip	Balanche
+Equip	Basic Archer Gloves
+Equip	Battle Axe
+Equip	Battle Bow
+Equip	Battle Crossbow
+Equip	Battle Shield
+Equip	Bazlud
+Equip	Bear Huntertop
+Equip	Beginner's Garnier
+Equip	Beginner's Long Sword
+Equip	Beginner's Triangular Zamadar
+Equip	Beginner's War Bow
+Equip	Beginner's Wooden Wand
+Equip	Beige Elf Shoes
+Equip	Beige Lineros
+Equip	Beige Linnex
+Equip	Beige Nitty
+Equip	Beige Patriot
+Equip	Beige Plain Robe
+Equip	Bennis Chain Pants
+Equip	Black Amoria Skirt
+Equip	Black Amoria Top
+Equip	Black Armine
+Equip	Black Armine Skirt
+Equip	Black Bandana
+Equip	Black Baseball Cap
+Equip	Black Bennis Chainmail
+Equip	Black Blue-Lined Shoes
+Equip	Black Cat Gloves
+Equip	Black Cloth Pants
+Equip	Black Cloth Vest
+Equip	Black Dragon Robe
+Equip	Black Duo
+Equip	Black Enamel Boots
+Equip	Black Feather Hat
+Equip	Black Gaia Cape
+Equip	Black Ghetto Beanie
+Equip	Black Gomushin
+Equip	Black Green-Lined Shoes
+Equip	Black Headband
+Equip	Black Hunter
+Equip	Black Hunter Boots
+Equip	Black Huntress Armor
+Equip	Black Huntress Pants
+Equip	Black Jangoon Armor
+Equip	Black Jangoon Pants
+Equip	Black Jangoon Skirt
+Equip	Black Jester
+Equip	Black Justice Cape
+Equip	Black Knucklevest
+Equip	Black Knucklevest Pants
+Equip	Black Lappy Boots
+Equip	Black Loosecap
+Equip	Black Lutia
+Equip	Black Magic Cape
+Equip	Black Magic Shoes
+Equip	Black Marker
+Equip	Black Maro
+Equip	Black Martial Arts Pants
+Equip	Black Napoleon
+Equip	Black Nitty
+Equip	Black Pao
+Equip	Black Pao Bottoms
+Equip	Black Polyfeather Hat
+Equip	Black Red-Lined Shoes
+Equip	Black Robin Hat
+Equip	Black Salt Shoes
+Equip	Black Scarab
+Equip	Black Sneak
+Equip	Black Sneak Pants
+Equip	Black Split
+Equip	Black Split Pants
+Equip	Black Split Piece
+Equip	Black Split Skirt
+Equip	Black Steal
+Equip	Black Steal Pants
+Equip	Black Swimming Cap
+Equip	Black Thief Hood
+Equip	Black Tube
+Equip	Black Wind Shoes
+Equip	Black Wizard Robe
+Equip	Black Yellow-Lined Shoes
+Equip	Blood Avarice
+Equip	Blood Battle Grieves
+Equip	Blood Camel Boots
+Equip	Blood Chaos Robe
+Equip	Blood Fitted Mail
+Equip	Blood Gigantic
+Equip	Blood Mesana
+Equip	Blood Moss Boots
+Equip	Blood Nightfox
+Equip	Blood Platina Pants
+Equip	Blood Slain
+Equip	Blood Sneak
+Equip	Blood Sneak Pants
+Equip	Bloody Mantis
+Equip	Bloody Mantis Pants
+Equip	Bloody Platina
+Equip	Blue Amoria Skirt
+Equip	Blue Amoria Top
+Equip	Blue Anakamoon
+Equip	Blue Anakarune
+Equip	Blue Ankle-strap Sandals
+Equip	Blue Apprentice Hat
+Equip	Blue Arten
+Equip	Blue Avenger
+Equip	Blue Axe
+Equip	Blue Bamboo Hat
+Equip	Blue Bandana
+Equip	Blue Baseball Cap
+Equip	Blue Basic Boots
+Equip	Blue Bennis Chainmail
+Equip	Blue Bone Helm
+Equip	Blue Burgler
+Equip	Blue Calaf
+Equip	Blue Calas
+Equip	Blue Carzen Boots
+Equip	Blue Chaos Robe
+Equip	Blue China
+Equip	Blue China Pants
+Equip	Blue Choro
+Equip	Blue Cloth Pants
+Equip	Blue Cloth Vest
+Equip	Blue Counter
+Equip	Blue Crusader Chainmail
+Equip	Blue Diros
+Equip	Blue Distinction
+Equip	Blue Doros Robe
+Equip	Blue Dragon
+Equip	Blue Duke
+Equip	Blue Duo
+Equip	Blue Elf Shoes
+Equip	Blue Enamel Boots
+Equip	Blue Engrit
+Equip	Blue Eyes
+Equip	Blue Fairy Skirt
+Equip	Blue Fairy Top
+Equip	Blue Feather Hat
+Equip	Blue Flowery Tube
+Equip	Blue Gaia Cape
+Equip	Blue Ghetto Beanie
+Equip	Blue Gidder Shoes
+Equip	Blue Goldrunners
+Equip	Blue Goldwind Shoes
+Equip	Blue Goni Shoes
+Equip	Blue Gore Boots
+Equip	Blue Guiltian
+Equip	Blue Guise
+Equip	Blue Hawkeye
+Equip	Blue Headband
+Equip	Blue High Boots
+Equip	Blue Hinkel
+Equip	Blue Hunter
+Equip	Blue Hunter Boots
+Equip	Blue Hunter's Armor
+Equip	Blue Hunter's Pants
+Equip	Blue Icarus Cape
+Equip	Blue Ice Queen
+Equip	Blue Ice Queen Skirt
+Equip	Blue Infinium Circlet
+Equip	Blue Jangoon Armor
+Equip	Blue Jangoon Shoes
+Equip	Blue Jean Shorts
+Equip	Blue Jester
+Equip	Blue Jewelry Boots
+Equip	Blue Justice Cape
+Equip	Blue Kendo Robe
+Equip	Blue Knucklevest Pants
+Equip	Blue Lapiz Sandals
+Equip	Blue Lappy Boots
+Equip	Blue Legolia
+Equip	Blue Legolia Pants
+Equip	Blue Legolier
+Equip	Blue Legolier Pants
+Equip	Blue Lineros
+Equip	Blue Linnex
+Equip	Blue Lolico Armor
+Equip	Blue Lolico Pants
+Equip	Blue Loosecap
+Equip	Blue Lorin
+Equip	Blue Lumati
+Equip	Blue Lutia
+Equip	Blue Magic Cape
+Equip	Blue Magic Shoes
+Equip	Blue Maro
+Equip	Blue Matty
+Equip	Blue Metal Gear
+Equip	Blue Moon
+Equip	Blue Moon Conehat
+Equip	Blue Moon Gloves
+Equip	Blue Moon Pants
+Equip	Blue Moon Shoes
+Equip	Blue Moonlight
+Equip	Blue Morrican
+Equip	Blue Mystique
+Equip	Blue Mystique Pants
+Equip	Blue Mystique Shoes
+Equip	Blue Napoleon
+Equip	Blue Nightfox
+Equip	Blue Nightshift
+Equip	Blue Nightshift Pants
+Equip	Blue Ninja Sandals
+Equip	Blue Noel
+Equip	Blue One-lined T-Shirt
+Equip	Blue Oriental Helmet
+Equip	Blue Orientican
+Equip	Blue Orientican Pants
+Equip	Blue Pao
+Equip	Blue Pao Bottoms
+Equip	Blue Patriot
+Equip	Blue Penance
+Equip	Blue Pierre Shoes
+Equip	Blue Piette Pants
+Equip	Blue Pilfer
+Equip	Blue Plain Robe
+Equip	Blue Pole-Feather Hat
+Equip	Blue Qi Pao
+Equip	Blue Qi Pao Pants
+Equip	Blue Qi Pao Skirt
+Equip	Blue Requiem
+Equip	Blue Requierre
+Equip	Blue Robin Hat
+Equip	Blue Rubber Boots
+Equip	Blue Sauna Robe
+Equip	Blue Savata
+Equip	Blue Scarab
+Equip	Blue Seraphis
+Equip	Blue Sergeant
+Equip	Blue Shark
+Equip	Blue Shark Skirt
+Equip	Blue Shouldermail
+Equip	Blue Shouldermail Pants
+Equip	Blue Silky Boots
+Equip	Blue Sky
+Equip	Blue Sneak
+Equip	Blue Sneakers
+Equip	Blue Sonata
+Equip	Blue Split Piece
+Equip	Blue Starlight
+Equip	Blue Steal
+Equip	Blue Steal Pants
+Equip	Blue Steel-Tip Boots
+Equip	Blue Striped Undershirt
+Equip	Blue Studded Pants
+Equip	Blue Studded Top
+Equip	Blue Swimming Cap
+Equip	Blue Tai
+Equip	Blue Thief Hood
+Equip	Blue Tiberian
+Equip	Blue Training Pants
+Equip	Blue Training Shirt
+Equip	Blue White-Lined Boots
+Equip	Blue Whitebottom Boots
+Equip	Blue Willow
+Equip	Blue Wizard Robe
+Equip	Blue Wizardry Hat
+Equip	Blue Woodsman Boots
+Equip	Blue-Lined Kismet
+Equip	Blue-Striped Boxers
+Equip	Blueberry Lolica Armor
+Equip	Bone Helm
+Equip	Broadsword
+Equip	Bronze Aroa Boots
+Equip	Bronze Chain Boots
+Equip	Bronze Clench
+Equip	Bronze Crusader Helm
+Equip	Bronze Football Helmet
+Equip	Bronze Full Helm
+Equip	Bronze Gigantic
+Equip	Bronze Grieves
+Equip	Bronze Guardian
+Equip	Bronze Helmet
+Equip	Bronze Husk
+Equip	Bronze Identity
+Equip	Bronze Igor
+Equip	Bronze Koif
+Equip	Bronze Mischief
+Equip	Bronze Missel
+Equip	Bronze Planet
+Equip	Bronze Platine
+Equip	Bronze Platine Pants
+Equip	Bronze Pow
+Equip	Bronze Pride
+Equip	Bronze Rover
+Equip	Bronze Scaler
+Equip	Bronze Viking Helm
+Equip	Bronze Wolfskin
+Equip	Brown Able Skirt
+Equip	Brown Ankle-strap Sandals
+Equip	Brown Apprentice Hat
+Equip	Brown Archer Top
+Equip	Brown Aroa Boots
+Equip	Brown Bamboo Hat
+Equip	Brown Baseball Cap
+Equip	Brown Basic Boots
+Equip	Brown Burgler
+Equip	Brown China
+Equip	Brown China Pants
+Equip	Brown Choro
+Equip	Brown Corporal
+Equip	Brown Corporal Pants
+Equip	Brown Cotton Shorts
+Equip	Brown Distinction
+Equip	Brown Doroness Robe
+Equip	Brown Doros Robe
+Equip	Brown Duo
+Equip	Brown Feather Hat
+Equip	Brown Ghetto Beanie
+Equip	Brown Gidder Shoes
+Equip	Brown Guiltian
+Equip	Brown Guise
+Equip	Brown Hard Leather Boots
+Equip	Brown Hard Leather Pants
+Equip	Brown Hard Leather Top
+Equip	Brown Hawkeye
+Equip	Brown High Boots
+Equip	Brown Hunter
+Equip	Brown Hunter Boots
+Equip	Brown Jack Boots
+Equip	Brown Jangoon Armor
+Equip	Brown Jangoon Pants
+Equip	Brown Jangoon Shoes
+Equip	Brown Jangoon Skirt
+Equip	Brown Jester
+Equip	Brown Lamelle
+Equip	Brown Lapiz Sandals
+Equip	Brown Legolia
+Equip	Brown Legolia Pants
+Equip	Brown Legolier
+Equip	Brown Legolier Pants
+Equip	Brown Lolico Armor
+Equip	Brown Lolico Pants
+Equip	Brown Loosecap
+Equip	Brown Lorin
+Equip	Brown Marker
+Equip	Brown Martial Arts Pants
+Equip	Brown Matty
+Equip	Brown Moon
+Equip	Brown Moon Conehat
+Equip	Brown Moon Gloves
+Equip	Brown Moon Pants
+Equip	Brown Moonlight
+Equip	Brown Nightfox
+Equip	Brown Nightshift
+Equip	Brown Nightshift Pants
+Equip	Brown Pierre Shoes
+Equip	Brown Piette
+Equip	Brown Piette Pants
+Equip	Brown Piettra
+Equip	Brown Piettra Skirt
+Equip	Brown Pilfer
+Equip	Brown Pole-Feather Hat
+Equip	Brown Polyfeather Hat
+Equip	Brown Ramel Skirt
+Equip	Brown Requiem
+Equip	Brown Requierre
+Equip	Brown Robin Hat
+Equip	Brown Scarab
+Equip	Brown Skullcap
+Equip	Brown Sneak
+Equip	Brown Sneak Pants
+Equip	Brown Sonata
+Equip	Brown Starlight
+Equip	Brown Steel-Tip Boots
+Equip	Brown Studded Pants
+Equip	Brown Studded Top
+Equip	Brown Tiberian
+Equip	Brown Training Pants
+Equip	Brown Training Shirt
+Equip	Brown Winter Hat
+Equip	Brown Woodsman Boots
+Equip	Buck
+Equip	Cap of Memories
+Equip	Cass
+Equip	Cat's Eye
+Equip	Chief Stan Hat
+Equip	Chrono
+Equip	Coconut Knife
+Equip	Colorful Tube
+Equip	Composite Bow
+Equip	Crescent Polearm
+Equip	Cromi
+Equip	Crossbow
+Equip	Crystal Flower Earrings
+Equip	Cutlus
+Equip	Dankke
+Equip	Dark Anakamoon
+Equip	Dark Anakarune
+Equip	Dark Arten
+Equip	Dark Avarice
+Equip	Dark Avenger
+Equip	Dark Brace
+Equip	Dark Briggon
+Equip	Dark Brown Sneak Pants
+Equip	Dark Brown Stealer
+Equip	Dark Brown Stealer Pants
+Equip	Dark Burgler
+Equip	Dark Calaf
+Equip	Dark Calas
+Equip	Dark Carzen Boots
+Equip	Dark Chaos Robe
+Equip	Dark Cleave
+Equip	Dark Clench
+Equip	Dark Crusader Chainmail
+Equip	Dark Distinction
+Equip	Dark Dome
+Equip	Dark Elf Shoes
+Equip	Dark Engrit
+Equip	Dark Eyes
+Equip	Dark Garner
+Equip	Dark Gigantic
+Equip	Dark Golden Circlet
+Equip	Dark Guardian
+Equip	Dark Guiltian
+Equip	Dark Guise
+Equip	Dark Hawkeye
+Equip	Dark Hunter's Armor
+Equip	Dark Hunter's Pants
+Equip	Dark Husk
+Equip	Dark Identity
+Equip	Dark Infinium Circlet
+Equip	Dark Knuckle
+Equip	Dark Legolia
+Equip	Dark Legolia Pants
+Equip	Dark Legolier
+Equip	Dark Legolier Pants
+Equip	Dark Lineros
+Equip	Dark Linnex
+Equip	Dark Lorin
+Equip	Dark Manute
+Equip	Dark Master Sergeant
+Equip	Dark Master Sergeant Kilt
+Equip	Dark Matty
+Equip	Dark Mesana
+Equip	Dark Mischief
+Equip	Dark Moon Conehat
+Equip	Dark Moon Shoes
+Equip	Dark Moonlight
+Equip	Dark Moss Boots
+Equip	Dark Nightshift
+Equip	Dark Nightshift Pants
+Equip	Dark Noel
+Equip	Dark Orientican
+Equip	Dark Orientican Pants
+Equip	Dark Patriot
+Equip	Dark Penance
+Equip	Dark Piette
+Equip	Dark Piette Pants
+Equip	Dark Piettra
+Equip	Dark Piettra Skirt
+Equip	Dark Pilfer
+Equip	Dark Pole-Feather Hat
+Equip	Dark Requiem
+Equip	Dark Requierre
+Equip	Dark Savata
+Equip	Dark Scorpio
+Equip	Dark Scorpio Pants
+Equip	Dark Seraphis
+Equip	Dark Shadow
+Equip	Dark Shadow Pants
+Equip	Dark Shouldermail
+Equip	Dark Shouldermail Pants
+Equip	Dark Silver Stealer
+Equip	Dark Silver Stealer Pants
+Equip	Dark Slain
+Equip	Dark Sneak
+Equip	Dark Sneak Pants
+Equip	Dark Starlight
+Equip	Dark Studded Pants
+Equip	Dark Studded Top
+Equip	Dark Tiberian
+Equip	Dark Trigger
+Equip	Dark War Boots
+Equip	Dark Willow
+Equip	Dark Wolfskin
+Equip	Deadly Fin
+Equip	Deer Huntertop
+Equip	Doombringer
+Equip	Double Axe
+Equip	Dr. Lim Hat
+Equip	Eagle Crow
+Equip	Eloon
+Equip	Emerald Battle Grieves
+Equip	Emerald Dome
+Equip	Emerald Earrings
+Equip	Emerald Fitted Mail
+Equip	Emerald Hildon Boots
+Equip	Emerald Staff
+Equip	Emergency Rescue Tube
+Equip	Esther Shield
+Equip	Evil Tale
+Equip	Evil Wings
+Equip	Faded Maple Leaf Earrings
+Equip	Fairy Wand
+Equip	Field Dagger
+Equip	Fireman's Axe
+Equip	Fish Spear
+Equip	Flame Golden Circlet
+Equip	Fork on a Stick
+Equip	Forked Dagger
+Equip	Forked Spear
+Equip	Fruit Knife
+Equip	Fusion Mace
+Equip	Garnier
+Equip	Gephart
+Equip	Gigantic Sledge
+Equip	Gladius
+Equip	Gold Ancient Shield
+Equip	Gold Arbion
+Equip	Gold Brace
+Equip	Gold Brist
+Equip	Gold Burgonet Helm
+Equip	Gold Chain Boots
+Equip	Gold Cleave
+Equip	Gold Dragon
+Equip	Gold Drop Earrings
+Equip	Gold Earrings
+Equip	Gold Eyes
+Equip	Gold Hildon Boots
+Equip	Gold Lapiz Sandals
+Equip	Gold Manute
+Equip	Gold Moon Shoes
+Equip	Gold Moss Boots
+Equip	Gold Nordic Helm
+Equip	Gold Pow
+Equip	Gold Rover
+Equip	Gold Scaler
+Equip	Gold Sharp Helm
+Equip	Gold Sneak
+Equip	Gold Sneak Pants
+Equip	Gold Sylvia
+Equip	Gold Titans
+Equip	Gold War Boots
+Equip	Golden Crow
+Equip	Golden Hinkel
+Equip	Golden Mole
+Equip	Golden Pride
+Equip	Golden River
+Equip	Great Blue Helmet
+Equip	Great Brown Helmet
+Equip	Great Red Helmet
+Equip	Green Able Armor
+Equip	Green Able Armor Skirt
+Equip	Green Archer Top
+Equip	Green Arianne
+Equip	Green Arianne Skirt
+Equip	Green Armine
+Equip	Green Armine Skirt
+Equip	Green Aroa Boots
+Equip	Green Avelin
+Equip	Green Avelin Skirt
+Equip	Green Bamboo Hat
+Equip	Green Bennis Chainmail
+Equip	Green Burgler
+Equip	Green China
+Equip	Green China Pants
+Equip	Green Diros
+Equip	Green Distinction
+Equip	Green Elf Shoes
+Equip	Green Fairy Skirt
+Equip	Green Fairy Top
+Equip	Green Feather Hat
+Equip	Green Ghetto Beanie
+Equip	Green Goldrunners
+Equip	Green Goldwind Shoes
+Equip	Green Goni Shoes
+Equip	Green Gore Boots
+Equip	Green Guise
+Equip	Green Hard Leather Boots
+Equip	Green Hawkeye
+Equip	Green Headband
+Equip	Green Hunter
+Equip	Green Hunter Boots
+Equip	Green Hunter's Armor
+Equip	Green Hunter's Pants
+Equip	Green Huntress Armor
+Equip	Green Huntress Pants
+Equip	Green Hwarang Shirt
+Equip	Green Icarus Cape
+Equip	Green Ice Queen
+Equip	Green Ice Queen Skirt
+Equip	Green Jack Boots
+Equip	Green Jester
+Equip	Green Knucklevest
+Equip	Green Lamelle
+Equip	Green Lappy Boots
+Equip	Green Leather Hoodwear
+Equip	Green Legolia
+Equip	Green Legolia Pants
+Equip	Green Legolier
+Equip	Green Legolier Pants
+Equip	Green Lineros
+Equip	Green Linnex
+Equip	Green Loosecap
+Equip	Green Lumati
+Equip	Green Marker
+Equip	Green Maro
+Equip	Green Matty
+Equip	Green Moon Conehat
+Equip	Green Morrican
+Equip	Green Napoleon
+Equip	Green Orientican
+Equip	Green Orientican Pants
+Equip	Green Patriot
+Equip	Green Pilfer
+Equip	Green Plain Robe
+Equip	Green Pole-Feather Hat
+Equip	Green Ramel Skirt
+Equip	Green Robin Hat
+Equip	Green Scarab
+Equip	Green Seraphis
+Equip	Green Shivermail
+Equip	Green Shivermail Skirt
+Equip	Green Silky Boots
+Equip	Green Skullcap
+Equip	Green Sonata
+Equip	Green Starlight
+Equip	Green Steel-Tip Boots
+Equip	Green T-Shirt
+Equip	Green Thief Hood
+Equip	Green Tiberian
+Equip	Green White-Lined Boots
+Equip	Green Winter Hat
+Equip	Green Wizard Robe
+Equip	Green Wizardry Hat
+Equip	Green Woodsman Boots
+Equip	Grey Able Armor
+Equip	Grey Able Skirt
+Equip	Grey T-Shirt
+Equip	Grey Thick Sweat Pants
+Equip	Gross Jaeger
+Equip	Halfmoon Zamadar
+Equip	Hammer
+Equip	Hand Axe
+Equip	Hard Briefcase
+Equip	Hardwood Wand
+Equip	Hawkhead
+Equip	Heavy Hammer
+Equip	Heavy Mace
+Equip	Heckler
+Equip	Henesys Earrings
+Equip	Hero's Gladius
+Equip	Holy Cross Earrings
+Equip	Holy Spear
+Equip	Hunter's Bow
+Equip	Ice Jeans
+Equip	Ice Wand
+Equip	Indigo Miniskirt
+Equip	Inkwell Hat
+Equip	Iron Axe
+Equip	Iron Ball
+Equip	Iron Burgonet Helm
+Equip	Iron Chain Boots
+Equip	Iron Dagger
+Equip	Iron Knuckle
+Equip	Iron Mace
+Equip	Iron Viking Helm
+Equip	Ivory Shouldermail
+Equip	Ivory Shouldermail Pants
+Equip	Jacker
+Equip	Janitor's Mop
+Equip	Jean Capris
+Equip	Jeweled Katar
+Equip	Jousting Helmet
+Equip	Juno
+Equip	Jurgen Wristguard
+Equip	Kandine
+Equip	Kerning City Earrings
+Equip	Khaki Shadow
+Equip	Khaki Shadow Pants
+Equip	Knuckle Mace
+Equip	Korean Fan
+Equip	Leaf Earrings
+Equip	Leather Purse
+Equip	Leather Sandals
+Equip	Lemona
+Equip	Light Mantis
+Equip	Light Mantis Pants
+Equip	Light Scorpio
+Equip	Light Scorpio Pants
+Equip	Lightning Earrings
+Equip	Lion Huntertop
+Equip	Lion's Fang
+Equip	Lionheart
+Equip	Lollipop
+Equip	Long Sword
+Equip	Mace
+Equip	Machete
+Equip	MapleStory Invincible Hat
+Equip	Maplestory Patrol Hat
+Equip	Marine Shadow
+Equip	Marine Shadow Pants
+Equip	Mark of the Beta
+Equip	Maroon Jangoon Armor
+Equip	Maroon Jangoon Shoes
+Equip	Maroon Moon
+Equip	Maroon Moon Pants
+Equip	Meba
+Equip	Metal Axe
+Equip	Metal Gear
+Equip	Metal Koif
+Equip	Metal Silver Earrings
+Equip	Metal Wand
+Equip	Mikhail
+Equip	Mithril Axe
+Equip	Mithril Battle Grieves
+Equip	Mithril Brist
+Equip	Mithril Buckler
+Equip	Mithril Crusader Helm
+Equip	Mithril Football Helmet
+Equip	Mithril Full Helm
+Equip	Mithril Guards
+Equip	Mithril Helmet
+Equip	Mithril Hildon Boots
+Equip	Mithril Husk
+Equip	Mithril Koif
+Equip	Mithril Maul
+Equip	Mithril Mischief
+Equip	Mithril Nordic Helm
+Equip	Mithril Planet
+Equip	Mithril Platine
+Equip	Mithril Platine Pants
+Equip	Mithril Pole Arm
+Equip	Mithril Scaler
+Equip	Mithril Sharp Helm
+Equip	Mithril Titans
+Equip	Mithril Tower Shield
+Equip	Mithril Trigger
+Equip	Mithril Viking Helm
+Equip	Mithril Wand
+Equip	Mithril War Boots
+Equip	Mithril Wolfskin
+Equip	Monkey Wrench
+Equip	Mountain Crossbow
+Equip	Mystic Shield
+Equip	Nakamaki
+Equip	Nemi Hat
+Equip	Neocora
+Equip	Niam
+Equip	Nimble Wristguard
+Equip	Oaker Garner
+Equip	Oaker Scorpio
+Equip	Oaker Scorpio Pants
+Equip	Oaker Shouldermail
+Equip	Oaker Shouldermail Pants
+Equip	Ocean Mesana
+Equip	Old Bronze Nordic Helm
+Equip	Old Gladius
+Equip	Old Mithril Nordic Helm
+Equip	Old Raggedy Cape
+Equip	Old Steel Nordic Helm
+Equip	Old Wisconsin
+Equip	Old Wooden Staff
+Equip	Olympus
+Equip	Orange Calaf
+Equip	Orange Calas
+Equip	Orange Golden Circlet
+Equip	Orange Goldrunners
+Equip	Orange High Boots
+Equip	Orange Lolica Armor
+Equip	Orange Split Piece
+Equip	Orange Sporty T-Shirt
+Equip	Orange Tai
+Equip	Orange Whitebottom Boots
+Equip	Orihalcon Arbion
+Equip	Orihalcon Burgonet Helm
+Equip	Orihalcon Camel Boots
+Equip	Orihalcon Hildon Boots
+Equip	Orihalcon Master Sergeant
+Equip	Orihalcon Master Sergeant Kilt
+Equip	Orihalcon Missel
+Equip	Orihalcon Platine
+Equip	Orihalcon Platine Pants
+Equip	Pan Lid
+Equip	Pansy Earrings
+Equip	Pickaxe
+Equip	Pig Illustrated
+Equip	Pink Arianne
+Equip	Pink Arianne Skirt
+Equip	Pink Cotton Boxers
+Equip	Pink Goldrunners
+Equip	Pink Goldwind Shoes
+Equip	Pink Jester
+Equip	Pink Moon Conehat
+Equip	Pink Mystique
+Equip	Pink Mystique Pants
+Equip	Pink Qi Pao
+Equip	Pink Starry Shirt
+Equip	Pink Tank Top
+Equip	Pink Whitebottom Boots
+Equip	Pink-Flowered Earrings
+Equip	Plunger
+Equip	Pointed Shovel
+Equip	Pole Arm
+Equip	Pumpkin Basket
+Equip	Purple Arianne
+Equip	Purple Arianne Skirt
+Equip	Purple Avenger
+Equip	Purple Carzen Boots
+Equip	Purple Doroness Robe
+Equip	Purple Fairy Skirt
+Equip	Purple Fairy Top
+Equip	Purple Goldwind Shoes
+Equip	Purple Goni Shoes
+Equip	Purple Jewelry Boots
+Equip	Purple Moonlight
+Equip	Purple Morrican
+Equip	Purple Mystique
+Equip	Purple Mystique Pants
+Equip	Purple Mystique Shoes
+Equip	Purple Nightfox
+Equip	Purple Qi Pao Pants
+Equip	Purple Qi Pao Skirt
+Equip	Purple Salt Shoes
+Equip	Purple Shadow
+Equip	Purple Shadow Pants
+Equip	Purple Shivermail
+Equip	Purple Shivermail Skirt
+Equip	Purple Split
+Equip	Purple Steal
+Equip	Purple Steal Pants
+Equip	Purple Steel-Tip Boots
+Equip	Purple Tube
+Equip	Rabbit Huntertop
+Equip	Razor
+Equip	Red / Gold Stealer Pants
+Equip	Red Amoria Skirt
+Equip	Red Amoria Top
+Equip	Red Anakamoon
+Equip	Red Anakarune
+Equip	Red Ankle-strap Sandals
+Equip	Red Apprentice Hat
+Equip	Red Arten
+Equip	Red Avenger
+Equip	Red Bandana
+Equip	Red Baseball Cap
+Equip	Red Bennis Chainmail
+Equip	Red Bone Helm
+Equip	Red Brick
+Equip	Red Burgler
+Equip	Red Calaf
+Equip	Red Calas
+Equip	Red China
+Equip	Red China Pants
+Equip	Red Choro
+Equip	Red Cleave
+Equip	Red Cloth Pants
+Equip	Red Cloth Vest
+Equip	Red Cross Earrings
+Equip	Red Cross Shield
+Equip	Red Diros
+Equip	Red Distinction
+Equip	Red Doroness Robe
+Equip	Red Duke
+Equip	Red Enamel Boots
+Equip	Red Engrit
+Equip	Red Feather Hat
+Equip	Red Flowery Tube
+Equip	Red Gaia Cape
+Equip	Red Ghetto Beanie
+Equip	Red Gold Stealer
+Equip	Red Goni Shoes
+Equip	Red Gore Boots
+Equip	Red Guiltian
+Equip	Red Guise
+Equip	Red Hawkeye
+Equip	Red Headband
+Equip	Red Hinkel
+Equip	Red Hunter
+Equip	Red Hunter Boots
+Equip	Red Hunter's Armor
+Equip	Red Hunter's Pants
+Equip	Red Huntress Pants
+Equip	Red Hwarang Shirt
+Equip	Red Ice Queen
+Equip	Red Ice Queen Skirt
+Equip	Red Infinium Circlet
+Equip	Red Jack Boots
+Equip	Red Jangoon Armor
+Equip	Red Jangoon Skirt
+Equip	Red Jewelry Boots
+Equip	Red Justice Cape
+Equip	Red Katana
+Equip	Red Kendo Robe
+Equip	Red Knucklevest
+Equip	Red Knucklevest Pants
+Equip	Red Lamelle
+Equip	Red Lapiz Sandals
+Equip	Red Lappy Boots
+Equip	Red Legolia
+Equip	Red Legolia Pants
+Equip	Red Legolier
+Equip	Red Legolier Pants
+Equip	Red Loosecap
+Equip	Red Lumati
+Equip	Red Lutia
+Equip	Red Magic Cape
+Equip	Red Magic Shoes
+Equip	Red Maro
+Equip	Red Martial Arts Pants
+Equip	Red Matty
+Equip	Red Miniskirt
+Equip	Red Moon
+Equip	Red Moon Gloves
+Equip	Red Moon Pants
+Equip	Red Moon Shoes
+Equip	Red Moonlight
+Equip	Red Mystique
+Equip	Red Mystique Pants
+Equip	Red Mystique Shoes
+Equip	Red Napoleon
+Equip	Red Nightshift
+Equip	Red Nightshift Pants
+Equip	Red Ninja Sandals
+Equip	Red Noel
+Equip	Red Oriental Helmet
+Equip	Red Orientican
+Equip	Red Orientican Pants
+Equip	Red Pao
+Equip	Red Pao Bottoms
+Equip	Red Penance
+Equip	Red Pierre Shoes
+Equip	Red Pilfer
+Equip	Red Pole-Feather Hat
+Equip	Red Polyfeather Hat
+Equip	Red Qi Pao
+Equip	Red Qi Pao Pants
+Equip	Red Qi Pao Skirt
+Equip	Red Ramel Skirt
+Equip	Red Requiem
+Equip	Red Requierre
+Equip	Red Robin Hat
+Equip	Red Rubber Boots
+Equip	Red Salt Shoes
+Equip	Red Sauna Robe
+Equip	Red Savata
+Equip	Red Seraphis
+Equip	Red Sergeant
+Equip	Red Sergeant Kilt
+Equip	Red Shadow
+Equip	Red Shadow Pants
+Equip	Red Shark
+Equip	Red Shark Skirt
+Equip	Red Shivermail
+Equip	Red Shivermail Skirt
+Equip	Red Shouldermail
+Equip	Red Shouldermail Pants
+Equip	Red Silky Boots
+Equip	Red Skullcap
+Equip	Red Sneakers
+Equip	Red Sonata
+Equip	Red Split
+Equip	Red Starlight
+Equip	Red Starry Bandana
+Equip	Red Steal
+Equip	Red Steal Pants
+Equip	Red Striped T-Shirt
+Equip	Red Striped Top
+Equip	Red Swimming Cap
+Equip	Red Tai
+Equip	Red Thief Hood
+Equip	Red Tiberian
+Equip	Red Triangular Shield
+Equip	Red Viper
+Equip	Red Whip
+Equip	Red White-Lined Boots
+Equip	Red Whitebottom Boots
+Equip	Red Willow
+Equip	Red Wizardry Hat
+Equip	Red-Hearted Earrings
+Equip	Red-Lined Kismet
+Equip	Redemption
+Equip	Reef Claw
+Equip	Ribboned Pig Headband
+Equip	Rookie Pants
+Equip	Rower
+Equip	Ryden
+Equip	Sabre
+Equip	Sabretooth
+Equip	Sai
+Equip	Sandblasted Jeans
+Equip	Sapphire Camel Boots
+Equip	Sapphire Clench
+Equip	Sapphire Earrings
+Equip	Sapphire Fitted Mail
+Equip	Sapphire Gigantic
+Equip	Sapphire Slain
+Equip	Sapphire Staff
+Equip	Saw
+Equip	Scimitar
+Equip	Scythe
+Equip	Seclusion Wristguard
+Equip	Sephia Garner
+Equip	Serpent's Coil
+Equip	Serpent's Tongue
+Equip	Shinkita
+Equip	Silver / Black Stealer Pants
+Equip	Silver Ancient Shield
+Equip	Silver Battle Grieves
+Equip	Silver Black Stealer
+Equip	Silver Chain Boots
+Equip	Silver Crow
+Equip	Silver Crusader Helm
+Equip	Silver Fitted Mail
+Equip	Silver Guardian
+Equip	Silver Identity
+Equip	Silver Leather Hoodwear
+Equip	Silver Legend Shield
+Equip	Silver Master Sergeant
+Equip	Silver Master Sergeant Kilt
+Equip	Silver Planet
+Equip	Silver Rover
+Equip	Silver Sylvia
+Equip	Silver War Boots
+Equip	Silver Wind Shoes
+Equip	Single Earring
+Equip	Skull Earrings
+Equip	Skull Shield
+Equip	Sky Blue Starry Bandana
+Equip	Sky Blue Umbrella
+Equip	Sky Shark
+Equip	Sky Shark Skirt
+Equip	Sky Sneak
+Equip	Sky Sneak Pants
+Equip	Skylar
+Equip	Sledgehammer
+Equip	Smelly Gomushin
+Equip	Sophia Pants
+Equip	Sparta
+Equip	Spear
+Equip	Square Hammer
+Equip	Square Shovel
+Equip	Squishy Shoes
+Equip	Star Earrings
+Equip	Steel Ancient Shield
+Equip	Steel Arbion
+Equip	Steel Avarice
+Equip	Steel Briggon
+Equip	Steel Brist
+Equip	Steel Corporal
+Equip	Steel Corporal Pants
+Equip	Steel Fingerless Gloves
+Equip	Steel Fitted Mail
+Equip	Steel Football Helmet
+Equip	Steel Full Helm
+Equip	Steel Grieves
+Equip	Steel Guards
+Equip	Steel Helmet
+Equip	Steel Igor
+Equip	Steel Manute
+Equip	Steel Missel
+Equip	Steel Nordic Helm
+Equip	Steel Pipe
+Equip	Steel Pow
+Equip	Steel Pride
+Equip	Steel Sergeant Kilt
+Equip	Steel Sharp Helm
+Equip	Steel Shield
+Equip	Steel Slain
+Equip	Steel Sylvia
+Equip	Steel Titans
+Equip	Steel Tower Shield
+Equip	Steel Trigger
+Equip	Stinger
+Equip	Stolen Fence
+Equip	Studded Polearm
+Equip	Sword
+Equip	Tamus
+Equip	The Blessing
+Equip	The Gold Dragon
+Equip	The Judgement
+Equip	The Nine Dragons
+Equip	The Rising
+Equip	The Shining
+Equip	Thorns
+Equip	Titan
+Equip	Traus
+Equip	Triangular Zamadar
+Equip	Triple-Tipped Zamadar
+Equip	Two-Handed Axe
+Equip	Two-Handed Sword
+Equip	Umber Mantis
+Equip	Umber Mantis Pants
+Equip	Umber Shouldermail
+Equip	Umber Shouldermail Pants
+Equip	Undershirt
+Equip	Vaulter 2000
+Equip	Viking Sword
+Equip	Violet Platina
+Equip	Violet Platina Pants
+Equip	War Bow
+Equip	Warfare Pants
+Equip	Weighted Earrings
+Equip	White Anakamoon
+Equip	White Anakarune
+Equip	White Bandana
+Equip	White Calaf
+Equip	White Calas
+Equip	White Chaos Robe
+Equip	White Crusader Chainmail
+Equip	White Doros Robe
+Equip	White Fingerless Gloves
+Equip	White Gaia Cape
+Equip	White Gomushin
+Equip	White Guiltian
+Equip	White Jangoon Pants
+Equip	White Justice Cape
+Equip	White Kendo Robe
+Equip	White Magic Cape
+Equip	White Magic Shoes
+Equip	White Martial Arts Pants
+Equip	White Martial Arts Shorts
+Equip	White Napoleon
+Equip	White Nightfox
+Equip	White Ninja Sandals
+Equip	White Piette
+Equip	White Piettra
+Equip	White Piettra Skirt
+Equip	White Polyfeather Hat
+Equip	White Seraphis
+Equip	White Split Pants
+Equip	White Split Skirt
+Equip	White Tube Top
+Equip	White Undershirt
+Equip	White Wizard Robe
+Equip	Wizard Staff
+Equip	Wizard Wand
+Equip	Wizet Invincible Hat
+Equip	Wizet Plain Shoes
+Equip	Wizet Plain Suit
+Equip	Wizet Plain Suit Pants
+Equip	Wizet Secret Agent Suitcase
+Equip	Wooden Baseball Bat
+Equip	Wooden Buckler
+Equip	Wooden Club
+Equip	Wooden Legend Shield
+Equip	Wooden Mallet
+Equip	Wooden Staff
+Equip	Wooden Sword
+Equip	Wooden Wand
+Equip	Work Gloves
+Equip	Yellow Able Armor
+Equip	Yellow Arianne
+Equip	Yellow Arianne Skirt
+Equip	Yellow Avelin
+Equip	Yellow Avelin Skirt
+Equip	Yellow Bandana
+Equip	Yellow Baseball Cap
+Equip	Yellow Basic Boots
+Equip	Yellow Bennis Chainmail
+Equip	Yellow Briggon
+Equip	Yellow Doros Robe
+Equip	Yellow Duke
+Equip	Yellow Engrit
+Equip	Yellow Headband
+Equip	Yellow Icarus Cape
+Equip	Yellow Jangoon Armor
+Equip	Yellow Metal Gear
+Equip	Yellow Ninja Sandals
+Equip	Yellow Pierre Shoes
+Equip	Yellow Rubber Boots
+Equip	Yellow Square
+Equip	Yellow Starry Bandana
+Equip	Yellow T-Shirt
+Equip	Yellow Thief Hood
+Equip	Yellow Umbrella
+Equip	Yellow Wind Shoes
+Equip	Zakum Helmet
+Equip	Zard
+Equip	Zeco
+Etc	A Gift for JM
+Etc	A Gift for Nella
+Etc	Adamantium Ingot
+Etc	Adamantium Ore
+Etc	Alex's Gift Sack
+Etc	Alligator Skin Pouch
+Etc	Amended Ledger
+Etc	Amethyst
+Etc	Amethyst Ore
+Etc	Ancient Scroll
+Etc	Animal Fossil
+Etc	Animal Fur Bundle
+Etc	Aquamarine
+Etc	Aquamarine Ore
+Etc	Aqumander Tail
+Etc	Arcon's Blood
+Etc	Armor Crafting Catalyst
+Etc	Arwen's Glass Shoe
+Etc	Athena Pierce's Box
+Etc	Athena Pierce's Letter
+Etc	Ayan's Letter
+Etc	Ayan's Toy Sword
+Etc	Bartos's Letter
+Etc	Betty's report
+Etc	Binding Bridle
+Etc	Black Crystal
+Etc	Black Crystal Ore
+Etc	Black Dye
+Etc	Black Feather
+Etc	Blackbull's Deed to the Land
+Etc	Bloctopus Key Chain
+Etc	Blue Dye
+Etc	Blue Mushroom Cap
+Etc	Blue Primrose Seed
+Etc	Blue Snail Shell
+Etc	Blue Toy Block
+Etc	Blue Viola
+Etc	Bound Ledger
+Etc	Broken Mirror Glass
+Etc	Broken Wooden Bow
+Etc	Bronze Ingot
+Etc	Bronze Ore
+Etc	Brown Primrose Seed
+Etc	Bruce's Special Cake
+Etc	Bubbling's Huge Bubble
+Etc	Buffoon's Grandpa Clock
+Etc	Buffy Hat
+Etc	Charm of the Undead
+Etc	Cheap Battery
+Etc	Chief Gray's Sign
+Etc	Chief Stan's Hammer
+Etc	Chief Stan's Letter
+Etc	Clang Claw
+Etc	Clock Spring
+Etc	Coconut
+Etc	Cog
+Etc	Cold Eye Tail
+Etc	Coupon
+Etc	Croco Skin
+Etc	Curse Eye Tail
+Etc	Cursed Doll
+Etc	Dances with Balrog's Letter
+Etc	Dark Crystal
+Etc	Dark Crystal Ore
+Etc	Dark Marble (Bowman)
+Etc	Dark Marble (Magician)
+Etc	Dark Marble (Thief)
+Etc	Dark Marble (Warrior)
+Etc	Dark Nependeath Seed (Alt)
+Etc	Dark Pepe Beak
+Etc	Dark Stone Golem Rubble
+Etc	Dark Yeti Horn
+Etc	Decayed Charm
+Etc	Deciphered Document
+Etc	Deep Buffoon's Rock Piece
+Etc	Dexterity Crystal
+Etc	Diamond
+Etc	Diamond Ore
+Etc	Dirty Bandage
+Etc	Double-Rooted Red Ginseng
+Etc	Dragon Skin
+Etc	Drake Skull
+Etc	Dual Pirate's Propeller
+Etc	Duskmander Tail
+Etc	Echopus Leg
+Etc	Elda's Last Message
+Etc	Elda's Name-Charm
+Etc	Emerald
+Etc	Emerald Ore
+Etc	Encrypted Document
+Etc	Encrypted Document (Alt)
+Etc	Eos Rock Scroll
+Etc	Estelle's Special Sauce
+Etc	Event Trophy
+Etc	Evil Eye Tail
+Etc	Evil Spirit
+Etc	Eye of Fire
+Etc	Fairy Wing
+Etc	Fairy's Tentacle
+Etc	Fire Boar's Tooth
+Etc	Fire Ore
+Etc	Firewood
+Etc	Flaming Feather
+Etc	Flying Medicine
+Etc	Fossil Box
+Etc	Fossil Report
+Etc	Fragment of Magic
+Etc	Free Spirit
+Etc	Fresh Milk
+Etc	Garnet
+Etc	Garnet Ore
+Etc	Gatekeeper Armband
+Etc	Ghost Pirate Key
+Etc	Giant Tree's Bough
+Etc	Giant Tree's Rotten Bough
+Etc	Gigantic Viking Hat
+Etc	Glowing Mushroom
+Etc	Glowing Mushroom Spore
+Etc	Glowspore Lamp
+Etc	Gold Ingot
+Etc	Gold Ore
+Etc	Golden Stirge Wing
+Etc	Green Mushroom Cap
+Etc	Green Primrose Seed
+Etc	Grendel the Really Old's Letter
+Etc	Halloween Candies
+Etc	Hard Walnut
+Etc	Hearthkeeper's Journal
+Etc	Hero's Gladius
+Etc	Horny Mushroom Cap
+Etc	Horse Skull
+Etc	Ice Piece
+Etc	Incomplete Ledger
+Etc	Ink of Truth
+Etc	Iron Hog's Metal Hoof
+Etc	Iron Ingot
+Etc	Iron Ore
+Etc	Jr. Boogie Horn
+Etc	Jr. Necki Skin
+Etc	Jr. Sentinel Shellpiece
+Etc	Lazy Buffy Marble
+Etc	Leaf
+Etc	Leather
+Etc	Lewis's Letter
+Etc	Life Scroll
+Etc	Ligator Skin
+Etc	Lorang Claw
+Etc	Lucas's Letter
+Etc	Luck Crystal
+Etc	Luminous Magical Resonance
+Etc	Lupin Doll
+Etc	Lupin's Banana
+Etc	MT-09's Fuel
+Etc	Magic Box
+Etc	Malady's Experimental Frog
+Etc	Maple Leaf
+Etc	Maria's Letter
+Etc	Mateon's Tentacle
+Etc	Mecateon's Laser Gun
+Etc	Mechanical Heart
+Etc	Medicine With Weird Vibes
+Etc	Mithril Ingot
+Etc	Mithril Ore
+Etc	Monster Card
+Etc	Moon Bunny's Rice Cake
+Etc	Moon Rock
+Etc	Motor
+Etc	Mrs. Ming Ming's Cooking Recipe
+Etc	Mushmom Spore
+Etc	Mushroom Spore
+Etc	Nependeath Seed (Alt)
+Etc	Octopus & Mushroom Omok Set
+Etc	Octopus Leg
+Etc	Old Chief Stan's Hammer
+Etc	Old Gold Watch
+Etc	Old Wooden Board
+Etc	Ominous Rotten Branch
+Etc	Omok Piece: Mushroom
+Etc	Omok Piece: Octopus
+Etc	Omok Piece: Pig
+Etc	Omok Piece: Slime
+Etc	Omok Table
+Etc	One-Handed Weapon Crafting Catalyst
+Etc	Opal
+Etc	Opal Ore
+Etc	Orange Mushroom Cap
+Etc	Orihalcon Ingot
+Etc	Orihalcon Ore
+Etc	Panda Doll
+Etc	Paper Document
+Etc	Pass
+Etc	Pelvic Bone
+Etc	Pepe Beak
+Etc	Pet Ability Transfer Scroll
+Etc	Piece of Ice
+Etc	Pig & Mushroom Omok Set
+Etc	Pig & Octopus Omok Set
+Etc	Pig's Head
+Etc	Pig's Ribbon
+Etc	Pink Anthurium
+Etc	Pink Primrose Seed
+Etc	Pink Viola
+Etc	Plane Controller
+Etc	Plant Fossil
+Etc	Plant Sample
+Etc	Plastic Crown
+Etc	Plateon's Helmet
+Etc	Poisonous Mushroom
+Etc	Power Crystal
+Etc	Processed Cloth
+Etc	Processed Leather
+Etc	Processed Parchment
+Etc	Processed Wood
+Etc	Propeller
+Etc	Purple Primrose Seed
+Etc	Raffle Petal
+Etc	Rafflesia Petal
+Etc	Rat Trap
+Etc	Receiving Apparatus
+Etc	Red Cape
+Etc	Red Dye
+Etc	Red Snail Shell
+Etc	Repaired Wooden Bow
+Etc	Rib
+Etc	Rina's Unagi Special
+Etc	Rombot's Memory Card
+Etc	Rotten Mushmom Cap
+Etc	Rotten Root Fragment
+Etc	Rusty Screw
+Etc	Sapphire
+Etc	Sapphire Ore
+Etc	Scorched Arcon Scroll
+Etc	Screw
+Etc	Scroll Crafting Catalyst
+Etc	Scroll of Secrets
+Etc	Sealed Bottle
+Etc	Sealed Teddy Bear
+Etc	Sealed-up Grandpa Clock
+Etc	Secret Book
+Etc	Seedling
+Etc	Sera's Mirror
+Etc	Set of Match Cards
+Etc	Shumi's Coin
+Etc	Shumi's Roll of Cash
+Etc	Shumi's Sack of Cash
+Etc	Silver Ingot
+Etc	Silver Ore
+Etc	Skeledog's Bone
+Etc	Slate
+Etc	Slime & Mushroom Omok Set
+Etc	Slime & Octopus Omok Set
+Etc	Slime & Pig Omok Set
+Etc	Slime Bubble
+Etc	Small Egg
+Etc	Small Spaceship
+Etc	Smooth Horn Marble
+Etc	Snail Shell
+Etc	Soft Feather
+Etc	Space Food
+Etc	Sparkling Glass Marble
+Etc	Sparkling Rock
+Etc	Special Stirge Phobia Cure
+Etc	Spiderweb
+Etc	Spool of Thread
+Etc	Squishy Liquid
+Etc	Stamped Ledger
+Etc	Star Rock
+Etc	Sticky Spiderweb
+Etc	Stiff Feather
+Etc	Stirge Wing
+Etc	Stone Golem Rubble
+Etc	Strange Mushroom Spore
+Etc	Stuffed Drake Skull
+Etc	Stump's Teardrop
+Etc	Table Clock
+Etc	Tablecloth
+Etc	Tanathos Strap
+Etc	Tauromacis Horn
+Etc	Taurospear Horn
+Etc	Teddy's Cotton
+Etc	Teddy's Yellow Ribbon
+Etc	The Dark Lord's Letter
+Etc	The Girl Next Door
+Etc	The Key
+Etc	The Magic Rock
+Etc	The Proof of a Hero (Bowman)
+Etc	The Proof of a Hero (Magician)
+Etc	The Proof of a Hero (Thief)
+Etc	The Proof of a Hero (Warrior)
+Etc	The Snail Legend
+Etc	The Summoning Rock
+Etc	Ticket to Construction Site B1
+Etc	Ticket to Construction Site B2
+Etc	Ticket to Construction Site B3
+Etc	Ticket to Ellinia (Basic)
+Etc	Ticket to Ellinia (Regular)
+Etc	Ticket to Ludibrium (Basic)
+Etc	Ticket to Ludibrium (Regular)
+Etc	Ticket to Orbis (Basic)
+Etc	Ticket to Orbis (Regular)
+Etc	Topaz
+Etc	Topaz Ore
+Etc	Torn Ledger Pages
+Etc	Torn Note
+Etc	Tortie Shell
+Etc	Toy Drum
+Etc	Toy Duckling
+Etc	Toy Trojan Sword
+Etc	Transparent Item
+Etc	Treasure Scroll
+Etc	Tree Branch
+Etc	Two-Handed Weapon Crafting Catalyst
+Etc	VIP Mirror
+Etc	Very Dry Branch
+Etc	Viking Sail
+Etc	Vitamin Gummy
+Etc	Weird Medicine
+Etc	White Dye
+Etc	White Viola
+Etc	Wild Boar Tooth
+Etc	Wild Kargo Eye
+Etc	Winston's Recommendation
+Etc	Winter Supply Bundle
+Etc	Wisdom Crystal
+Etc	Witchgrass Leaf
+Etc	Wooden Board
+Etc	Worn-Out Goggle
+Etc	Yellow Dye
+Etc	Yellow Primrose Seed
+Etc	Yellow Toy Block
+Etc	Yeti Horn
+Etc	Zelya's Map Fragment
+Etc	Zombie Teddy Bear
+Setup	Amorian Relaxer
+Setup	Anvil
+Setup	Arcane Station
+Setup	Arcon Figure
+Setup	Assorted Pottery Set
+Setup	Beach Chair(Blue)
+Setup	Beach Chair(Red)
+Setup	Black Christmas Recharger Chair
+Setup	Bloody Rose
+Setup	Blue Ball Ornament
+Setup	Blue Candle
+Setup	Blue Candy Canes
+Setup	Blue Gift-Box Ornament
+Setup	Blue Miniature Bulb
+Setup	Blue Seal Cushion
+Setup	Blue Star Miniature Bulb
+Setup	Blue-Ribboned Giftbox
+Setup	Brass Candlestick
+Setup	Brick Pile
+Setup	Camping Tent
+Setup	Candy Cane
+Setup	Charge UP Chair
+Setup	Cherry Bed
+Setup	Cherry Bench
+Setup	Cherry Bookshelf
+Setup	Cherry Lattice Window
+Setup	Cherry Wardrobe
+Setup	Chewing Panda Chair
+Setup	Christmas Box
+Setup	Christmas Tree Chair
+Setup	Christmas wreath
+Setup	Circular Tree Ornament
+Setup	Clear Chair
+Setup	Corked Storage Jar
+Setup	Crimson Balrog Helmet
+Setup	Cuddly Polar Bear
+Setup	Dragon Skull Chair
+Setup	Exit Sign
+Setup	Fire Extinguisher
+Setup	Fire Hydrant
+Setup	Flower Bud Ceiling Light
+Setup	Furnace Chair
+Setup	Fuzzy Kitty Chair
+Setup	Gold Seal Cushion
+Setup	Greater Teru Bozu Chair
+Setup	Green " + "
+Setup	Green " - "
+Setup	Green "A"
+Setup	Green "C"
+Setup	Green "E"
+Setup	Green "H"
+Setup	Green "I"
+Setup	Green "M"
+Setup	Green "P"
+Setup	Green "R"
+Setup	Green "S"
+Setup	Green "T"
+Setup	Green "X"
+Setup	Green "Y"
+Setup	Green Chair
+Setup	Green Christmas Recharger Chair
+Setup	Green Miniature Bulb
+Setup	Green No. 0
+Setup	Green No. 1
+Setup	Green No. 2
+Setup	Green No. 3
+Setup	Green No. 4
+Setup	Green No. 5
+Setup	Green No. 6
+Setup	Green No. 7
+Setup	Green No. 8
+Setup	Green No. 9
+Setup	Green Star Miniature Bulb
+Setup	Grey Seal Cushion
+Setup	Halloween Broomstick Chair
+Setup	Henesys Flag
+Setup	Henesys Resident's Chair
+Setup	Henesys Table
+Setup	Hinakazari Chair
+Setup	Ice Chair
+Setup	Igloo
+Setup	It's a Hoot! Chair
+Setup	Jr. Balrog Horn
+Setup	Kadomatsu
+Setup	Kerning City Flag
+Setup	Kerning City Resident's Chair
+Setup	Kerning City Street Sign
+Setup	Kerning City Table
+Setup	King Slime Balloon
+Setup	King-sized Star
+Setup	Kotatsu
+Setup	Lakelis Statue
+Setup	Leatherworking Station
+Setup	Letter A
+Setup	Letter E
+Setup	Letter F
+Setup	Letter I
+Setup	Letter L
+Setup	Letter N
+Setup	Letter O
+Setup	Letter P
+Setup	Letter S
+Setup	Letter T
+Setup	Little Bug
+Setup	Little Sunflower
+Setup	Mano Statue
+Setup	Maple Tree Chair
+Setup	MapleStory Fest 2026 Staff Chair
+Setup	Metal Bookshelf
+Setup	Metal Ceiling Light
+Setup	Metal Scale
+Setup	Metal Trash Can
+Setup	Metal Wall Light
+Setup	Metal Wardrobe
+Setup	Metal Window
+Setup	Metal Window with Curtains
+Setup	Miwok Chief's Chair
+Setup	Mochi Ice Cream Chair
+Setup	Moon Bunny Statue
+Setup	Moon Star Chair
+Setup	Mushmom Balloon
+Setup	Mushroom Ornament
+Setup	Music Box
+Setup	No Biking Sign
+Setup	No Smoking Sign
+Setup	Oak Barrel
+Setup	Oak Bench
+Setup	Oak Window
+Setup	Olivia's Chair
+Setup	Orange Star Miniature Bulb
+Setup	Painting of Rotten Mushmom
+Setup	Painting of Shade
+Setup	Painting of Zombie Mushmom
+Setup	Pale Maple Leaf
+Setup	Palm Tree Beach Chair
+Setup	Pig Ornament
+Setup	Pink Beach Chair
+Setup	Pink Seal Cushion
+Setup	Pink Star Miniature Bulb
+Setup	Pink Teddy Chair
+Setup	Polar Bear Chair
+Setup	Poor Ribbon Pig Chair
+Setup	Portrait of Helena
+Setup	Portrait of the Dark Lord
+Setup	Potted Sunflower
+Setup	Purple Barstool
+Setup	Rabbit Sofa
+Setup	Red " + "
+Setup	Red " - "
+Setup	Red "A"
+Setup	Red "C"
+Setup	Red "E"
+Setup	Red "H"
+Setup	Red "I"
+Setup	Red "M"
+Setup	Red "P"
+Setup	Red "R"
+Setup	Red "S"
+Setup	Red "T"
+Setup	Red "X"
+Setup	Red "Y"
+Setup	Red Ball Ornament
+Setup	Red Candle
+Setup	Red Candy Canes
+Setup	Red Chair
+Setup	Red Christmas Recharger Chair
+Setup	Red Fruit Leaves
+Setup	Red Gift-Box Ornament
+Setup	Red Miniature Bulb
+Setup	Red No. 0
+Setup	Red No. 1
+Setup	Red No. 2
+Setup	Red No. 3
+Setup	Red No. 4
+Setup	Red No. 5
+Setup	Red No. 6
+Setup	Red No. 7
+Setup	Red No. 8
+Setup	Red No. 9
+Setup	Red Round Chair
+Setup	Red Sock
+Setup	Red Star Miniature Bulb
+Setup	Red Umbrella Chair
+Setup	Red-Ribboned Giftbox
+Setup	Reddened Maple Leaf
+Setup	Reinforced Safe
+Setup	Reinforced Wooden Chest
+Setup	Roasted Relaxer
+Setup	Rope-Wrapped Jug
+Setup	Rudolph Ornament
+Setup	Ruldolph Santa Boots
+Setup	Rustic Bed
+Setup	Rusty Safe
+Setup	Santa Ornament
+Setup	Sewing Machine
+Setup	Skull Throne
+Setup	Sky-blue Wooden Chair
+Setup	Slime Ornament
+Setup	Small Barbed Wire Garden Plot
+Setup	Small Garden Plot
+Setup	Small Potted Vine
+Setup	Soul Teddy Chair
+Setup	Steel Drum
+Setup	Steel Milk Can
+Setup	Stone Golem Hand Chair
+Setup	Straw Training Dummy
+Setup	Strawberry Patch
+Setup	Stumpy Figure
+Setup	TV Recliner
+Setup	Tall Sunflower
+Setup	Teddy Bear Bed
+Setup	The First Trial
+Setup	The Green Relaxer
+Setup	The Red Relaxer
+Setup	The Red Relaxer (Alt)
+Setup	The Stirge Seat
+Setup	The Yellow Relaxer
+Setup	The gingerbread man
+Setup	The gingerbread woman
+Setup	Tomato Tree
+Setup	Wall Fan
+Setup	Warrior Throne
+Setup	Weaponcrafting Station
+Setup	Wheat Sheaves
+Setup	White Seal Cushion
+Setup	Wooden Bench
+Setup	Wooden Scrub Brush
+Setup	Wooden Tub
+Setup	Woodworking Station
+Setup	World's End
+Setup	Worn Wooden Chest
+Setup	Yellow Ball Ornament
+Setup	Yellow Butterfly
+Setup	Yellow Candle
+Setup	Yellow Candy Canes
+Setup	Yellow Chair
+Setup	Yellow Fruit Leaves
+Setup	Yellow Gift-Box Ornament
+Setup	Yellow Miniature Bulb
+Setup	Yellow-Ribboned Giftbox
+Use	1.5x EXP Coupon (15 min)
+Use	10,000 Meso Pouch
+Use	2x EXP Coupon (15 min)
+Use	3x EXP Coupon (15 min)
+Use	50,000 Meso Pouch
+Use	Adamantium Arrows for Bows
+Use	Adventurer's Journal
+Use	Adventurer's Journal - Page 2
+Use	Adventurer's Journal - Page 3
+Use	Adventurer's Journal - Page 4
+Use	Adventurer's Journal - Page 5
+Use	Adventurer's Journal - Page 6
+Use	Andre's Seafood Soup
+Use	Apple
+Use	Arcforging Kit
+Use	Arrows for Bows
+Use	Arrows for Crossbows
+Use	Atmospheric Effect Box
+Use	Aura Face Coupon
+Use	Aura Outfit Set
+Use	Aurora Stamp
+Use	Avatar Gift Box
+Use	Black Sack
+Use	Blue Malady's Candy
+Use	Blue Potion
+Use	Blue Potion (Alt)
+Use	Bottomwear DEF Scroll: Chaos
+Use	Bottomwear DEF Scroll: Greater
+Use	Bottomwear DEF Scroll: Intermediate
+Use	Bottomwear DEF Scroll: Lesser
+Use	Bottomwear HP Scroll: Chaos
+Use	Bottomwear HP Scroll: Greater
+Use	Bottomwear HP Scroll: Intermediate
+Use	Bottomwear HP Scroll: Lesser
+Use	Bottomwear MP Scroll: Chaos
+Use	Bottomwear MP Scroll: Greater
+Use	Bottomwear MP Scroll: Intermediate
+Use	Bottomwear MP Scroll: Lesser
+Use	Bow Attack Scroll: Chaos
+Use	Bow Attack Scroll: Greater
+Use	Bow Attack Scroll: Intermediate
+Use	Bow Attack Scroll: Lesser
+Use	Bronze Arrows for Bows
+Use	Bronze Arrows for Crossbows
+Use	Cake
+Use	Cake (Alt)
+Use	Cape Accuracy Scroll: Chaos
+Use	Cape Accuracy Scroll: Greater
+Use	Cape Accuracy Scroll: Intermediate
+Use	Cape Accuracy Scroll: Lesser
+Use	Cape DEX Scroll: Chaos
+Use	Cape DEX Scroll: Greater
+Use	Cape DEX Scroll: Intermediate
+Use	Cape DEX Scroll: Lesser
+Use	Cape INT Scroll: Chaos
+Use	Cape INT Scroll: Greater
+Use	Cape INT Scroll: Intermediate
+Use	Cape INT Scroll: Lesser
+Use	Cape LUK Scroll: Chaos
+Use	Cape LUK Scroll: Greater
+Use	Cape LUK Scroll: Intermediate
+Use	Cape LUK Scroll: Lesser
+Use	Cape Magic Def. Scroll: Chaos
+Use	Cape Magic Def. Scroll: Greater
+Use	Cape Magic Def. Scroll: Intermediate
+Use	Cape Magic Def. Scroll: Lesser
+Use	Cape STR Scroll: Chaos
+Use	Cape STR Scroll: Greater
+Use	Cape STR Scroll: Intermediate
+Use	Cape STR Scroll: Lesser
+Use	Cape Weapon Def. Scroll: Chaos
+Use	Cape Weapon Def. Scroll: Greater
+Use	Cape Weapon Def. Scroll: Intermediate
+Use	Cape Weapon Def. Scroll: Lesser
+Use	Cider
+Use	Claw Attack Scroll: Chaos
+Use	Claw Attack Scroll: Greater
+Use	Claw Attack Scroll: Intermediate
+Use	Claw Attack Scroll: Lesser
+Use	Companion's Magic Box
+Use	Compensation Box
+Use	Compensation Box (Alt 2)
+Use	Compensation Box (Alt 3)
+Use	Compensation Box (Alt 4)
+Use	Compensation Box (Alt)
+Use	Crossbow Attack Scroll: Chaos
+Use	Crossbow Attack Scroll: Greater
+Use	Crossbow Attack Scroll: Intermediate
+Use	Crossbow Attack Scroll: Lesser
+Use	Dagger Attack Scroll: Chaos
+Use	Dagger Attack Scroll: Greater
+Use	Dagger Attack Scroll: Intermediate
+Use	Dagger Attack Scroll: Lesser
+Use	Destructive Potion
+Use	Dexterity Potion
+Use	Drake's Blood
+Use	Drake's Meat
+Use	Dried Squid
+Use	Earring Crit. Damage Scroll: Chaos
+Use	Earring Crit. Damage Scroll: Greater
+Use	Earring Crit. Damage Scroll: Intermediate
+Use	Earring Crit. Damage Scroll: Lesser
+Use	Earring DEX Scroll: Chaos
+Use	Earring DEX Scroll: Greater
+Use	Earring DEX Scroll: Intermediate
+Use	Earring DEX Scroll: Lesser
+Use	Earring Evasion Scroll: Chaos
+Use	Earring Evasion Scroll: Greater
+Use	Earring Evasion Scroll: Intermediate
+Use	Earring Evasion Scroll: Lesser
+Use	Earring INT Scroll: Chaos
+Use	Earring INT Scroll: Greater
+Use	Earring INT Scroll: Intermediate
+Use	Earring INT Scroll: Lesser
+Use	Earring LUK Scroll: Chaos
+Use	Earring LUK Scroll: Greater
+Use	Earring LUK Scroll: Intermediate
+Use	Earring LUK Scroll: Lesser
+Use	Earring STR Scroll: Chaos
+Use	Earring STR Scroll: Greater
+Use	Earring STR Scroll: Intermediate
+Use	Earring STR Scroll: Lesser
+Use	Egg
+Use	Elixir
+Use	Fairy's Honey
+Use	Fat Sausage
+Use	Fern Face Coupon
+Use	Fern Hair Coupon
+Use	Fern Outfit Set
+Use	Fern's Clothes Selector Coupon
+Use	Founder's Chat Ring Exchange Coupon
+Use	Founder's Label Ring Exchange Coupon
+Use	Founder's Thief Avatar Set
+Use	Fried Chicken
+Use	Frieren Clothes Selector Coupon
+Use	Frieren Face Coupon
+Use	Frieren Hair (Ringlets) Coupon
+Use	Frieren Hair (Sleep) Coupon
+Use	Frieren Hair Coupon
+Use	Frieren Outfit Set
+Use	Frieren Outfit Set (Ringlets)
+Use	Frieren Outfit Set (Sleep)
+Use	GM Black Sack: Jr. Balrog Level 80
+Use	GM Black Sack: King Slime Level 32
+Use	GM Black Sack: Mano Level 20
+Use	GM Black Sack: Mushmom Level 40
+Use	GM Black Sack: Rotten Mushmom Level 60
+Use	GM Black Sack: Zombie Mushmom Level 50
+Use	GM's Blessing of Wind
+Use	GM's Blessing of the Keen Eye
+Use	Gift Box
+Use	Gift for the New Journey
+Use	Gloves Accuracy Scroll: Chaos
+Use	Gloves Accuracy Scroll: Greater
+Use	Gloves Accuracy Scroll: Intermediate
+Use	Gloves Accuracy Scroll: Lesser
+Use	Gloves Attack Scroll: Chaos
+Use	Gloves Attack Scroll: Greater
+Use	Gloves Attack Scroll: Intermediate
+Use	Gloves Attack Scroll: Lesser
+Use	Gloves Crit. Rate Scroll: Chaos
+Use	Gloves Crit. Rate Scroll: Greater
+Use	Gloves Crit. Rate Scroll: Intermediate
+Use	Gloves Crit. Rate Scroll: Lesser
+Use	Gloves Magic Attack Scroll: Chaos
+Use	Gloves Magic Attack Scroll: Greater
+Use	Gloves Magic Attack Scroll: Intermediate
+Use	Gloves Magic Attack Scroll: Lesser
+Use	Grape Juice
+Use	Green Apple
+Use	Green Malady's Candy
+Use	Hamburger
+Use	Hat Accuracy Scroll: Chaos
+Use	Hat Accuracy Scroll: Greater
+Use	Hat Accuracy Scroll: Intermediate
+Use	Hat Accuracy Scroll: Lesser
+Use	Hat HP Scroll: Chaos
+Use	Hat HP Scroll: Greater
+Use	Hat HP Scroll: Intermediate
+Use	Hat HP Scroll: Lesser
+Use	Hat MP Scroll: Chaos
+Use	Hat MP Scroll: Greater
+Use	Hat MP Scroll: Intermediate
+Use	Hat MP Scroll: Lesser
+Use	Himmel Face Coupon
+Use	Himmel Hair Coupon
+Use	Himmel Outfit Set
+Use	Hot Dog
+Use	Hot Dog Supreme
+Use	Hwabi Throwing Stars
+Use	Ice Cream Pop
+Use	Icicle
+Use	Ilbi Throwing Stars
+Use	Inkwell's Blessing
+Use	Iron Arrows for Bows
+Use	Iron Arrows for Crossbows
+Use	Jr. Balrog Invasion
+Use	Kumbi Throwing Stars
+Use	Leaf Points (1,000) Exchange Coupon
+Use	Leaf Points (10,000) Exchange Coupon
+Use	Leaf Points (100,000) Exchange Coupon
+Use	Leaf Points (5,000) Exchange Coupon
+Use	Leaf Points (50,000) Exchange Coupon
+Use	Leatherworking Kit
+Use	Lemon
+Use	Lemon (Alt)
+Use	Lie Detector Test
+Use	Lie Detector Test (Alt 2)
+Use	Lie Detector Test (Alt)
+Use	Linie Face Coupon
+Use	Linie Outfit Set
+Use	Lügner Face Coupon
+Use	Lügner Outfit Set
+Use	Magic Potion
+Use	Mana Elixir
+Use	Manji Avatar Set
+Use	MapleStory Community VIP Chat Ring Exchange Coupon
+Use	MapleStory Community VIP Exchange Gift Box
+Use	MapleStory Community VIP Label Ring Exchange Coupon
+Use	MapleStory Fest 2026 Chat Ring Exchange Coupon
+Use	MapleStory Fest 2026 Gift Box (Bronze)
+Use	MapleStory Fest 2026 Gift Box (Gold)
+Use	MapleStory Fest 2026 Gift Box (Silver)
+Use	MapleStory Fest 2026 Label Ring Exchange Coupon
+Use	MapleStory Fest 2026 Special Hat Exchange Box (Bronze)
+Use	MapleStory Fest 2026 Special Hat Exchange Box (Gold)
+Use	MapleStory Fest 2026 Special Hat Exchange Box (Silver)
+Use	MapleStory Fest 2026 Surprise Gift Box
+Use	Meat
+Use	Mithril Arrows for Crossbows
+Use	Mokbi Throwing Stars
+Use	Mrs. Ming Ming's Stew
+Use	Mysterious Meso Pouch
+Use	Mystery Palette Exchange Coupon
+Use	Natalie's Fashion Box (F)
+Use	Natalie's Fashion Box (M)
+Use	One-Handed Axe Attack Scroll: Chaos
+Use	One-Handed Axe Attack Scroll: Greater
+Use	One-Handed Axe Attack Scroll: Intermediate
+Use	One-Handed Axe Attack Scroll: Lesser
+Use	One-Handed Blunt Weapon Attack Scroll: Chaos
+Use	One-Handed Blunt Weapon Attack Scroll: Greater
+Use	One-Handed Blunt Weapon Attack Scroll: Intermediate
+Use	One-Handed Blunt Weapon Attack Scroll: Lesser
+Use	One-Handed Sword Attack Scroll: Chaos
+Use	One-Handed Sword Attack Scroll: Greater
+Use	One-Handed Sword Attack Scroll: Intermediate
+Use	One-Handed Sword Attack Scroll: Lesser
+Use	Orange
+Use	Orange Juice
+Use	Orange Mushroom Daydream
+Use	Orange Mushroom Invasion
+Use	Orange Mushroom Package
+Use	Orange Mushroom to Zakum Upgrade Package
+Use	Orange Potion
+Use	Overall Armor DEF Scroll: Chaos
+Use	Overall Armor DEF Scroll: Greater
+Use	Overall Armor DEF Scroll: Intermediate
+Use	Overall Armor DEF Scroll: Lesser
+Use	Overall Armor DEX Scroll: Chaos
+Use	Overall Armor DEX Scroll: Greater
+Use	Overall Armor DEX Scroll: Intermediate
+Use	Overall Armor DEX Scroll: Lesser
+Use	Overall Armor INT Scroll: Chaos
+Use	Overall Armor INT Scroll: Greater
+Use	Overall Armor INT Scroll: Intermediate
+Use	Overall Armor INT Scroll: Lesser
+Use	Overall Armor LUK Scroll: Chaos
+Use	Overall Armor LUK Scroll: Greater
+Use	Overall Armor LUK Scroll: Intermediate
+Use	Overall Armor LUK Scroll: Lesser
+Use	Overall Armor STR Scroll: Chaos
+Use	Overall Armor STR Scroll: Greater
+Use	Overall Armor STR Scroll: Intermediate
+Use	Overall Armor STR Scroll: Lesser
+Use	Palette Cleanser Exchange Coupon
+Use	Pet Equip Jump Scroll: Chaos
+Use	Pet Equip Jump Scroll: Greater
+Use	Pet Equip Jump Scroll: Intermediate
+Use	Pet Equip Jump Scroll: Lesser
+Use	Pet Equip Speed Scroll: Chaos
+Use	Pet Equip Speed Scroll: Greater
+Use	Pet Equip Speed Scroll: Intermediate
+Use	Pet Equip Speed Scroll: Lesser
+Use	Pet Food
+Use	Pet Food (Alt)
+Use	Pizza
+Use	Polearm Attack Scroll: Chaos
+Use	Polearm Attack Scroll: Greater
+Use	Polearm Attack Scroll: Intermediate
+Use	Polearm Attack Scroll: Lesser
+Use	Power Elixir
+Use	Pure Water
+Use	Rainbow-colored Snail Shell
+Use	Red Bean Sundae
+Use	Red Malady's Candy
+Use	Red Potion
+Use	Red Potion (Alt)
+Use	Red Snail Daydream
+Use	Red Snail Invasion
+Use	Return Scroll - Nearest Town
+Use	Return Scroll - Nearest Town (Alt)
+Use	Return Scroll to Ellinia
+Use	Return Scroll to Forgotten Hollow
+Use	Return Scroll to Henesys
+Use	Return Scroll to Kerning City
+Use	Return Scroll to Lith Harbor
+Use	Return Scroll to My Home
+Use	Return Scroll to Perion
+Use	Return Scroll to Sleepywood
+Use	Ribbon Pig Daydream
+Use	Ribbon Pig Invasion
+Use	Roger's Apple
+Use	Salad
+Use	Sap of Ancient Tree
+Use	Sharpness Potion
+Use	Shield Accuracy Scroll: Chaos
+Use	Shield Accuracy Scroll: Greater
+Use	Shield Accuracy Scroll: Intermediate
+Use	Shield Accuracy Scroll: Lesser
+Use	Shield DEF Scroll: Chaos
+Use	Shield DEF Scroll: Greater
+Use	Shield DEF Scroll: Intermediate
+Use	Shield DEF Scroll: Lesser
+Use	Shoes Evasion Scroll: Chaos
+Use	Shoes Evasion Scroll: Greater
+Use	Shoes Evasion Scroll: Intermediate
+Use	Shoes Evasion Scroll: Lesser
+Use	Shoes Jump Scroll: Chaos
+Use	Shoes Jump Scroll: Greater
+Use	Shoes Jump Scroll: Intermediate
+Use	Shoes Jump Scroll: Lesser
+Use	Shoes Speed Scroll: Chaos
+Use	Shoes Speed Scroll: Greater
+Use	Shoes Speed Scroll: Intermediate
+Use	Shoes Speed Scroll: Lesser
+Use	Smithing Kit
+Use	Snail Package
+Use	Snail to Orange Mushroom Upgrade Package
+Use	Snail to Zakum Upgrade Package
+Use	Sniper Potion
+Use	Snowball
+Use	Spear Attack Scroll: Chaos
+Use	Spear Attack Scroll: Greater
+Use	Spear Attack Scroll: Intermediate
+Use	Spear Attack Scroll: Lesser
+Use	Speed Potion
+Use	Staff Magic Attack Scroll: Chaos
+Use	Staff Magic Attack Scroll: Greater
+Use	Staff Magic Attack Scroll: Intermediate
+Use	Staff Magic Attack Scroll: Lesser
+Use	Stark Face Coupon
+Use	Stark Hair Coupon
+Use	Stark Outfit Set
+Use	Stark's Clothes Selector Coupon
+Use	Stark's Gloves Selector Coupon
+Use	Stark's Shoes Selector Coupon
+Use	Steely Throwing Knives
+Use	Subi Throwing Stars
+Use	Summoning New-Type Balrog
+Use	Sunrise Dew
+Use	Supreme Dexterity Potion
+Use	Supreme Sniper Potion
+Use	Tailoring Kit
+Use	The Songs of Solomon
+Use	Thief's Note
+Use	Tobi Throwing Stars
+Use	Topwear DEF Scroll: Chaos
+Use	Topwear DEF Scroll: Greater
+Use	Topwear DEF Scroll: Intermediate
+Use	Topwear DEF Scroll: Lesser
+Use	Topwear HP Scroll: Chaos
+Use	Topwear HP Scroll: Greater
+Use	Topwear HP Scroll: Intermediate
+Use	Topwear HP Scroll: Lesser
+Use	Topwear MP Scroll: Chaos
+Use	Topwear MP Scroll: Greater
+Use	Topwear MP Scroll: Intermediate
+Use	Topwear MP Scroll: Lesser
+Use	Two-handed Axe Attack Scroll: Chaos
+Use	Two-handed Axe Attack Scroll: Greater
+Use	Two-handed Axe Attack Scroll: Intermediate
+Use	Two-handed Axe Attack Scroll: Lesser
+Use	Two-handed Blunt Weapon Attack Scroll: Chaos
+Use	Two-handed Blunt Weapon Attack Scroll: Greater
+Use	Two-handed Blunt Weapon Attack Scroll: Intermediate
+Use	Two-handed Blunt Weapon Attack Scroll: Lesser
+Use	Two-handed Sword Attack Scroll: Chaos
+Use	Two-handed Sword Attack Scroll: Greater
+Use	Two-handed Sword Attack Scroll: Intermediate
+Use	Two-handed Sword Attack Scroll: Lesser
+Use	Unagi
+Use	W Ramen
+Use	Wand Magic Attack Scroll: Chaos
+Use	Wand Magic Attack Scroll: Greater
+Use	Wand Magic Attack Scroll: Intermediate
+Use	Wand Magic Attack Scroll: Lesser
+Use	Warrior Potion
+Use	Watermelon
+Use	Weaponcrafting Kit
+Use	Well-Loved Avatar Set
+Use	White Potion
+Use	Wolbi Throwing Stars
+Use	Woodcrafting Kit
+Use	Wooden Top
+Use	Zakum Package
+Use	Übel Face Coupon
+Use	Übel Hair Coupon
+Use	Übel Outfit Set

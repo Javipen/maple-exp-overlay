@@ -21,7 +21,8 @@ Resized to fit beside the chat, using edit mode (Shift+5), at the start of a ses
   received EXP (+32)") and every pickup ("You have gained mesos (+15)", "Lupin's Banana x1 earned.
   (Etc)"):
   - mesos picked up are counted exactly, inventory open or not
-  - loot is counted and priced at what NPC shops pay (Settings > Loot)
+  - loot is counted and priced at what NPC shops pay (Settings > Loot); each item is named from the
+    game's own item list, which comes with the overlay
   - **Profit** on the card: mesos picked up + loot, less the potions used
 - **Three layouts:** *Minimal*, *Session EXP*, and *Full*, which adds the mesos and repot rows.
 - **Four themes:** Brown, Orange, Blue and Steel.

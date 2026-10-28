@@ -731,6 +731,14 @@ check(f"mesos/hr counts only what's picked up while the EXP clock runs, as EXP/h
 app._messages([("mesos", 5), ("exp", 9), ("item", "Lupin's Banana", 1, "Etc")], m.time.monotonic())
 check("message lines go where they belong: mesos and loot picked up, a kill's EXP",
       app.picked_mesos == 105 and list(app.loot.values()) == [("Lupin's Banana", 1)] and app._kill_exp[-1][1] == 9)
+sys.path.insert(0, str(ROOT / "tools"))
+import make_item_font  # noqa: E402
+import msgwatch  # noqa: E402
+band, tab, qty, name = make_item_font.rows()[6]                 # (a real 4K "Lupin's Banana x1 earned. (Etc)")
+words = make_item_font.words(band)
+line = msgwatch.Line(0.0, "white", kind="text", band=band, span=(int(words[-1][0]), int(words[0][1])), done=True)
+check(f"a white line with no amount is read by the item reader ({app._said([line], 20)})",
+      app._said([line], 20) == [("item", "Lupin's Banana", 1, "Etc")])
 app.reset()
 app.session.started, app.tracker.running = False, running
 app.cfg["save_captures"] = True
