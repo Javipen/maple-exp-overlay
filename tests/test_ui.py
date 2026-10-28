@@ -675,6 +675,16 @@ app.clear_repot(confirm=False)
 check("clearing the repot history clears Pot cost too", "pot_cost" not in app.cfg)
 app.pots.seen_at = m.time.monotonic() - m.POTS_STALE - 1
 check("not looked at for a while: Pot cost is marked as not up to date", app._pot_cost_text().startswith("~"))
+app.pots.seen_at = m.time.monotonic() - 5                      # (looked at before coming into town)
+app.session.started = True
+app._handle(blank._replace(where="Reading", map="Henesys"))
+check(f"coming into a town with the popup not looked at since: a reminder to hold LT before buying ({app._pot_cost_text()})",
+      app.in_town and app._pot_cost_text() == "Hold LT")
+app._pots(popup, m.time.monotonic())
+check(f"...gone once the popup's been looked at ({app._pot_cost_text()})", app._pot_cost_text() == "0")
+app._handle(blank._replace(where="Reading", map="Rocky Road II"))
+check("...and not shown on a hunting map", not app.in_town and app._pot_cost_text() == "0")
+app.session.started = False
 box = tk.Frame(app.root)
 app._fill_pots(box, {"bg": "white"}, {"bg": "white"}, 300)
 check("Settings lists the potions, each with its price", len(box.winfo_children()) == 5)

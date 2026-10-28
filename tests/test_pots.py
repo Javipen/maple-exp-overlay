@@ -36,6 +36,9 @@ counts_b = [c for _, c in got_b]
 # (In the compressed screenshot the lemon's yellow bleeds into the 8 of its 984: not checked there.)
 check(f"...and in another picture, with other counts ({counts_b})",
       counts_b[:4] == [None, 992, 357, 21] and counts_b[5:] == [1005, None, None])
+got_c = [c for _, c in reader.look(cv2.imread(str(FRAMES / "pots_lt_c.png")), 20)]   # (a capture, cropped to the popup)
+check(f"a 4-digit count that runs over the slot's right edge is read whole ({got_c})",
+      got_c == [None, 588, 683, 102, 717, 2203, None, None])
 check("the right trigger's popup (skills) isn't read as potions", reader.look(cv2.imread(str(FRAMES / "pots_rt.png")), 20) is None)
 check("nor the usual controller buttons", reader.look(cv2.imread(str(FRAMES / "pots_none.png")), 20) is None)
 names = [pw.guess_item(look)[0] if c is not None else None for look, c in got]

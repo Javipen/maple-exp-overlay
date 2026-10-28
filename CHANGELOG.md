@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.1 (in testing)
+
+- **4-digit potion counts are read again.** A count like 2203 runs past its slot's right edge in the
+  left-trigger popup, and its last digit was cut off, so that potion stopped counting in Pot cost
+  (an orange potion at 2,199 was read, at 2,200 it wasn't). The reader now looks a little past the
+  edge, only when there are strokes there and the count can't be read within the slot.
+- **"Hold LT" in town.** Coming into a town with the popup not looked at since, Pot cost says
+  "Hold LT" until you do. Potions bought before that look would hide the ones used since the last
+  one (the count goes up overall, which is a purchase), so a look before shopping keeps them counted.
+
 ## 1.2.0
 
 - **A new message watcher: kills and pickups counted line by line.** The game's messages at the bottom
