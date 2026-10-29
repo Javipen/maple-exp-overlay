@@ -25,6 +25,7 @@ DIGIT_TOP, DIGIT_BOTTOM = 0.72, 1.30    # the count's band, in slot heights from
 # less), and how far apart they are.
 GLYPH_TOP, GLYPH_H, GLYPH_W, ONE_W, ADV, ONE_ADV = 4, 26, 15, 7, 22, 14
 MATCH, MARGIN = 0.22, 0.03  # how far off a digit may be from its shape, and how much better than the next best
+REACH = 10                  # 4K px past a slot's right edge a long count may end (see read_count)
 END_INK = 0.1               # past the end of a number there's next to nothing (a clean count: under 0.04)
 LOOK = (12, 9)              # an icon's look (columns, rows), to tell items apart
 
@@ -81,9 +82,15 @@ class PotReader:
         return out
 
     def read_count(self, bgr, box, gh):
-        """The count in a slot, or None if there's none (or it isn't clear)."""
+        """The count in a slot, or None if there's none (or it isn't clear). A 4-digit count can run past
+        the slot's right edge (2203): only when the count can't be read within the slot, a little past
+        it is looked at too."""
         mask, _ = strokes(bgr, box, gh)
         got = decode(mask, self.shapes, gh / GH0)
+        if not got:
+            wide, _ = strokes(bgr, box, gh, REACH)
+            if wide[:, mask.shape[1]:].sum() >= 3 * gh / GH0:      # (strokes past the edge: a digit runs on)
+                got = decode(wide, self.shapes, gh / GH0)
         if not got or (len(got[0]) > 1 and got[0][0] == "0"):
             return None
         return int(got[0])
@@ -101,14 +108,16 @@ def same_icon(a, b):
     return a is not None and b is not None and float(np.abs(a - b).mean()) < 0.03
 
 
-def strokes(bgr, box, gh):
+def strokes(bgr, box, gh, reach=0):
     """The count's band of a slot as a mask (0/1) of the digits' light strokes, and its left x.
+    reach: how far past the slot's right edge to look (4K px), for a long count that ends over it.
 
     The digits are drawn as thin light outlines (white, light blue at the bottom) inside a black
     plate, over the icon: the light pixels inside the black plate are the digits."""
     x, y, w, h = box
     y0, y1 = y + int(DIGIT_TOP * h), y + int(DIGIT_BOTTOM * h)
-    x0, x1 = max(0, x - int(round(8 * gh / GH0))), x + w - 2      # (a count can start over the slot's frame)
+    x0 = max(0, x - int(round(8 * gh / GH0)))                    # (a count can start over the slot's frame)
+    x1 = x + w - 2 + int(round(reach * gh / GH0))
     hsv = cv2.cvtColor(bgr[y0:y1, x0:x1], cv2.COLOR_BGR2HSV)
     # The black plate fills the gaps between the strokes, which are thin; not the slot's light frame,
     # which is wider.

@@ -47,8 +47,8 @@ from PIL import Image, ImageDraw, ImageFont, ImageTk
 import ocr
 import report
 from hud import LAYOUTS as HUD_LAYOUTS, THEMES as HUD_THEMES, HudCard
-from msgwatch import Font as MessageFont, MessageWatcher, stack_area
-from pickwatch import read_line as read_pickup
+from msgwatch import GH0 as GH0_MSG, Font as MessageFont, MessageWatcher, stack_area
+from itemwatch import ItemReader
 from potwatch import PotReader, guess_item, same_icon, search_area as pot_search_area
 from platforms import create_platform, hotkey_text, parse_hotkey
 from report import Health, Recent
@@ -83,7 +83,7 @@ def _local_only():
 
 _local_only()
 
-VERSION = "1.2.0"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
+VERSION = "1.2.1"                  # the local-only edition (based on Maple Classic Exp Overlay 0.9.10-beta)
 WINDOW_TITLE = "Maple Classic Exp Overlay"    # the version is shown in Settings
 OLD_TITLES = ("Maple EXP/hr",)               # what versions before 0.9.3 were called
 
@@ -3015,6 +3015,7 @@ class App:
         self.autolog = AutoLog(self.cfg["gap_seconds"])
         self.map_name = None
         self.in_town = False                # on a town map: nobody farms there, so nothing is logged
+        self.town_since = None              # when you last came into a town (for the "Hold LT" reminder)
         self.level = None
         self.note = None
         self.last_logged = None
@@ -3089,6 +3090,11 @@ class App:
         except Exception as e:
             self.messages = None
             log_error("loading the message font", e)
+        try:                                    # (item lines: their names learned as they come, in the data folder)
+            self.items = ItemReader(ASSETS, DATA_DIR / "item_names.npz")
+        except Exception as e:
+            self.items = None
+            log_error("loading the item font", e)
         self._kill_exp = deque(maxlen=200)      # (when, EXP) for each kill seen in the messages
         self._last_kill_at = -1e9
         self._hud_pending = None                # an EXP rise seen once, waiting for the next reading to agree
@@ -3994,19 +4000,19 @@ class App:
                     log_error("watching the messages", e)
                 self.stop_evt.wait(max(0.02, MESSAGE_POLL - (time.monotonic() - t0)))
 
-    @staticmethod
-    def _said(lines, gh):
+    def _said(self, lines, gh):
         """New message lines (msgwatch.Line) as what they say: ("exp", amount) for an EXP or party bonus
-        line, ("mesos", amount), ("item", name, how many, tab). A white line with no amount is read
-        by Tesseract (an item, mostly); lines that can't be read are left out."""
+        line, ("mesos", amount), ("item", name, how many, tab). A white line with no amount is an item,
+        mostly: read by the item reader (itemwatch.py), with Tesseract for a name it doesn't know by
+        sight yet. Lines that can't be read are left out."""
         out = []
         for line in lines:
             if line.kind in ("exp", "bonus"):
                 out.append(("exp", line.amount))
             elif line.kind == "mesos":
                 out.append(("mesos", line.amount))
-            elif line.kind == "text" and line.colour == "white" and tesseract_ok and line.band is not None:
-                got = read_pickup(line.band, line.span, gh, TESS.read_lines)
+            elif line.kind == "text" and line.colour == "white" and self.items and line.band is not None:
+                got = self.items.read(line.band, line.span, gh / GH0_MSG, TESS.read_lines if tesseract_ok else None)
                 if got:
                     out.append(got)
         return out
@@ -4260,7 +4266,10 @@ class App:
             waiting = self.session.waiting
             self.session.map_seen(self.map_name)
             self._after_pause_check(waiting)
-        self.in_town = is_town(self.map_name)
+        town = is_town(self.map_name)
+        if town and not self.in_town:
+            self.town_since = time.monotonic()
+        self.in_town = town
         hidden = self._name_hidden()
         if hidden != self.map_hidden:
             self.map_hidden = hidden
@@ -4602,11 +4611,17 @@ class App:
 
     def _pot_cost_text(self):
         """The potions used since the last repot, less those picked up, at the shops' prices ("-" until
-        the popup's been read). More picked up than used shows as a gain."""
+        the popup's been read). More picked up than used shows as a gain.
+
+        In a town with the popup not looked at since you came in, it says "Hold LT": potions bought
+        before the next look would hide the ones used since the last (the count goes up overall)."""
         if not self.cfg.get("pots"):
             return "-"
-        cost = int(self.cfg.get("pot_cost") or 0)
         seen = self.pots.seen_at
+        if (self.in_town and self.session.started and self.town_since is not None
+                and (seen is None or seen < self.town_since)):
+            return "Hold LT"
+        cost = int(self.cfg.get("pot_cost") or 0)
         stale = self.session.on and (seen is None or time.monotonic() - seen > POTS_STALE)
         return ("~" if stale else "") + (f"-{fmt_num(cost)}" if cost > 0 else f"+{fmt_num(-cost)}" if cost < 0 else "0")
 

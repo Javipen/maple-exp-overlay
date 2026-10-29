@@ -1,0 +1,45 @@
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Use	24	Arrows for Crossbows
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Lupin's Banana
+Etc	1	Lupin's Banana
+Use	1	Orange Potion
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Use	1	Red Potion
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Leather
+Use	1	Red Potion
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Use	18	Arrows for Crossbows
+Use	14	Arrows for Bows
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Animal Fur Bundle
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Use	1	Red Potion
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Equip	1	Green Woodsman Boots
+Etc	1	Green Mushroom Cap
+Use	1	Orange Potion
+Etc	1	Lupin's Banana
+Etc	1	Lupin's Banana
+Etc	1	Green Mushroom Cap
+Etc	1	Green Mushroom Cap
+Etc	1	Lupin's Banana
+Etc	1	Animal Fur Bundle
