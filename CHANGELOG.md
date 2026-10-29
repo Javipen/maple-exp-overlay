@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.1 (in testing)
+## 1.2.1
 
 - **4-digit potion counts are read again.** A count like 2203 runs past its slot's right edge in the
   left-trigger popup, and its last digit was cut off, so that potion stopped counting in Pot cost
